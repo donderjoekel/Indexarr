@@ -454,7 +454,7 @@ namespace NzbDrone.Core.Indexers
                 new XDeclaration("1.0", "UTF-8", null),
                 new XElement("caps",
                     new XElement("server",
-                        new XAttribute("title", "Prowlarr")),
+                        new XAttribute("title", "Indexarr")),
                     LimitsDefault != null || LimitsMax != null ?
                         new XElement("limits",
                             LimitsDefault != null ? new XAttribute("default", LimitsDefault) : null,

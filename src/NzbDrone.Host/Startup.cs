@@ -49,7 +49,7 @@ namespace NzbDrone.Host
                 b.ClearProviders();
                 b.SetMinimumLevel(LogLevel.Trace);
                 b.AddFilter("Microsoft.AspNetCore", LogLevel.Warning);
-                b.AddFilter("Prowlarr.Http.Authentication", LogLevel.Information);
+                b.AddFilter("Indexarr.Http.Authentication", LogLevel.Information);
                 b.AddFilter("Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager", LogLevel.Error);
                 b.AddNLog();
             });
@@ -98,12 +98,12 @@ namespace NzbDrone.Host
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "1.0.0",
-                    Title = "Prowlarr",
-                    Description = "Prowlarr API docs",
+                    Title = "Indexarr",
+                    Description = "Indexarr API docs",
                     License = new OpenApiLicense
                     {
                         Name = "GPL-3.0",
-                        Url = new Uri("https://github.com/Prowlarr/Prowlarr/blob/develop/LICENSE")
+                        Url = new Uri("https://github.com/Indexarr/Indexarr/blob/develop/LICENSE")
                     }
                 });
 

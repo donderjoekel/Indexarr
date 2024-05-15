@@ -35,18 +35,18 @@ namespace NzbDrone.Host
 
         public static readonly List<string> ASSEMBLIES = new List<string>
         {
-            "Prowlarr.Host",
-            "Prowlarr.Core",
-            "Prowlarr.SignalR",
-            "Prowlarr.Api.V1",
-            "Prowlarr.Http"
+            "Indexarr.Host",
+            "Indexarr.Core",
+            "Indexarr.SignalR",
+            "Indexarr.Api.V1",
+            "Indexarr.Http"
         };
 
         public static void Start(string[] args, Action<IHostBuilder> trayCallback = null)
         {
             try
             {
-                Logger.Info("Starting Prowlarr - {0} - Version {1}",
+                Logger.Info("Starting Indexarr - {0} - Version {1}",
                             Environment.ProcessPath,
                             Assembly.GetExecutingAssembly().GetName().Version);
 
@@ -97,7 +97,7 @@ namespace NzbDrone.Host
                             })
                             .ConfigureServices(services =>
                             {
-                                services.Configure<PostgresOptions>(config.GetSection("Prowlarr:Postgres"));
+                                services.Configure<PostgresOptions>(config.GetSection("Indexarr:Postgres"));
                             }).Build();
 
                         break;
@@ -153,7 +153,7 @@ namespace NzbDrone.Host
                 })
                 .ConfigureServices(services =>
                 {
-                    services.Configure<PostgresOptions>(config.GetSection("Prowlarr:Postgres"));
+                    services.Configure<PostgresOptions>(config.GetSection("Indexarr:Postgres"));
                     services.Configure<FormOptions>(x =>
                     {
                         //Double the default multipart body length from 128 MB to 256 MB
@@ -241,7 +241,7 @@ namespace NzbDrone.Host
             {
                 Logger.Error(ex, ex.Message);
 
-                throw new InvalidConfigFileException($"{configPath} is corrupt or invalid. Please delete the config file and Prowlarr will recreate it.", ex);
+                throw new InvalidConfigFileException($"{configPath} is corrupt or invalid. Please delete the config file and Indexarr will recreate it.", ex);
             }
         }
 

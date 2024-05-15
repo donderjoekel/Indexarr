@@ -18,7 +18,7 @@ namespace NzbDrone.Core.Datastore
                 .Build();
 
             var postgresOptions = new PostgresOptions();
-            config.GetSection("Prowlarr:Postgres").Bind(postgresOptions);
+            config.GetSection("Indexarr:Postgres").Bind(postgresOptions);
 
             return postgresOptions;
         }

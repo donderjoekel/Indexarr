@@ -110,7 +110,7 @@ namespace NzbDrone.Core.Update
 
             if (_diskProvider.GetTotalSize(tempFolder) < 1.Gigabytes())
             {
-                _logger.Warn("Temporary location '{0}' has less than 1 GB free space, Prowlarr may not be able to update itself.", tempFolder);
+                _logger.Warn("Temporary location '{0}' has less than 1 GB free space, Indexarr may not be able to update itself.", tempFolder);
             }
 
             var packageDestination = Path.Combine(updateSandboxFolder, updatePackage.FileName);
@@ -167,7 +167,7 @@ namespace NzbDrone.Core.Update
             }
 
             _logger.Info("Starting update client {0}", updateClientExePath);
-            _logger.ProgressInfo("Prowlarr will restart shortly.");
+            _logger.ProgressInfo("Indexarr will restart shortly.");
 
             _processProvider.Start(updateClientExePath, GetUpdaterArgs(updateSandboxFolder));
 
@@ -207,7 +207,7 @@ namespace NzbDrone.Core.Update
                 throw new UpdateFailedException("Update Script: '{0}' does not exist", scriptPath);
             }
 
-            _logger.Info("Removing Prowlarr.Update");
+            _logger.Info("Removing Indexarr.Update");
             _diskProvider.DeleteFolder(_appFolderInfo.GetUpdateClientFolder(), true);
 
             _logger.ProgressInfo("Starting update script: {0}", _configFileProvider.UpdateScriptPath);
@@ -227,7 +227,7 @@ namespace NzbDrone.Core.Update
             if (_appFolderInfo.StartUpFolder.IsParentPath(_appFolderInfo.AppDataFolder) ||
                 _appFolderInfo.StartUpFolder.PathEquals(_appFolderInfo.AppDataFolder))
             {
-                throw new UpdateFailedException("Your Prowlarr configuration '{0}' is being stored in application folder '{1}' which will cause data lost during the upgrade. Please remove any symlinks or redirects before trying again.", _appFolderInfo.AppDataFolder, _appFolderInfo.StartUpFolder);
+                throw new UpdateFailedException("Your Indexarr configuration '{0}' is being stored in application folder '{1}' which will cause data lost during the upgrade. Please remove any symlinks or redirects before trying again.", _appFolderInfo.AppDataFolder, _appFolderInfo.StartUpFolder);
             }
         }
 
@@ -287,7 +287,7 @@ namespace NzbDrone.Core.Update
                 try
                 {
                     InstallUpdate(latestAvailable);
-                    _logger.ProgressDebug("Restarting Prowlarr to apply updates");
+                    _logger.ProgressDebug("Restarting Indexarr to apply updates");
                 }
                 catch (UpdateFolderNotWritableException ex)
                 {

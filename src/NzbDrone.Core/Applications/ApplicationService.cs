@@ -131,7 +131,7 @@ namespace NzbDrone.Core.Applications
             {
                 var indexerMappings = _appIndexerMapService.GetMappingsForApp(app.Definition.Id);
 
-                //Get Dictionary of Remote Indexers point to Prowlarr and what they are mapped to
+                //Get Dictionary of Remote Indexers point to Indexarr and what they are mapped to
                 var remoteMappings = ExecuteAction(a => a.GetIndexerMappings(), app);
 
                 if (remoteMappings == null)
@@ -187,12 +187,12 @@ namespace NzbDrone.Core.Applications
 
                         if (allIndexers.All(x => x.Id != mapping.IndexerId))
                         {
-                            _logger.Warn("Indexer with the ID {0} was found within {1} but is no longer defined within Prowlarr, this is being removed.", mapping.IndexerId, app.Name);
+                            _logger.Warn("Indexer with the ID {0} was found within {1} but is no longer defined within Indexarr, this is being removed.", mapping.IndexerId, app.Name);
                             ExecuteAction(a => a.RemoveIndexer(mapping.IndexerId), app);
                         }
                         else if (((ApplicationDefinition)app.Definition).SyncLevel == ApplicationSyncLevel.FullSync && indexer != null && !ShouldHandleIndexer(app.Definition, indexer))
                         {
-                            _logger.Warn("Indexer with the ID {0} was found within {1} but is no longer handled by Prowlarr, this is being removed.", mapping.IndexerId, app.Name);
+                            _logger.Warn("Indexer with the ID {0} was found within {1} but is no longer handled by Indexarr, this is being removed.", mapping.IndexerId, app.Name);
                             ExecuteAction(a => a.RemoveIndexer(mapping.IndexerId), app);
                         }
                     }

@@ -23,7 +23,7 @@
 
     <!-- Specifies whether it's one of our own libraries -->
     <ProwlarrProject>false</ProwlarrProject>
-    <ProwlarrProject Condition="$(MSBuildProjectName.StartsWith('Prowlarr'))">true</ProwlarrProject>
+    <ProwlarrProject Condition="$(MSBuildProjectName.StartsWith('Indexarr'))">true</ProwlarrProject>
     <ProwlarrProject Condition="$(MSBuildProjectName.StartsWith('ServiceInstall'))">true</ProwlarrProject>
     <ProwlarrProject Condition="$(MSBuildProjectName.StartsWith('ServiceUninstall'))">true</ProwlarrProject>
 

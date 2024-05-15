@@ -46,7 +46,7 @@ namespace NzbDrone.Core.Notifications.SendGrid
             try
             {
                 const string title = "Test Notification";
-                const string body = "This is a test message from Prowlarr";
+                const string body = "This is a test message from Indexarr";
 
                 _proxy.SendNotification(title, body, Settings);
             }

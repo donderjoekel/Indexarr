@@ -65,7 +65,7 @@ namespace NzbDrone.Core.Download
             var grabEvent = new IndexerDownloadEvent(release, success, source, host, release.Title, release.DownloadUrl)
             {
                 Indexer = indexer,
-                GrabTrigger = source == "Prowlarr" ? GrabTrigger.Manual : GrabTrigger.Api
+                GrabTrigger = source == "Indexarr" ? GrabTrigger.Manual : GrabTrigger.Api
             };
 
             try

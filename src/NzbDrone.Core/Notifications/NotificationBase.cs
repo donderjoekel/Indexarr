@@ -13,10 +13,10 @@ namespace NzbDrone.Core.Notifications
         protected const string HEALTH_RESTORED_TITLE = "Health Check Restored";
         protected const string APPLICATION_UPDATE_TITLE = "Application Updated";
 
-        protected const string RELEASE_GRABBED_TITLE_BRANDED = "Prowlarr - " + RELEASE_GRABBED_TITLE;
-        protected const string HEALTH_ISSUE_TITLE_BRANDED = "Prowlarr - " + HEALTH_ISSUE_TITLE;
-        protected const string HEALTH_RESTORED_TITLE_BRANDED = "Prowlarr - " + HEALTH_RESTORED_TITLE;
-        protected const string APPLICATION_UPDATE_TITLE_BRANDED = "Prowlarr - " + APPLICATION_UPDATE_TITLE;
+        protected const string RELEASE_GRABBED_TITLE_BRANDED = "Indexarr - " + RELEASE_GRABBED_TITLE;
+        protected const string HEALTH_ISSUE_TITLE_BRANDED = "Indexarr - " + HEALTH_ISSUE_TITLE;
+        protected const string HEALTH_RESTORED_TITLE_BRANDED = "Indexarr - " + HEALTH_RESTORED_TITLE;
+        protected const string APPLICATION_UPDATE_TITLE_BRANDED = "Indexarr - " + APPLICATION_UPDATE_TITLE;
 
         public abstract string Name { get; }
 

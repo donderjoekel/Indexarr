@@ -62,16 +62,16 @@ namespace NzbDrone.Core.Applications.Sonarr
                         failures.AddIfNotNull(new ValidationFailure("ApiKey", "API Key is invalid"));
                         break;
                     case HttpStatusCode.BadRequest:
-                        _logger.Warn(ex, "Prowlarr URL is invalid");
-                        failures.AddIfNotNull(new ValidationFailure("ProwlarrUrl", "Prowlarr URL is invalid, Mangarr cannot connect to Prowlarr"));
+                        _logger.Warn(ex, "Indexarr URL is invalid");
+                        failures.AddIfNotNull(new ValidationFailure("ProwlarrUrl", "Indexarr URL is invalid, Mangarr cannot connect to Indexarr"));
                         break;
                     case HttpStatusCode.SeeOther:
                         _logger.Warn(ex, "Mangarr returned redirect and is invalid");
-                        failures.AddIfNotNull(new ValidationFailure("BaseUrl", "Mangarr URL is invalid, Prowlarr cannot connect to Mangarr - are you missing a URL base?"));
+                        failures.AddIfNotNull(new ValidationFailure("BaseUrl", "Mangarr URL is invalid, Indexarr cannot connect to Mangarr - are you missing a URL base?"));
                         break;
                     case HttpStatusCode.NotFound:
                         _logger.Warn(ex, "Mangarr not found");
-                        failures.AddIfNotNull(new ValidationFailure("BaseUrl", "Mangarr URL is invalid, Prowlarr cannot connect to Mangarr. Is Mangarr running and accessible? Mangarr v2 is not supported."));
+                        failures.AddIfNotNull(new ValidationFailure("BaseUrl", "Mangarr URL is invalid, Indexarr cannot connect to Mangarr. Is Mangarr running and accessible? Mangarr v2 is not supported."));
                         break;
                     default:
                         _logger.Warn(ex, "Unable to complete application test");
@@ -114,7 +114,7 @@ namespace NzbDrone.Core.Applications.Sonarr
 
                 if (match.Groups["indexer"].Success && int.TryParse(match.Groups["indexer"].Value, out var indexerId))
                 {
-                    // Add parsed mapping if it's mapped to a Indexer in this Prowlarr instance
+                    // Add parsed mapping if it's mapped to a Indexer in this Indexarr instance
                     mappings.Add(new AppIndexerMap { IndexerId = indexerId, RemoteIndexerId = indexer.Id });
                 }
             }
@@ -186,13 +186,13 @@ namespace NzbDrone.Core.Applications.Sonarr
 
                     if (indexerCapabilities.Categories.SupportedCategories(Settings.SyncCategories.ToArray()).Any() || indexerCapabilities.Categories.SupportedCategories(Settings.AnimeSyncCategories.ToArray()).Any())
                     {
-                        // Retain user fields not-affiliated with Prowlarr
+                        // Retain user fields not-affiliated with Indexarr
                         sonarrIndexer.Fields.AddRange(remoteIndexer.Fields.Where(f => sonarrIndexer.Fields.All(s => s.Name != f.Name)));
 
-                        // Retain user tags not-affiliated with Prowlarr
+                        // Retain user tags not-affiliated with Indexarr
                         sonarrIndexer.Tags.UnionWith(remoteIndexer.Tags);
 
-                        // Retain user settings not-affiliated with Prowlarr
+                        // Retain user settings not-affiliated with Indexarr
                         sonarrIndexer.DownloadClientId = remoteIndexer.DownloadClientId;
                         sonarrIndexer.SeasonSearchMaximumSingleEpisodeAge = remoteIndexer.SeasonSearchMaximumSingleEpisodeAge;
 

@@ -44,7 +44,7 @@ namespace NzbDrone.Core.Notifications.Join
         public ValidationFailure Test(JoinSettings settings)
         {
             const string title = "Test Notification";
-            const string body = "This is a test message from Prowlarr.";
+            const string body = "This is a test message from Indexarr.";
 
             try
             {
@@ -93,8 +93,8 @@ namespace NzbDrone.Core.Notifications.Join
             var request = requestBuilder.AddQueryParam("apikey", settings.ApiKey)
                           .AddQueryParam("title", title)
                           .AddQueryParam("text", message)
-                          .AddQueryParam("icon", "https://cdn.rawgit.com/Prowlarr/Prowlarr/develop/Logo/256.png") // Use the Prowlarr logo.
-                          .AddQueryParam("smallicon", "https://cdn.rawgit.com/Prowlarr/Prowlarr/develop/Logo/96-Outline-White.png") // 96x96px with outline at 88x88px on a transparent background.
+                          .AddQueryParam("icon", "https://cdn.rawgit.com/Indexarr/Indexarr/develop/Logo/256.png") // Use the Indexarr logo.
+                          .AddQueryParam("smallicon", "https://cdn.rawgit.com/Indexarr/Indexarr/develop/Logo/96-Outline-White.png") // 96x96px with outline at 88x88px on a transparent background.
                           .AddQueryParam("priority", settings.Priority)
                           .Build();
 

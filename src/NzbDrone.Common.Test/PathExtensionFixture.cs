@@ -274,13 +274,13 @@ namespace NzbDrone.Common.Test
         [Test]
         public void GetUpdateClientFolder()
         {
-            GetIAppDirectoryInfo().GetUpdateClientFolder().Should().BeEquivalentTo(@"C:\Temp\prowlarr_update\Prowlarr\Prowlarr.Update\".AsOsAgnostic());
+            GetIAppDirectoryInfo().GetUpdateClientFolder().Should().BeEquivalentTo(@"C:\Temp\prowlarr_update\Prowlarr\Indexarr.Update\".AsOsAgnostic());
         }
 
         [Test]
         public void GetUpdateClientExePath()
         {
-            GetIAppDirectoryInfo().GetUpdateClientExePath().Should().BeEquivalentTo(@"C:\Temp\prowlarr_update\Prowlarr.Update".AsOsAgnostic().ProcessNameToExe());
+            GetIAppDirectoryInfo().GetUpdateClientExePath().Should().BeEquivalentTo(@"C:\Temp\prowlarr_update\Indexarr.Update".AsOsAgnostic().ProcessNameToExe());
         }
 
         [Test]

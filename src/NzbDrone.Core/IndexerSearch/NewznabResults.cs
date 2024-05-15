@@ -70,7 +70,7 @@ namespace NzbDrone.Core.IndexerSearch
                         new XElement(_AtomNs + "link",
                             new XAttribute("rel", "self"),
                             new XAttribute("type", "application/rss+xml")),
-                        new XElement("title", "Prowlarr"),
+                        new XElement("title", "Indexarr"),
                         from r in Releases
                         let t = (r as TorrentInfo) ?? new TorrentInfo()
                         select new XElement("item",

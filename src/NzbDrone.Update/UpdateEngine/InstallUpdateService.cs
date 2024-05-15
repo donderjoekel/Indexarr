@@ -86,11 +86,11 @@ namespace NzbDrone.Update.UpdateEngine
         public void Start(string installationFolder, int processId)
         {
             _logger.Info("Installation Folder: {0}", installationFolder);
-            _logger.Info("Updating Prowlarr from version {0} to version {1}", _detectExistingVersion.GetExistingVersion(installationFolder), BuildInfo.Version);
+            _logger.Info("Updating Indexarr from version {0} to version {1}", _detectExistingVersion.GetExistingVersion(installationFolder), BuildInfo.Version);
 
             Verify(installationFolder, processId);
 
-            if (installationFolder.EndsWith(@"\bin\Prowlarr") || installationFolder.EndsWith(@"/bin/Prowlarr"))
+            if (installationFolder.EndsWith(@"\bin\Indexarr") || installationFolder.EndsWith(@"/bin/Indexarr"))
             {
                 installationFolder = installationFolder.GetParentPath();
                 _logger.Info("Fixed Installation Folder: {0}", installationFolder);
@@ -115,7 +115,7 @@ namespace NzbDrone.Update.UpdateEngine
                 {
                     if (_processProvider.Exists(ProcessProvider.PROWLARR_CONSOLE_PROCESS_NAME) || _processProvider.Exists(ProcessProvider.PROWLARR_PROCESS_NAME))
                     {
-                        _logger.Error("Prowlarr was restarted prematurely by external process.");
+                        _logger.Error("Indexarr was restarted prematurely by external process.");
                         return;
                     }
                 }
@@ -128,7 +128,7 @@ namespace NzbDrone.Update.UpdateEngine
                     // Set executable flag on app
                     if (OsInfo.IsOsx || OsInfo.IsLinux)
                     {
-                        _diskProvider.SetFilePermissions(Path.Combine(installationFolder, "Prowlarr"), "755", null);
+                        _diskProvider.SetFilePermissions(Path.Combine(installationFolder, "Indexarr"), "755", null);
                     }
                 }
                 catch (Exception e)
@@ -155,7 +155,7 @@ namespace NzbDrone.Update.UpdateEngine
 
                         if (_processProvider.Exists(ProcessProvider.PROWLARR_PROCESS_NAME))
                         {
-                            _logger.Info("Prowlarr was restarted by external process.");
+                            _logger.Info("Indexarr was restarted by external process.");
                             break;
                         }
                     }

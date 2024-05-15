@@ -63,7 +63,7 @@ namespace NzbDrone.Core.Notifications.Email
 
             try
             {
-                SendEmail(settings, "Prowlarr - Test Notification", body);
+                SendEmail(settings, "Indexarr - Test Notification", body);
             }
             catch (Exception ex)
             {

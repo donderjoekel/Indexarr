@@ -36,7 +36,7 @@ namespace NzbDrone.Core.Applications.Sonarr
             AnimeSyncCategories = Array.Empty<int>();
         }
 
-        [FieldDefinition(0, Label = "Prowlarr Server", HelpText = "Prowlarr server URL as Mangarr sees it, including http(s)://, port, and urlbase if needed", Placeholder = "http://localhost:9696")]
+        [FieldDefinition(0, Label = "Indexarr Server", HelpText = "Indexarr server URL as Mangarr sees it, including http(s)://, port, and urlbase if needed", Placeholder = "http://localhost:9696")]
         public string ProwlarrUrl { get; set; }
 
         [FieldDefinition(1, Label = "Mangarr Server", HelpText = "URL used to connect to Mangarr server, including http(s)://, port, and urlbase if required", Placeholder = "http://localhost:8989")]

@@ -59,7 +59,7 @@ namespace NzbDrone.Core.Notifications
 
             if (grabTrigger == GrabTrigger.Manual)
             {
-                message = string.Format("{0} manually grabbed in Prowlarr from {1}",
+                message = string.Format("{0} manually grabbed in Indexarr from {1}",
                                     release.Title,
                                     release.Indexer);
             }
@@ -132,7 +132,7 @@ namespace NzbDrone.Core.Notifications
         public void Handle(UpdateInstalledEvent message)
         {
             var updateMessage = new ApplicationUpdateMessage();
-            updateMessage.Message = $"Prowlarr updated from {message.PreviousVerison.ToString()} to {message.NewVersion.ToString()}";
+            updateMessage.Message = $"Indexarr updated from {message.PreviousVerison.ToString()} to {message.NewVersion.ToString()}";
             updateMessage.PreviousVersion = message.PreviousVerison;
             updateMessage.NewVersion = message.NewVersion;
 

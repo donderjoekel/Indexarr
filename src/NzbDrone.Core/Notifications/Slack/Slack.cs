@@ -83,7 +83,7 @@ namespace NzbDrone.Core.Notifications.Slack
         {
             try
             {
-                var message = $"Test message from Prowlarr posted at {DateTime.Now}";
+                var message = $"Test message from Indexarr posted at {DateTime.Now}";
 
                 var payload = CreatePayload(message);
 

@@ -16,13 +16,13 @@ namespace NzbDrone.Common.Extensions
         private const string DB_RESTORE = "prowlarr.restore";
         private const string LOG_DB = "logs.db";
         private const string NLOG_CONFIG_FILE = "nlog.config";
-        private const string UPDATE_CLIENT_EXE_NAME = "Prowlarr.Update";
+        private const string UPDATE_CLIENT_EXE_NAME = "Indexarr.Update";
 
         private static readonly string UPDATE_SANDBOX_FOLDER_NAME = "prowlarr_update" + Path.DirectorySeparatorChar;
-        private static readonly string UPDATE_PACKAGE_FOLDER_NAME = "Prowlarr" + Path.DirectorySeparatorChar;
+        private static readonly string UPDATE_PACKAGE_FOLDER_NAME = "Indexarr" + Path.DirectorySeparatorChar;
         private static readonly string UPDATE_BACKUP_FOLDER_NAME = "prowlarr_backup" + Path.DirectorySeparatorChar;
         private static readonly string UPDATE_BACKUP_APPDATA_FOLDER_NAME = "prowlarr_appdata_backup" + Path.DirectorySeparatorChar;
-        private static readonly string UPDATE_CLIENT_FOLDER_NAME = "Prowlarr.Update" + Path.DirectorySeparatorChar;
+        private static readonly string UPDATE_CLIENT_FOLDER_NAME = "Indexarr.Update" + Path.DirectorySeparatorChar;
         private static readonly string UPDATE_LOG_FOLDER_NAME = "UpdateLogs" + Path.DirectorySeparatorChar;
 
         private static readonly Regex PARENT_PATH_END_SLASH_REGEX = new Regex(@"(?<!:)\\$", RegexOptions.Compiled);
