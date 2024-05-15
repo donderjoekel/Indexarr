@@ -71,7 +71,7 @@ namespace NzbDrone.Core.Validation
         public static IRuleBuilderOptions<T, string> ContainsProwlarr<T>(this IRuleBuilder<T, string> ruleBuilder)
         {
             ruleBuilder.SetValidator(new NotEmptyValidator(null));
-            return ruleBuilder.SetValidator(new RegularExpressionValidator("prowlarr", RegexOptions.IgnoreCase)).WithMessage("Must contain Indexarr");
+            return ruleBuilder.SetValidator(new RegularExpressionValidator("indexarr", RegexOptions.IgnoreCase)).WithMessage("Must contain Indexarr");
         }
     }
 }

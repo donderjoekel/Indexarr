@@ -69,9 +69,9 @@
 
   <!-- Set the Product and Version info for our own projects -->
   <PropertyGroup Condition="'$(ProwlarrProject)'=='true'">
-    <Product>Prowlarr</Product>
-    <Company>prowlarr.com</Company>
-    <Copyright>Copyright 2014-$([System.DateTime]::Now.ToString('yyyy')) prowlarr.com (GNU General Public v3)</Copyright>
+    <Product>Indexarr</Product>
+    <Company>indexarr.com</Company>
+    <Copyright>Copyright 2014-$([System.DateTime]::Now.ToString('yyyy')) indexarr.com (GNU General Public v3)</Copyright>
 
     <!-- Should be replaced by CI -->
     <AssemblyVersion>10.0.0.*</AssemblyVersion>

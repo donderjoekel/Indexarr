@@ -39,7 +39,7 @@ namespace NzbDrone.Core.Backup
 
         private string _backupTempFolder;
 
-        public static readonly Regex BackupFileRegex = new Regex(@"(nzbdrone|prowlarr)_backup_v?[._0-9]+\.zip", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        public static readonly Regex BackupFileRegex = new Regex(@"(nzbdrone|indexarr)_backup_v?[._0-9]+\.zip", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public BackupService(IMainDatabase maindDb,
                              IMakeDatabaseBackup makeDatabaseBackup,
@@ -59,7 +59,7 @@ namespace NzbDrone.Core.Backup
             _configService = configService;
             _logger = logger;
 
-            _backupTempFolder = Path.Combine(_appFolderInfo.TempFolder, "prowlarr_backup");
+            _backupTempFolder = Path.Combine(_appFolderInfo.TempFolder, "indexarr_backup");
         }
 
         public void Backup(BackupType backupType)
@@ -70,7 +70,7 @@ namespace NzbDrone.Core.Backup
             _diskProvider.EnsureFolder(GetBackupFolder(backupType));
 
             var dateNow = DateTime.Now;
-            var backupFilename = $"prowlarr_backup_v{BuildInfo.Version}_{dateNow:yyyy.MM.dd_HH.mm.ss}.zip";
+            var backupFilename = $"indexarr_backup_v{BuildInfo.Version}_{dateNow:yyyy.MM.dd_HH.mm.ss}.zip";
             var backupPath = Path.Combine(GetBackupFolder(backupType), backupFilename);
 
             Cleanup();
@@ -87,7 +87,7 @@ namespace NzbDrone.Core.Backup
             _logger.ProgressDebug("Creating backup zip");
 
             // Delete journal file created during database backup
-            _diskProvider.DeleteFile(Path.Combine(_backupTempFolder, "prowlarr.db-journal"));
+            _diskProvider.DeleteFile(Path.Combine(_backupTempFolder, "indexarr.db-journal"));
 
             _archiveService.CreateZip(backupPath, _diskProvider.GetFiles(_backupTempFolder, false));
 
@@ -124,7 +124,7 @@ namespace NzbDrone.Core.Backup
             if (backupFileName.EndsWith(".zip"))
             {
                 var restoredFile = false;
-                var temporaryPath = Path.Combine(_appFolderInfo.TempFolder, "prowlarr_backup_restore");
+                var temporaryPath = Path.Combine(_appFolderInfo.TempFolder, "indexarr_backup_restore");
 
                 _archiveService.Extract(backupFileName, temporaryPath);
 
@@ -144,7 +144,7 @@ namespace NzbDrone.Core.Backup
                         restoredFile = true;
                     }
 
-                    if (fileName.Equals("prowlarr.db", StringComparison.InvariantCultureIgnoreCase))
+                    if (fileName.Equals("indexarr.db", StringComparison.InvariantCultureIgnoreCase))
                     {
                         _diskProvider.MoveFile(file, _appFolderInfo.GetDatabaseRestore(), true);
                         restoredFile = true;

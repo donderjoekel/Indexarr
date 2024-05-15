@@ -76,7 +76,7 @@ namespace NzbDrone.Properties
         {
             get
             {
-                object obj = ResourceManager.GetObject("Prowlarr", resourceCulture);
+                object obj = ResourceManager.GetObject("Indexarr", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
