@@ -5,14 +5,17 @@ using Dapper;
 using NzbDrone.Common.Reflection;
 using NzbDrone.Core.Applications;
 using NzbDrone.Core.Authentication;
+using NzbDrone.Core.Chapters;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.CustomFilters;
 using NzbDrone.Core.Datastore.Converters;
+using NzbDrone.Core.IndexedMangas;
 using NzbDrone.Core.IndexerProxies;
 using NzbDrone.Core.Indexers;
 using NzbDrone.Core.IndexerVersions;
 using NzbDrone.Core.Instrumentation;
 using NzbDrone.Core.Jobs;
+using NzbDrone.Core.Mangas;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Notifications;
 using NzbDrone.Core.Parser.Model;
@@ -92,6 +95,13 @@ namespace NzbDrone.Core.Datastore
 
             Mapper.Entity<AppSyncProfile>("AppSyncProfiles").RegisterModel();
             Mapper.Entity<IndexerDefinitionVersion>("IndexerDefinitionVersions").RegisterModel();
+
+            Mapper.Entity<Manga>("Mangas").RegisterModel();
+            Mapper.Entity<IndexedManga>("IndexedMangas").RegisterModel()
+                .HasOne(x => x.Manga, x => x.MangaId)
+                .HasOne(x => x.Indexer, x => x.IndexerId);
+            Mapper.Entity<Chapter>("Chapters").RegisterModel()
+                .HasOne(x => x.IndexedManga, x => x.IndexedMangaId);
         }
 
         private static void RegisterMappers()
