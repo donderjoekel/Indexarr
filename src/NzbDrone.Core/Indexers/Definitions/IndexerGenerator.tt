@@ -1,0 +1,49 @@
+<#@ template hostspecific="true" language="C#" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+
+<#
+    var path = Path.GetDirectoryName(Host.TemplateFile);
+
+    var definitions = Directory.GetFiles(path, "*IndexerDefinitions.csv", SearchOption.AllDirectories)
+        .ToDictionary(x => Path.GetFileNameWithoutExtension(x).Replace("IndexerDefinitions", ""), File.ReadAllLines);
+
+    var templates = Directory.GetFiles(path, "*IndexerTemplate.txt", SearchOption.AllDirectories)
+        .ToDictionary(x => Path.GetFileNameWithoutExtension(x).Replace("IndexerTemplate", ""), File.ReadAllText);
+    
+    foreach (var kvp in definitions)
+    {
+        var identifier = kvp.Key;
+
+        Directory.GetFiles(Path.Combine(path, identifier, "Generated"), "*.g.cs", SearchOption.AllDirectories)
+            .ToList()
+            .ForEach(File.Delete);
+        
+        var lines = kvp.Value;
+        if (!templates.TryGetValue(identifier, out var template))
+        {
+            Console.WriteLine("Unable to find template for " + kvp.Key);
+            continue;
+        }
+        
+        var keys = lines[0].Split(',');
+
+        foreach (var line in lines.Skip(1))
+        {
+            var values = line.Split(',');
+            var source = template;
+
+            for (var i = 0; i < keys.Length; i++)
+            {
+                var key = keys[i];
+                var value = values[i];
+                source = source.Replace("{" + key + "}", value);
+            }
+            
+            var fullPath = Path.Combine(path, identifier, "Generated", values[0] + ".g.cs");
+            File.WriteAllText(fullPath, source);
+        }
+    }
+
+#>
+
