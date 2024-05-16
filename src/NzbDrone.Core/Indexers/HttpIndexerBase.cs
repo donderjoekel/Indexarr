@@ -6,12 +6,10 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using FluentValidation.Results;
-using MonoTorrent;
 using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Configuration;
-using NzbDrone.Core.Exceptions;
 using NzbDrone.Core.Http.CloudFlare;
 using NzbDrone.Core.Indexers.Events;
 using NzbDrone.Core.Indexers.Exceptions;
@@ -90,259 +88,9 @@ namespace NzbDrone.Core.Indexers
             _eventAggregator = eventAggregator;
         }
 
-        public override Task<IndexerPageableQueryResult> Fetch(MovieSearchCriteria searchCriteria)
+        public override Task<IndexerPageableIndexResult> FullIndex()
         {
-            if (!SupportsSearch && !SupportsRss)
-            {
-                return Task.FromResult(new IndexerPageableQueryResult());
-            }
-
-            if (!SupportsPagination && searchCriteria.Offset is > 0)
-            {
-                return Task.FromResult(new IndexerPageableQueryResult());
-            }
-
-            var caps = GetCapabilities();
-
-            if ((searchCriteria.ImdbId.IsNotNullOrWhiteSpace() && !caps.MovieSearchImdbAvailable) ||
-                (searchCriteria.TmdbId.HasValue && !caps.MovieSearchTmdbAvailable) ||
-                (searchCriteria.TraktId.HasValue && !caps.MovieSearchTraktAvailable) ||
-                (searchCriteria.DoubanId.HasValue && !caps.MovieSearchDoubanAvailable) ||
-                (searchCriteria.Genre.IsNotNullOrWhiteSpace() && !caps.MovieSearchGenreAvailable) ||
-                (searchCriteria.Year.HasValue && !caps.MovieSearchYearAvailable))
-            {
-                _logger.Debug("Movie search skipped due to unsupported capabilities used: {0}", Definition.Name);
-
-                return Task.FromResult(new IndexerPageableQueryResult());
-            }
-
-            return FetchReleases(g => SetCookieFunctions(g).GetSearchRequests(searchCriteria), searchCriteria);
-        }
-
-        public override Task<IndexerPageableQueryResult> Fetch(MusicSearchCriteria searchCriteria)
-        {
-            if (!SupportsSearch && !SupportsRss)
-            {
-                return Task.FromResult(new IndexerPageableQueryResult());
-            }
-
-            if (!SupportsPagination && searchCriteria.Offset is > 0)
-            {
-                return Task.FromResult(new IndexerPageableQueryResult());
-            }
-
-            var caps = GetCapabilities();
-
-            if ((searchCriteria.Album.IsNotNullOrWhiteSpace() && !caps.MusicSearchAlbumAvailable) ||
-                (searchCriteria.Artist.IsNotNullOrWhiteSpace() && !caps.MusicSearchArtistAvailable) ||
-                (searchCriteria.Label.IsNotNullOrWhiteSpace() && !caps.MusicSearchLabelAvailable) ||
-                (searchCriteria.Track.IsNotNullOrWhiteSpace() && !caps.MusicSearchTrackAvailable) ||
-                (searchCriteria.Genre.IsNotNullOrWhiteSpace() && !caps.MusicSearchGenreAvailable) ||
-                (searchCriteria.Year.HasValue && !caps.MusicSearchYearAvailable))
-            {
-                _logger.Debug("Music search skipped due to unsupported capabilities used: {0}", Definition.Name);
-
-                return Task.FromResult(new IndexerPageableQueryResult());
-            }
-
-            return FetchReleases(g => SetCookieFunctions(g).GetSearchRequests(searchCriteria), searchCriteria);
-        }
-
-        public override Task<IndexerPageableQueryResult> Fetch(TvSearchCriteria searchCriteria)
-        {
-            if (!SupportsSearch && !SupportsRss)
-            {
-                return Task.FromResult(new IndexerPageableQueryResult());
-            }
-
-            if (!SupportsPagination && searchCriteria.Offset is > 0)
-            {
-                return Task.FromResult(new IndexerPageableQueryResult());
-            }
-
-            var caps = GetCapabilities();
-
-            if ((searchCriteria.ImdbId.IsNotNullOrWhiteSpace() && !caps.TvSearchImdbAvailable) ||
-                (searchCriteria.TvdbId.HasValue && !caps.TvSearchTvdbAvailable) ||
-                (searchCriteria.RId.HasValue && !caps.TvSearchTvRageAvailable) ||
-                (searchCriteria.TvMazeId.HasValue && !caps.TvSearchTvMazeAvailable) ||
-                (searchCriteria.TraktId.HasValue && !caps.TvSearchTraktAvailable) ||
-                (searchCriteria.TmdbId.HasValue && !caps.TvSearchTmdbAvailable) ||
-                (searchCriteria.DoubanId.HasValue && !caps.TvSearchDoubanAvailable) ||
-                (searchCriteria.Genre.IsNotNullOrWhiteSpace() && !caps.TvSearchGenreAvailable) ||
-                (searchCriteria.Year.HasValue && !caps.TvSearchYearAvailable))
-            {
-                _logger.Debug("TV search skipped due to unsupported capabilities used: {0}", Definition.Name);
-
-                return Task.FromResult(new IndexerPageableQueryResult());
-            }
-
-            return FetchReleases(g => SetCookieFunctions(g).GetSearchRequests(searchCriteria), searchCriteria);
-        }
-
-        public override Task<IndexerPageableQueryResult> Fetch(BookSearchCriteria searchCriteria)
-        {
-            if (!SupportsSearch && !SupportsRss)
-            {
-                return Task.FromResult(new IndexerPageableQueryResult());
-            }
-
-            if (!SupportsPagination && searchCriteria.Offset is > 0)
-            {
-                return Task.FromResult(new IndexerPageableQueryResult());
-            }
-
-            var caps = GetCapabilities();
-
-            if ((searchCriteria.Title.IsNotNullOrWhiteSpace() && !caps.BookSearchTitleAvailable) ||
-                (searchCriteria.Author.IsNotNullOrWhiteSpace() && !caps.BookSearchAuthorAvailable) ||
-                (searchCriteria.Publisher.IsNotNullOrWhiteSpace() && !caps.BookSearchPublisherAvailable) ||
-                (searchCriteria.Genre.IsNotNullOrWhiteSpace() && !caps.BookSearchGenreAvailable) ||
-                (searchCriteria.Year.HasValue && !caps.BookSearchYearAvailable))
-            {
-                _logger.Debug("Book search skipped due to unsupported capabilities used: {0}", Definition.Name);
-
-                return Task.FromResult(new IndexerPageableQueryResult());
-            }
-
-            return FetchReleases(g => SetCookieFunctions(g).GetSearchRequests(searchCriteria), searchCriteria);
-        }
-
-        public override Task<IndexerPageableQueryResult> Fetch(BasicSearchCriteria searchCriteria)
-        {
-            if (!SupportsSearch && !SupportsRss)
-            {
-                return Task.FromResult(new IndexerPageableQueryResult());
-            }
-
-            if (!SupportsPagination && searchCriteria.Offset is > 0)
-            {
-                return Task.FromResult(new IndexerPageableQueryResult());
-            }
-
-            return FetchReleases(g => SetCookieFunctions(g).GetSearchRequests(searchCriteria), searchCriteria);
-        }
-
-        public override async Task<byte[]> Download(Uri link)
-        {
-            Cookies = GetCookies();
-
-            var request = await GetDownloadRequest(link);
-
-            if (request.Url.Scheme == "magnet")
-            {
-                ValidateMagnet(request.Url.FullUri);
-                return Encoding.UTF8.GetBytes(request.Url.FullUri);
-            }
-
-            if (request.RateLimit < RateLimit)
-            {
-                request.RateLimit = RateLimit;
-            }
-
-            request.AllowAutoRedirect = false;
-
-            byte[] fileData;
-
-            try
-            {
-                var response = await _httpClient.ExecuteProxiedAsync(request, Definition);
-
-                if (response.StatusCode is HttpStatusCode.MovedPermanently or HttpStatusCode.Found or HttpStatusCode.SeeOther)
-                {
-                    var autoRedirectChain = new List<string> { request.Url.ToString() };
-
-                    do
-                    {
-                        var redirectUrl = response.RedirectUrl;
-
-                        _logger.Debug("Download request is being redirected to: {0}", redirectUrl);
-
-                        if (redirectUrl.IsNullOrWhiteSpace())
-                        {
-                            throw new WebException("Remote website tried to redirect without providing a location.");
-                        }
-
-                        if (redirectUrl.StartsWith("magnet:"))
-                        {
-                            return await Download(new Uri(redirectUrl));
-                        }
-
-                        request.Url = new HttpUri(redirectUrl);
-                        autoRedirectChain.Add(request.Url.ToString());
-
-                        if (autoRedirectChain.Count > MaxRedirects)
-                        {
-                            throw new WebException($"Too many download redirections were attempted for {autoRedirectChain.Join(" -> ")}", WebExceptionStatus.ProtocolError);
-                        }
-
-                        response = await _httpClient.ExecuteProxiedAsync(request, Definition);
-                    }
-                    while (response.StatusCode is HttpStatusCode.MovedPermanently or HttpStatusCode.Found or HttpStatusCode.SeeOther);
-                }
-
-                fileData = response.ResponseData;
-
-                _logger.Debug("Downloaded for release finished ({0} bytes from {1})", fileData.Length, link.AbsoluteUri);
-            }
-            catch (HttpException ex)
-            {
-                if (ex.Response.StatusCode == HttpStatusCode.NotFound)
-                {
-                    _logger.Error(ex, "Downloading file for release failed since it no longer exists ({0})", link.AbsoluteUri);
-                    throw new ReleaseUnavailableException("Download failed", ex);
-                }
-
-                if (ex.Response.StatusCode == HttpStatusCode.TooManyRequests)
-                {
-                    _logger.Error("API Grab Limit reached for {0}", link.AbsoluteUri);
-                }
-                else
-                {
-                    _logger.Error(ex, "Downloading for release failed ({0})", link.AbsoluteUri);
-                }
-
-                throw new ReleaseDownloadException("Download failed", ex);
-            }
-            catch (WebException ex)
-            {
-                _logger.Error(ex, "Downloading for release failed ({0})", link.AbsoluteUri);
-
-                throw new ReleaseDownloadException("Download failed", ex);
-            }
-            catch (Exception)
-            {
-                _indexerStatusService.RecordFailure(Definition.Id);
-                _logger.Error("Download failed");
-                throw;
-            }
-
-            ValidateDownloadData(fileData);
-
-            return fileData;
-        }
-
-        protected virtual Task<HttpRequest> GetDownloadRequest(Uri link)
-        {
-            var requestBuilder = new HttpRequestBuilder(link.AbsoluteUri);
-
-            if (Cookies != null)
-            {
-                requestBuilder.SetCookies(Cookies);
-            }
-
-            var request = requestBuilder.Build();
-
-            return Task.FromResult(request);
-        }
-
-        protected virtual void ValidateDownloadData(byte[] fileData)
-        {
-        }
-
-        protected void ValidateMagnet(string link)
-        {
-            MagnetLink.Parse(link);
+            return FetchReleases(x => SetCookieFunctions(x).GetFullIndexRequests(), null);
         }
 
         protected IIndexerRequestGenerator SetCookieFunctions(IIndexerRequestGenerator generator)
@@ -386,10 +134,10 @@ namespace NzbDrone.Core.Indexers
             _indexerStatusService.UpdateCookies(Definition.Id, cookies, expiration);
         }
 
-        protected virtual async Task<IndexerPageableQueryResult> FetchReleases(Func<IIndexerRequestGenerator, IndexerPageableRequestChain> pageableRequestChainSelector, SearchCriteriaBase searchCriteria, bool isRecent = false)
+        protected virtual async Task<IndexerPageableIndexResult> FetchReleases(Func<IIndexerRequestGenerator, IndexerPageableRequestChain> pageableRequestChainSelector, SearchCriteriaBase searchCriteria, bool isRecent = false)
         {
-            var releases = new List<ReleaseInfo>();
-            var result = new IndexerPageableQueryResult();
+            var releases = new List<MangaInfo>();
+            var result = new IndexerPageableIndexResult();
             var url = string.Empty;
             var minimumBackoff = TimeSpan.FromHours(1);
 
@@ -410,7 +158,7 @@ namespace NzbDrone.Core.Indexers
 
                     foreach (var pageableRequest in pageableRequests)
                     {
-                        var pagedReleases = new List<ReleaseInfo>();
+                        var pagedReleases = new List<MangaInfo>();
 
                         var pageSize = PageSize;
 
@@ -420,19 +168,19 @@ namespace NzbDrone.Core.Indexers
 
                             var page = await FetchPage(request, parser);
 
-                            pageSize = pageSize == 1 ? page.Releases.Count : pageSize;
+                            pageSize = pageSize == 1 ? page.Mangas.Count : pageSize;
 
                             result.Queries.Add(page);
 
-                            pagedReleases.AddRange(page.Releases);
+                            pagedReleases.AddRange(page.Mangas);
 
-                            if (!IsFullPage(page.Releases, pageSize))
+                            if (!IsFullPage(page.Mangas, pageSize))
                             {
                                 break;
                             }
                         }
 
-                        releases.AddRange(pagedReleases.Where(r => IsValidRelease(r, searchCriteria.InteractiveSearch)));
+                        releases.AddRange(pagedReleases.Where(IsValidRelease));
                     }
 
                     if (releases.Any())
@@ -466,7 +214,7 @@ namespace NzbDrone.Core.Indexers
             }
             catch (TooManyRequestsException ex)
             {
-                result.Queries.Add(new IndexerQueryResult { Response = ex.Response });
+                result.Queries.Add(new IndexerIndexResult { Response = ex.Response });
 
                 var retryTime = ex.RetryAfter != TimeSpan.Zero ? ex.RetryAfter : minimumBackoff;
 
@@ -475,7 +223,7 @@ namespace NzbDrone.Core.Indexers
             }
             catch (HttpException ex)
             {
-                result.Queries.Add(new IndexerQueryResult { Response = ex.Response });
+                result.Queries.Add(new IndexerIndexResult { Response = ex.Response });
                 _indexerStatusService.RecordFailure(Definition.Id);
 
                 if (ex.Response.HasHttpServerError)
@@ -489,7 +237,7 @@ namespace NzbDrone.Core.Indexers
             }
             catch (RequestLimitReachedException ex)
             {
-                result.Queries.Add(new IndexerQueryResult { Response = ex.Response.HttpResponse });
+                result.Queries.Add(new IndexerIndexResult { Response = ex.Response.HttpResponse });
                 _indexerStatusService.RecordFailure(Definition.Id, minimumBackoff);
                 _logger.Warn(ex, "Request Limit reached for {0}. Disabled for {1}", this, minimumBackoff);
             }
@@ -500,14 +248,14 @@ namespace NzbDrone.Core.Indexers
             }
             catch (CloudFlareProtectionException ex)
             {
-                result.Queries.Add(new IndexerQueryResult { Response = ex.Response });
+                result.Queries.Add(new IndexerIndexResult { Response = ex.Response });
                 _indexerStatusService.RecordFailure(Definition.Id);
                 ex.WithData("FeedUrl", url);
                 _logger.Error(ex, "Cloudflare protection detected for {0}, Flaresolverr may be required.", this);
             }
             catch (IndexerException ex)
             {
-                result.Queries.Add(new IndexerQueryResult { Response = ex.Response.HttpResponse });
+                result.Queries.Add(new IndexerIndexResult { Response = ex.Response.HttpResponse });
                 _indexerStatusService.RecordFailure(Definition.Id);
                 _logger.Warn(ex, "{0}", url);
             }
@@ -528,7 +276,7 @@ namespace NzbDrone.Core.Indexers
                 _logger.Error(ex, "An error occurred while processing indexer feed. {0}", url);
             }
 
-            result.Releases = CleanupReleases(releases, searchCriteria);
+            result.Mangas = CleanupReleases(releases);
 
             return result;
         }
@@ -538,59 +286,32 @@ namespace NzbDrone.Core.Indexers
             return Capabilities ?? ((IndexerDefinition)Definition).Capabilities;
         }
 
-        protected virtual bool IsValidRelease(ReleaseInfo release, bool interactiveSearch = false)
+        protected virtual bool IsValidRelease(MangaInfo manga)
         {
-            if (release.Title.IsNullOrWhiteSpace())
-            {
-                _logger.Error("Invalid Release: '{0}' from indexer: {1}. No title provided.", release.InfoUrl, Definition.Name);
-
-                return false;
-            }
-
-            if (interactiveSearch)
-            {
-                // Show releases with issues in the interactive search
-                return true;
-            }
-
-            if (release.Size == null)
-            {
-                _logger.Warn("Invalid Release: '{0}' from indexer: {1}. No size provided.", release.Title, Definition.Name);
-
-                return false;
-            }
-
-            if (release.Categories == null || !release.Categories.Any())
-            {
-                _logger.Warn("Invalid Release: '{0}' from indexer: {1}. No categories provided.", release.Title, Definition.Name);
-
-                return false;
-            }
-
             return true;
         }
 
-        protected virtual bool IsFullPage(IList<ReleaseInfo> page, int pageSize)
+        protected virtual bool IsFullPage(IList<MangaInfo> page, int pageSize)
         {
             return pageSize != 0 && page.Count >= pageSize;
         }
 
-        protected virtual async Task<IndexerQueryResult> FetchPage(IndexerRequest request, IParseIndexerResponse parser)
+        protected virtual async Task<IndexerIndexResult> FetchPage(IndexerRequest request, IParseIndexerResponse parser)
         {
             var response = await FetchIndexerResponse(request);
 
             try
             {
-                var releases = parser.ParseResponse(response).ToList();
+                var mangas = parser.ParseResponse(response).ToList();
 
-                if (releases.Count == 0)
+                if (mangas.Count == 0)
                 {
                     _logger.Trace("No releases found. Response: {0}", response.Content);
                 }
 
-                return new IndexerQueryResult
+                return new IndexerIndexResult()
                 {
-                    Releases = releases,
+                    Mangas = mangas,
                     Response = response.HttpResponse
                 };
             }
@@ -752,7 +473,7 @@ namespace NzbDrone.Core.Indexers
                     testCriteria.SearchTerm = "test";
                 }
 
-                var firstRequest = generator.GetSearchRequests(testCriteria).GetAllTiers().FirstOrDefault()?.FirstOrDefault();
+                var firstRequest = generator.GetTestIndexRequests().GetAllTiers().FirstOrDefault()?.FirstOrDefault();
 
                 if (firstRequest == null)
                 {
@@ -761,7 +482,7 @@ namespace NzbDrone.Core.Indexers
 
                 var releases = await FetchPage(firstRequest, parser);
 
-                if (releases.Releases.Empty())
+                if (releases.Mangas.Empty())
                 {
                     return new ValidationFailure(string.Empty, "Query successful, but no results were returned from your indexer. This may be an issue with the indexer, your indexer category settings, or other indexer settings such as search freeleech only etc.");
                 }

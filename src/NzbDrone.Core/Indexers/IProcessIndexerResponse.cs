@@ -6,7 +6,7 @@ namespace NzbDrone.Core.Indexers
 {
     public interface IParseIndexerResponse
     {
-        IList<ReleaseInfo> ParseResponse(IndexerResponse indexerResponse);
+        IList<MangaInfo> ParseResponse(IndexerResponse indexerResponse);
         Action<IDictionary<string, string>, DateTime?> CookiesUpdater { get; set; }
     }
 }

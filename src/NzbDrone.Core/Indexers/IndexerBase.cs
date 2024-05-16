@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using FluentValidation.Results;
 using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
-using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.ThingiProvider;
 
@@ -92,97 +90,20 @@ namespace NzbDrone.Core.Indexers
 
         protected TSettings Settings => GetDefaultBaseUrl((TSettings)Definition.Settings);
 
-        public abstract Task<IndexerPageableQueryResult> Fetch(MovieSearchCriteria searchCriteria);
-        public abstract Task<IndexerPageableQueryResult> Fetch(MusicSearchCriteria searchCriteria);
-        public abstract Task<IndexerPageableQueryResult> Fetch(TvSearchCriteria searchCriteria);
-        public abstract Task<IndexerPageableQueryResult> Fetch(BookSearchCriteria searchCriteria);
-        public abstract Task<IndexerPageableQueryResult> Fetch(BasicSearchCriteria searchCriteria);
-        public abstract Task<byte[]> Download(Uri link);
+        public abstract Task<IndexerPageableIndexResult> FullIndex();
 
         public abstract IndexerCapabilities GetCapabilities();
 
-        protected virtual IList<ReleaseInfo> CleanupReleases(IEnumerable<ReleaseInfo> releases, SearchCriteriaBase searchCriteria)
+        protected virtual IList<MangaInfo> CleanupReleases(IEnumerable<MangaInfo> mangas)
         {
-            var result = releases.ToList();
+            var cleaned = mangas.ToList();
 
-            result.ForEach(c =>
+            foreach (var mangaInfo in cleaned)
             {
-                //Set GUID if not set
-                if (c.Guid.IsNullOrWhiteSpace())
-                {
-                    if (c.DownloadUrl.IsNotNullOrWhiteSpace())
-                    {
-                        c.Guid = c.DownloadUrl;
-                    }
-                    else if (Protocol == DownloadProtocol.Torrent && ((TorrentInfo)c).MagnetUrl.IsNotNullOrWhiteSpace())
-                    {
-                        c.Guid = ((TorrentInfo)c).MagnetUrl;
-                    }
-                    else if (c.InfoUrl.IsNotNullOrWhiteSpace())
-                    {
-                        c.Guid = c.InfoUrl;
-                    }
-                }
-
-                //Set common props
-                c.IndexerId = Definition.Id;
-                c.Indexer = Definition.Name;
-                c.DownloadProtocol = Protocol;
-                c.IndexerPrivacy = ((IndexerDefinition)Definition).Privacy;
-                c.IndexerPriority = ((IndexerDefinition)Definition).Priority;
-
-                //Add common flags
-                if (Protocol == DownloadProtocol.Torrent && c is TorrentInfo torrentRelease)
-                {
-                    if (torrentRelease.DownloadVolumeFactor == 0.0)
-                    {
-                        torrentRelease.IndexerFlags.Add(IndexerFlag.FreeLeech);
-                    }
-                    else if (torrentRelease.DownloadVolumeFactor == 0.5)
-                    {
-                        torrentRelease.IndexerFlags.Add(IndexerFlag.HalfLeech);
-                    }
-
-                    if (torrentRelease.UploadVolumeFactor == 0.0)
-                    {
-                        torrentRelease.IndexerFlags.Add(IndexerFlag.NeutralLeech);
-                    }
-                    else if (torrentRelease.UploadVolumeFactor == 2.0)
-                    {
-                        torrentRelease.IndexerFlags.Add(IndexerFlag.DoubleUpload);
-                    }
-
-                    if (torrentRelease.Scene.GetValueOrDefault(false))
-                    {
-                        torrentRelease.IndexerFlags.Add(IndexerFlag.Scene);
-                    }
-                }
-            });
-
-            return result.DistinctBy(v => v.Guid).ToList();
-        }
-
-        protected virtual IEnumerable<ReleaseInfo> FilterReleasesByQuery(IEnumerable<ReleaseInfo> releases, SearchCriteriaBase searchCriteria)
-        {
-            var commonWords = new[] { "and", "the", "an", "of" };
-
-            if (!searchCriteria.IsRssSearch && !searchCriteria.IsIdSearch)
-            {
-                var splitRegex = new Regex("[^\\w]+");
-
-                // split search term to individual terms for less aggressive filtering, filter common terms
-                var terms = splitRegex.Split(searchCriteria.SearchTerm).Where(t => t.IsNotNullOrWhiteSpace() && t.Length > 1 && !commonWords.ContainsIgnoreCase(t)).ToArray();
-
-                // check in title and description for any term searched for
-                releases = releases.Where(r =>
-                {
-                    var matches = terms.Where(t => (r.Title.IsNotNullOrWhiteSpace() && r.Title.ContainsIgnoreCase(t)) || (r.Description.IsNotNullOrWhiteSpace() && r.Description.ContainsIgnoreCase(t)));
-
-                    return terms.Length > 1 ? matches.Skip(1).Any() : matches.Any();
-                }).ToList();
+                mangaInfo.IndexerId = Definition.Id;
             }
 
-            return releases;
+            return cleaned;
         }
 
         protected virtual TSettings GetDefaultBaseUrl(TSettings settings)

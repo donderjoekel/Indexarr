@@ -82,11 +82,6 @@ public abstract class IndexarrBase<TRequestGenerator, TResponseParser, TSettings
         };
     }
 
-    protected override void ValidateDownloadData(byte[] fileData)
-    {
-        // No validation needed
-    }
-
     public sealed override IParseIndexerResponse GetParser()
     {
         return CreationHelper.Create<TResponseParser>(_provider, this, Definition, Settings, _logger);

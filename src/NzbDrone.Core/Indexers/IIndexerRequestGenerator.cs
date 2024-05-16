@@ -11,6 +11,8 @@ namespace NzbDrone.Core.Indexers
         IndexerPageableRequestChain GetSearchRequests(TvSearchCriteria searchCriteria);
         IndexerPageableRequestChain GetSearchRequests(BookSearchCriteria searchCriteria);
         IndexerPageableRequestChain GetSearchRequests(BasicSearchCriteria searchCriteria);
+        IndexerPageableRequestChain GetFullIndexRequests();
+        IndexerPageableRequestChain GetTestIndexRequests();
         Func<IDictionary<string, string>> GetCookies { get; set; }
         Action<IDictionary<string, string>, DateTime?> CookiesUpdater { get; set; }
     }

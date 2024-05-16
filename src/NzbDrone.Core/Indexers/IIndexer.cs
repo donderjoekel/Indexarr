@@ -1,7 +1,5 @@
-using System;
 using System.Text;
 using System.Threading.Tasks;
-using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.ThingiProvider;
 
 namespace NzbDrone.Core.Indexers
@@ -22,13 +20,8 @@ namespace NzbDrone.Core.Indexers
         DownloadProtocol Protocol { get; }
         IndexerPrivacy Privacy { get; }
 
-        Task<IndexerPageableQueryResult> Fetch(MovieSearchCriteria searchCriteria);
-        Task<IndexerPageableQueryResult> Fetch(MusicSearchCriteria searchCriteria);
-        Task<IndexerPageableQueryResult> Fetch(TvSearchCriteria searchCriteria);
-        Task<IndexerPageableQueryResult> Fetch(BookSearchCriteria searchCriteria);
-        Task<IndexerPageableQueryResult> Fetch(BasicSearchCriteria searchCriteria);
+        Task<IndexerPageableIndexResult> FullIndex();
 
-        Task<byte[]> Download(Uri link);
         bool IsObsolete();
 
         IndexerCapabilities GetCapabilities();

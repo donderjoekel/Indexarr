@@ -1,14 +1,9 @@
 using System;
 using System.Threading.Tasks;
 using NLog;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Common.Http;
 using NzbDrone.Common.TPL;
-using NzbDrone.Core.Exceptions;
 using NzbDrone.Core.Indexers;
-using NzbDrone.Core.Indexers.Events;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Parser.Model;
 
 namespace NzbDrone.Core.Download
 {
@@ -38,67 +33,9 @@ namespace NzbDrone.Core.Download
             _logger = logger;
         }
 
-        public async Task<byte[]> DownloadReport(string link, int indexerId, string source, string host, string title)
+        public Task<byte[]> DownloadReport(string link, int indexerId, string source, string host, string title)
         {
-            _logger.Trace("Attempting download of {0}", link);
-            var url = new Uri(link);
-
-            // Limit grabs to 2 per second.
-            if (link.IsNotNullOrWhiteSpace() && !link.StartsWith("magnet:"))
-            {
-                await _rateLimitService.WaitAndPulseAsync(url.Host, TimeSpan.FromSeconds(2));
-            }
-
-            var indexer = _indexerFactory.GetInstance(_indexerFactory.Get(indexerId));
-            var success = false;
-            var downloadedBytes = Array.Empty<byte>();
-
-            var release = new ReleaseInfo
-            {
-                Title = title,
-                DownloadUrl = link,
-                IndexerId = indexerId,
-                Indexer = indexer.Definition.Name,
-                DownloadProtocol = indexer.Protocol
-            };
-
-            var grabEvent = new IndexerDownloadEvent(release, success, source, host, release.Title, release.DownloadUrl)
-            {
-                Indexer = indexer,
-                GrabTrigger = source == "Indexarr" ? GrabTrigger.Manual : GrabTrigger.Api
-            };
-
-            try
-            {
-                downloadedBytes = await indexer.Download(url);
-                _indexerStatusService.RecordSuccess(indexerId);
-                grabEvent.Successful = true;
-            }
-            catch (ReleaseUnavailableException)
-            {
-                _logger.Trace("Release {0} no longer available on indexer.", link);
-                _eventAggregator.PublishEvent(grabEvent);
-                throw;
-            }
-            catch (ReleaseDownloadException ex)
-            {
-                if (ex.InnerException is TooManyRequestsException http429)
-                {
-                    _indexerStatusService.RecordFailure(indexerId, http429.RetryAfter);
-                }
-                else
-                {
-                    _indexerStatusService.RecordFailure(indexerId);
-                }
-
-                _eventAggregator.PublishEvent(grabEvent);
-                throw;
-            }
-
-            _logger.Trace("Downloaded {0} bytes from {1}", downloadedBytes.Length, link);
-            _eventAggregator.PublishEvent(grabEvent);
-
-            return downloadedBytes;
+            throw new NotImplementedException();
         }
     }
 }
