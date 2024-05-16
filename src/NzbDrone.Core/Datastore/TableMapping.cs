@@ -98,7 +98,7 @@ namespace NzbDrone.Core.Datastore
 
             Mapper.Entity<Manga>("Mangas").RegisterModel();
             Mapper.Entity<IndexedManga>("IndexedMangas").RegisterModel()
-                .HasOne(x => x.Manga, x => x.MangaId)
+                .HasOne(x => x.Manga, x => x.MangaId!.Value)
                 .HasOne(x => x.Indexer, x => x.IndexerId);
             Mapper.Entity<Chapter>("Chapters").RegisterModel()
                 .HasOne(x => x.IndexedManga, x => x.IndexedMangaId);
