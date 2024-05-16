@@ -11,6 +11,7 @@ using NzbDrone.Core.HealthCheck;
 using NzbDrone.Core.History;
 using NzbDrone.Core.Housekeeping;
 using NzbDrone.Core.IndexerVersions;
+using NzbDrone.Core.Indexing.Commands;
 using NzbDrone.Core.Lifecycle;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Messaging.Events;
@@ -109,7 +110,13 @@ namespace NzbDrone.Core.Jobs
                     {
                         Interval = GetBackupInterval(),
                         TypeName = typeof(BackupCommand).FullName
-                    }
+                    },
+
+                    new ScheduledTask
+                    {
+                        Interval = 12 * 60,
+                        TypeName = typeof(FullIndexCommand).FullName
+                    },
                 };
 
             var currentTasks = _scheduledTaskRepository.All().ToList();
