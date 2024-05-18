@@ -15,6 +15,6 @@ public class MangaSco : MadaraBase
     }
 
     public override string Name => "Manga Sco";
-    public override string[] IndexerUrls => new[] { "https://manhwasco.net/" };
+    public override string[] IndexerUrls => new[] { "https://manhwasco.net" };
+    public override int ChapterMode => 1;
 }
-

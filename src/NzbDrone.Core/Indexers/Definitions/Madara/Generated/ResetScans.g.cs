@@ -16,5 +16,5 @@ public class ResetScans : MadaraBase
 
     public override string Name => "Reset Scans";
     public override string[] IndexerUrls => new[] { "https://reset-scans.xyz/" };
+    public override int ChapterMode => 1;
 }
-

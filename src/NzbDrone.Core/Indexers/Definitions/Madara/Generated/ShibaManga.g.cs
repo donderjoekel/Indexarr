@@ -15,6 +15,6 @@ public class ShibaManga : MadaraBase
     }
 
     public override string Name => "Shiba Manga";
-    public override string[] IndexerUrls => new[] { "https://shibamanga.com/" };
+    public override string[] IndexerUrls => new[] { "https://shibamanga.com" };
+    public override int ChapterMode => 1;
 }
-

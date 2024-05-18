@@ -21,4 +21,20 @@ namespace NzbDrone.Core.Indexers
 
         public string Content => _httpResponse.Content;
     }
+
+    public class Response
+    {
+        private readonly HttpRequest _httpRequest;
+        private readonly HttpResponse _httpResponse;
+
+        public Response(HttpRequest httpRequest, HttpResponse httpResponse)
+        {
+            _httpRequest = httpRequest;
+            _httpResponse = httpResponse;
+        }
+
+        public HttpRequest HttpRequest => _httpRequest;
+        public HttpResponse HttpResponse => _httpResponse;
+        public string Content => _httpResponse.Content;
+    }
 }

@@ -15,6 +15,6 @@ public class MangaSushi : MadaraBase
     }
 
     public override string Name => "Manga Sushi";
-    public override string[] IndexerUrls => new[] { "https://mangasushi.org/" };
+    public override string[] IndexerUrls => new[] { "https://mangasushi.org" };
+    public override int ChapterMode => 1;
 }
-

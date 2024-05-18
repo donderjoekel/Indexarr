@@ -15,6 +15,6 @@ public class MangaUs : MadaraBase
     }
 
     public override string Name => "Manga US";
-    public override string[] IndexerUrls => new[] { "https://mangaus.xyz/" };
+    public override string[] IndexerUrls => new[] { "https://mangaus.xyz" };
+    public override int ChapterMode => 1;
 }
-

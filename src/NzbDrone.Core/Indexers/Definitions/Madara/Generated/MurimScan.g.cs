@@ -15,6 +15,6 @@ public class MurimScan : MadaraBase
     }
 
     public override string Name => "Murim Scan";
-    public override string[] IndexerUrls => new[] { "https://murimscan.run/" };
+    public override string[] IndexerUrls => new[] { "https://murimscan.run" };
+    public override int ChapterMode => 1;
 }
-

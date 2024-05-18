@@ -15,6 +15,6 @@ public class ManhwaFull : MadaraBase
     }
 
     public override string Name => "Manhwa Full";
-    public override string[] IndexerUrls => new[] { "https://manhwafull.com/" };
+    public override string[] IndexerUrls => new[] { "https://manhwafull.com" };
+    public override int ChapterMode => 1;
 }
-

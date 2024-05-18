@@ -15,6 +15,6 @@ public class MadaraDex : MadaraBase
     }
 
     public override string Name => "Madara Dex";
-    public override string[] IndexerUrls => new[] { "https://madaradex.org/" };
+    public override string[] IndexerUrls => new[] { "https://madaradex.org" };
+    public override int ChapterMode => 1;
 }
-

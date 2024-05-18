@@ -15,6 +15,6 @@ public class PawManga : MadaraBase
     }
 
     public override string Name => "Paw Manga";
-    public override string[] IndexerUrls => new[] { "https://pawmanga.com/" };
+    public override string[] IndexerUrls => new[] { "https://pawmanga.com" };
+    public override int ChapterMode => 1;
 }
-

@@ -15,6 +15,6 @@ public class LilyManga : MadaraBase
     }
 
     public override string Name => "Lily Manga";
-    public override string[] IndexerUrls => new[] { "https://lilymanga.net/" };
+    public override string[] IndexerUrls => new[] { "https://lilymanga.net" };
+    public override int ChapterMode => 1;
 }
-

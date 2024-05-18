@@ -15,6 +15,6 @@ public class MangaWeebs : MadaraBase
     }
 
     public override string Name => "Manga Weebs";
-    public override string[] IndexerUrls => new[] { "https://mangaweebs.org/" };
+    public override string[] IndexerUrls => new[] { "https://mangaweebs.org" };
+    public override int ChapterMode => 1;
 }
-

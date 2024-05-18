@@ -15,6 +15,6 @@ public class HReads : MadaraBase
     }
 
     public override string Name => "H Reads";
-    public override string[] IndexerUrls => new[] { "https://hreads.net/" };
+    public override string[] IndexerUrls => new[] { "https://hreads.net" };
+    public override int ChapterMode => 1;
 }
-

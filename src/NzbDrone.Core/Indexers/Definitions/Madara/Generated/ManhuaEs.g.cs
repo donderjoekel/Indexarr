@@ -15,6 +15,6 @@ public class ManhuaEs : MadaraBase
     }
 
     public override string Name => "Manhua ES";
-    public override string[] IndexerUrls => new[] { "https://manhuaes.com/" };
+    public override string[] IndexerUrls => new[] { "https://manhuaes.com" };
+    public override int ChapterMode => 1;
 }
-

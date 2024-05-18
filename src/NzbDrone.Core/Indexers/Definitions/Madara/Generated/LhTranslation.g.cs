@@ -15,6 +15,6 @@ public class LhTranslation : MadaraBase
     }
 
     public override string Name => "LH Translation";
-    public override string[] IndexerUrls => new[] { "https://lhtranslation.net/" };
+    public override string[] IndexerUrls => new[] { "https://lhtranslation.net" };
+    public override int ChapterMode => 1;
 }
-

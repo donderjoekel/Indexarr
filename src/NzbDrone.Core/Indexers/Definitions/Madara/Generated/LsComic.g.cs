@@ -15,6 +15,6 @@ public class LsComic : MadaraBase
     }
 
     public override string Name => "Leviatan Scans";
-    public override string[] IndexerUrls => new[] { "https://lscomic.com/" };
+    public override string[] IndexerUrls => new[] { "https://lscomic.com" };
+    public override int ChapterMode => 1;
 }
-

@@ -15,6 +15,6 @@ public class TopReadManwa : MadaraBase
     }
 
     public override string Name => "Top Read Manhwa";
-    public override string[] IndexerUrls => new[] { "https://topreadmanhwa.com/" };
+    public override string[] IndexerUrls => new[] { "https://topreadmanhwa.com" };
+    public override int ChapterMode => 1;
 }
-

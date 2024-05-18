@@ -15,6 +15,6 @@ public class ManhwaNew : MadaraBase
     }
 
     public override string Name => "Manhwa New";
-    public override string[] IndexerUrls => new[] { "https://manhwanew.com/" };
+    public override string[] IndexerUrls => new[] { "https://manhwanew.com" };
+    public override int ChapterMode => 1;
 }
-

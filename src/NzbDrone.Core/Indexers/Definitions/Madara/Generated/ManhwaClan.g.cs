@@ -15,6 +15,6 @@ public class ManhwaClan : MadaraBase
     }
 
     public override string Name => "Manhwa Clan";
-    public override string[] IndexerUrls => new[] { "https://manhwaclan.com/" };
+    public override string[] IndexerUrls => new[] { "https://manhwaclan.com" };
+    public override int ChapterMode => 1;
 }
-

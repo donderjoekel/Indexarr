@@ -15,6 +15,6 @@ public class ManyToonMe : MadaraBase
     }
 
     public override string Name => "Many Toon.me";
-    public override string[] IndexerUrls => new[] { "https://manytoon.me/" };
+    public override string[] IndexerUrls => new[] { "https://manytoon.me" };
+    public override int ChapterMode => 1;
 }
-

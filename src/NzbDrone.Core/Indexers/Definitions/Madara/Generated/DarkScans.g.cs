@@ -15,6 +15,6 @@ public class DarkScans : MadaraBase
     }
 
     public override string Name => "Dark Scans";
-    public override string[] IndexerUrls => new[] { "https://darkscans.com/" };
+    public override string[] IndexerUrls => new[] { "https://darkscans.com" };
+    public override int ChapterMode => 1;
 }
-

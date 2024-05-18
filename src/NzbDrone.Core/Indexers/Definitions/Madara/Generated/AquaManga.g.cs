@@ -15,6 +15,6 @@ public class AquaManga : MadaraBase
     }
 
     public override string Name => "Aqua Manga";
-    public override string[] IndexerUrls => new[] { "https://aquamanga.org/" };
+    public override string[] IndexerUrls => new[] { "https://aquamanga.org" };
+    public override int ChapterMode => 1;
 }
-

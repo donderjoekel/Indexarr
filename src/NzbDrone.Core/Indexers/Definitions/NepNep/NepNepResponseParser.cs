@@ -1,132 +1,186 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Newtonsoft.Json;
-using NzbDrone.Common.Extensions;
+using NLog;
 using NzbDrone.Common.Http;
-using NzbDrone.Core.Indexers.Definitions.Mangarr;
+using NzbDrone.Core.Concurrency;
+using NzbDrone.Core.Indexers.Definitions.Indexarr;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.ThingiProvider;
 
 namespace NzbDrone.Core.Indexers.Definitions.NepNep;
 
-public class NepNepResponseParser : MangarrResponseParser
+public class NepNepResponseParser : IndexarrResponseParser
 {
     private readonly IIndexerHttpClient _httpClient;
+    private readonly Logger _logger;
+    private readonly NepNepBase _nepNepBase;
 
-    public NepNepResponseParser(ProviderDefinition providerDefinition, IIndexerHttpClient httpClient)
+    public NepNepResponseParser(ProviderDefinition providerDefinition, IIndexerHttpClient httpClient, Logger logger, NepNepBase nepNepBase)
         : base(providerDefinition)
     {
         _httpClient = httpClient;
+        _logger = logger;
+        _nepNepBase = nepNepBase;
     }
 
-    protected override IList<TorrentInfo> ParseRssResponse(HttpResponse response)
+    protected override IList<MangaInfo> ParseFullIndexResponse(HttpResponse response)
     {
-        var releaseInfo = new List<TorrentInfo>();
-        var match = Regex.Match(response.Content, @"(?=LatestJSON =).+?(\[.+?\])\;");
-        var json = match.Groups[1].Value;
-        var releases = JsonConvert.DeserializeObject<List<LatestRelease>>(json);
-        foreach (var latestRelease in releases)
-        {
-            var url = CreateUrl(Settings.BaseUrl,
-                latestRelease.IndexName,
-                latestRelease.Chapter,
-                out var chapterNumber);
-
-            var release = CreateTorrentInfo(url,
-                latestRelease.SeriesName,
-                chapterNumber,
-                DateTime.Parse(latestRelease.Date));
-
-            releaseInfo.Add(release);
-        }
-
-        return releaseInfo;
+        return ParseResponse(response, false);
     }
 
-    protected override IList<TorrentInfo> ParseSearchResponse(HttpResponse response, string query, string season, string episode)
+    protected override IList<MangaInfo> ParseTestIndexResponse(HttpResponse response)
     {
-        var releaseInfo = new List<TorrentInfo>();
+        return ParseResponse(response, true);
+    }
+
+    private List<MangaInfo> ParseResponse(HttpResponse response, bool isTest)
+    {
+        var mangas = new List<MangaInfo>();
         var match = Regex.Match(response.Content, @"(?=Directory =).+?(\[.+?\])\;");
         var json = match.Groups[1].Value;
         var directory = JsonConvert.DeserializeObject<List<DirectoryItem>>(json);
-        var items = directory.Where(x => StringExtensions.ContainsIgnoreCase((string)x.Slug, query) || StringExtensions.ContainsIgnoreCase((IEnumerable<string>)x.al, query)).ToList();
-        foreach (var directoryItem in items)
+        if (isTest)
         {
-            var request = new HttpRequest(Settings.BaseUrl + "manga/" + directoryItem.Index);
-            response = _httpClient.Execute(request);
-            match = Regex.Match(response.Content, @"(?=Chapters =).+?(\[.+?\])\;");
-            json = match.Groups[1].Value;
-            var chapters = JsonConvert.DeserializeObject<List<ChapterInfo>>(json);
+            mangas = RunSequentially(directory, true);
+        }
+        else
+        {
+            mangas = RunConcurrently(directory);
+        }
 
-            foreach (var chapter in chapters)
+        return mangas;
+    }
+
+    private List<MangaInfo> RunSequentially(List<DirectoryItem> directory, bool isTest)
+    {
+        var mangas = new List<MangaInfo>();
+
+        foreach (var item in directory)
+        {
+            try
             {
-                var url = CreateUrl(Settings.BaseUrl, directoryItem.Index, chapter.Chapter, out var chapterNumber);
-
-                if (episode.IsNotNullOrWhiteSpace() && episode != chapterNumber.ToString(CultureInfo.InvariantCulture))
+                var mangaUrl = Settings.BaseUrl + "manga/" + item.Index;
+                var chapters = GetChapters(item, mangaUrl);
+                mangas.Add(new MangaInfo()
                 {
-                    continue;
-                }
+                    Title = item.Slug,
+                    Url = mangaUrl,
+                    Chapters = chapters
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Failed to parse manga info");
+                continue;
+            }
 
-                var release = CreateTorrentInfo(url,
-                    directoryItem.Slug,
-                    chapterNumber,
-                    DateTime.Parse(chapter.Date));
-
-                releaseInfo.Add(release);
+            if (isTest)
+            {
+                return mangas;
             }
         }
 
-        return releaseInfo;
+        return mangas;
     }
 
-    public override IList<string> ParseChapterResponse(string content)
+    private List<MangaInfo> RunConcurrently(List<DirectoryItem> directory)
     {
-        var match = Regex.Match(content, @"(?=CurChapter =).+?(\{.+?\})\;");
+        using var semaphore = new SemaphoreSlim(25);
+        var resetEvent = new AutoResetEvent(true);
+        var mangas = new List<MangaInfo>();
+
+        ConcurrentWork.CreateAndRun(25, directory, item => () =>
+        {
+            var mangaUrl = Settings.BaseUrl + "manga/" + item.Index;
+            var chapters = GetChapters(item, mangaUrl);
+            resetEvent.WaitOne();
+            mangas.Add(new MangaInfo()
+            {
+                Title = item.Slug,
+                Url = mangaUrl,
+                Chapters = chapters
+            });
+            resetEvent.Set();
+        });
+
+        /*var tasks = new List<Task>();
+
+        foreach (var item in directory)
+        {
+            tasks.Add(Task.Run(() =>
+            {
+                try
+                {
+                    semaphore.Wait();
+                    var mangaUrl = Settings.BaseUrl + "manga/" + item.Index;
+                    var chapters = GetChapters(item, mangaUrl);
+                    resetEvent.WaitOne();
+                    mangas.Add(new MangaInfo()
+                    {
+                        Title = item.Slug,
+                        Url = mangaUrl,
+                        Chapters = chapters
+                    });
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e, "Failed to parse manga info");
+                }
+                finally
+                {
+                    resetEvent.Set();
+                    semaphore.Release();
+                }
+            }));
+        }
+
+        Task.WhenAll(tasks).GetAwaiter().GetResult();*/
+
+        return mangas;
+    }
+
+    private List<Parser.Model.ChapterInfo> GetChapters(DirectoryItem item, string mangaUrl)
+    {
+        _logger.Info("Requesting chapters for '{0}' from {1}", item.Slug, mangaUrl);
+        var request = new HttpRequest(mangaUrl);
+        var customResponse = _nepNepBase.ExecuteRequest(request);
+        var match = Regex.Match(customResponse.Content, @"(?=Chapters =).+?(\[.+?\])\;");
         var json = match.Groups[1].Value;
-        var chapterInfo = JsonConvert.DeserializeObject<ChapterInfo>(json);
-
-        if (!int.TryParse(chapterInfo.Page, out var pageCount))
+        var chapters = JsonConvert.DeserializeObject<List<ChapterInfo>>(json);
+        if (chapters == null)
         {
-            throw new InvalidOperationException("Unable to parse page count");
+            _logger.Warn("No chapters found for '{0}' from {1}", item.Slug, mangaUrl);
+            return new List<Parser.Model.ChapterInfo>();
         }
 
-        match = Regex.Match(content, @"(?=ng-src=).+\"".+\/manga\/(.+?)\/.+\""");
-        var slug = match.Groups[1].Value;
-
-        var directory = string.IsNullOrEmpty(chapterInfo.Directory) ? string.Empty : chapterInfo.Directory + "/";
-        var chapterString = chapterInfo.Chapter[1..^1];
-        if (chapterInfo.Chapter[^1] != '0')
+        var chapterInfos = new List<Parser.Model.ChapterInfo>();
+        foreach (var chapter in chapters)
         {
-            chapterString += $".{chapterInfo.Chapter[^1]}";
+            var chapterUrl = CreateUrl(Settings.BaseUrl, item.Index, chapter.Chapter, out var volume, out var chapterNumber);
+            chapterInfos.Add(new Parser.Model.ChapterInfo()
+            {
+                Volume = volume,
+                Number = chapterNumber,
+                Url = chapterUrl,
+                Date = DateTime.Parse(chapter.Date)
+            });
         }
 
-        match = Regex.Match(content, @"(?=CurPathName =).+?(\"".+?\"")\;");
-        var urlBase = match.Groups[1].Value.Trim('"');
-
-        var urls = new List<string>();
-        for (var i = 0; i < pageCount; i++)
-        {
-            var s = "000" + (i + 1);
-            var page = s[^3..];
-            var url = $"https://{urlBase}/manga/{slug}/{directory}{chapterString}-{page}.png";
-            urls.Add(url);
-        }
-
-        return urls;
+        return chapterInfos;
     }
 
-    private string CreateUrl(string baseUrl, string indexName, string chapterCode, out double chapterNumber)
+    private string CreateUrl(string baseUrl, string indexName, string chapterCode, out int volume, out decimal chapterNumber)
     {
-        var volume = int.Parse(chapterCode[..1]);
+        volume = int.Parse(chapterCode[..1]);
         var index = volume != 1 ? "-index-" + volume : string.Empty;
         var n = int.Parse(chapterCode[1..^1]);
         var a = int.Parse(chapterCode[^1].ToString());
         var m = a != 0 ? "." + a : string.Empty;
         var id = indexName + "-chapter-" + n + m + index + ".html";
-        chapterNumber = n + (a * 0.1);
+        chapterNumber = n + (a * 0.1m);
         var chapterUrl = baseUrl + "read-online/" + id;
         return chapterUrl;
     }

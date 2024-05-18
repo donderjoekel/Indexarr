@@ -15,6 +15,6 @@ public class MortalsGroove : MadaraBase
     }
 
     public override string Name => "Mortals Groove";
-    public override string[] IndexerUrls => new[] { "https://mortalsgroove.com/" };
+    public override string[] IndexerUrls => new[] { "https://mortalsgroove.com" };
+    public override int ChapterMode => 1;
 }
-

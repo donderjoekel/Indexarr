@@ -15,6 +15,6 @@ public class KsGroupScans : MadaraBase
     }
 
     public override string Name => "KS Group Scans";
-    public override string[] IndexerUrls => new[] { "https://ksgroupscans.com/" };
+    public override string[] IndexerUrls => new[] { "https://ksgroupscans.com" };
+    public override int ChapterMode => 1;
 }
-

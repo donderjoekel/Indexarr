@@ -15,6 +15,6 @@ public class GirlsLoveManga : MadaraBase
     }
 
     public override string Name => "Girls Love Manga";
-    public override string[] IndexerUrls => new[] { "https://glmanga.com/" };
+    public override string[] IndexerUrls => new[] { "https://glmanga.com" };
+    public override int ChapterMode => 1;
 }
-

@@ -15,6 +15,6 @@ public class TheGuild : MadaraBase
     }
 
     public override string Name => "The Guild";
-    public override string[] IndexerUrls => new[] { "https://theguildscans.com/" };
+    public override string[] IndexerUrls => new[] { "https://theguildscans.com" };
+    public override int ChapterMode => 1;
 }
-

@@ -15,6 +15,6 @@ public class PonyManga : MadaraBase
     }
 
     public override string Name => "Pony Manga";
-    public override string[] IndexerUrls => new[] { "https://ponymanga.com/" };
+    public override string[] IndexerUrls => new[] { "https://ponymanga.com" };
+    public override int ChapterMode => 1;
 }
-

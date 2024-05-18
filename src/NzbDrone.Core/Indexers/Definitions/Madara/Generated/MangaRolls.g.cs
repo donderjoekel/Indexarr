@@ -15,6 +15,6 @@ public class MangaRolls : MadaraBase
     }
 
     public override string Name => "Manga Rolls";
-    public override string[] IndexerUrls => new[] { "https://mangarolls.net/" };
+    public override string[] IndexerUrls => new[] { "https://mangarolls.net" };
+    public override int ChapterMode => 1;
 }
-

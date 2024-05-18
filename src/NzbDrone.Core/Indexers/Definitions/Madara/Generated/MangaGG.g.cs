@@ -15,6 +15,6 @@ public class MangaGG : MadaraBase
     }
 
     public override string Name => "Manga GG";
-    public override string[] IndexerUrls => new[] { "https://mangagg.com/" };
+    public override string[] IndexerUrls => new[] { "https://mangagg.com" };
+    public override int ChapterMode => 1;
 }
-

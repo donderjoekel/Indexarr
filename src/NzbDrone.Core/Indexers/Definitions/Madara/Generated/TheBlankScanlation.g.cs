@@ -15,6 +15,6 @@ public class TheBlankScanlation : MadaraBase
     }
 
     public override string Name => "The Blank Scanlation";
-    public override string[] IndexerUrls => new[] { "https://theblank.net/" };
+    public override string[] IndexerUrls => new[] { "https://theblank.net" };
+    public override int ChapterMode => 1;
 }
-

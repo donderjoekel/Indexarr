@@ -15,6 +15,6 @@ public class KissManga : MadaraBase
     }
 
     public override string Name => "Kiss Manga";
-    public override string[] IndexerUrls => new[] { "https://kissmanga.in/" };
+    public override string[] IndexerUrls => new[] { "https://kissmanga.in" };
+    public override int ChapterMode => 1;
 }
-

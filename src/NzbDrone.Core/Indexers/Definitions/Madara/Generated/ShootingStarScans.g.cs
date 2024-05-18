@@ -15,6 +15,6 @@ public class ShootingStarScans : MadaraBase
     }
 
     public override string Name => "Shooting Star Scans";
-    public override string[] IndexerUrls => new[] { "https://shootingstarscans.com/" };
+    public override string[] IndexerUrls => new[] { "https://shootingstarscans.com" };
+    public override int ChapterMode => 1;
 }
-

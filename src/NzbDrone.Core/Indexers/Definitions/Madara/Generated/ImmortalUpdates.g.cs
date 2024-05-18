@@ -15,6 +15,6 @@ public class ImmortalUpdates : MadaraBase
     }
 
     public override string Name => "Immortal Updates";
-    public override string[] IndexerUrls => new[] { "https://immortalupdates.com/" };
+    public override string[] IndexerUrls => new[] { "https://immortalupdates.com" };
+    public override int ChapterMode => 1;
 }
-

@@ -15,6 +15,6 @@ public class MangaFreak : MadaraBase
     }
 
     public override string Name => "Manga Freak";
-    public override string[] IndexerUrls => new[] { "https://mangafreak.online/" };
+    public override string[] IndexerUrls => new[] { "https://mangafreak.online" };
+    public override int ChapterMode => 1;
 }
-

@@ -15,6 +15,6 @@ public class S2Manga : MadaraBase
     }
 
     public override string Name => "S2 Manga";
-    public override string[] IndexerUrls => new[] { "https://s2manga.com/" };
+    public override string[] IndexerUrls => new[] { "https://s2manga.com" };
+    public override int ChapterMode => 1;
 }
-

@@ -15,6 +15,6 @@ public class DecadenceScans : MadaraBase
     }
 
     public override string Name => "Decadence Scans";
-    public override string[] IndexerUrls => new[] { "https://reader.decadencescans.com/" };
+    public override string[] IndexerUrls => new[] { "https://reader.decadencescans.com" };
+    public override int ChapterMode => 1;
 }
-

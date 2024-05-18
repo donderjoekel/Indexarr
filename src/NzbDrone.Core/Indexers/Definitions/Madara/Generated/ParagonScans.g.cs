@@ -15,6 +15,6 @@ public class ParagonScans : MadaraBase
     }
 
     public override string Name => "Paragon Scans";
-    public override string[] IndexerUrls => new[] { "https://paragonscans.com/" };
+    public override string[] IndexerUrls => new[] { "https://paragonscans.com" };
+    public override int ChapterMode => 1;
 }
-

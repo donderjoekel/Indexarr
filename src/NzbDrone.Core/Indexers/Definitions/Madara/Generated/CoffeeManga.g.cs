@@ -15,6 +15,6 @@ public class CoffeeManga : MadaraBase
     }
 
     public override string Name => "Coffee Manga";
-    public override string[] IndexerUrls => new[] { "https://coffeemanga.io/" };
+    public override string[] IndexerUrls => new[] { "https://coffeemanga.io" };
+    public override int ChapterMode => 1;
 }
-

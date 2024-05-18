@@ -15,6 +15,6 @@ public class MangaDistrict : MadaraBase
     }
 
     public override string Name => "Manga District";
-    public override string[] IndexerUrls => new[] { "https://mangadistrict.com/" };
+    public override string[] IndexerUrls => new[] { "https://mangadistrict.com" };
+    public override int ChapterMode => 1;
 }
-

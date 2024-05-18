@@ -15,6 +15,6 @@ public class MangaFoxFull : MadaraBase
     }
 
     public override string Name => "Manga Fox Full";
-    public override string[] IndexerUrls => new[] { "https://mangafoxfull.com/" };
+    public override string[] IndexerUrls => new[] { "https://mangafoxfull.com" };
+    public override int ChapterMode => 1;
 }
-

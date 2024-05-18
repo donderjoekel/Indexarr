@@ -15,6 +15,6 @@ public class MangaRead : MadaraBase
     }
 
     public override string Name => "Manga Read";
-    public override string[] IndexerUrls => new[] { "https://mangaread.co/" };
+    public override string[] IndexerUrls => new[] { "https://mangaread.co" };
+    public override int ChapterMode => 1;
 }
-

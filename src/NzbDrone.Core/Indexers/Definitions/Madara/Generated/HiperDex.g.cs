@@ -15,6 +15,6 @@ public class HiperDex : MadaraBase
     }
 
     public override string Name => "Hiper Dex";
-    public override string[] IndexerUrls => new[] { "https://hiperdex.com/" };
+    public override string[] IndexerUrls => new[] { "https://hiperdex.com" };
+    public override int ChapterMode => 1;
 }
-

@@ -15,6 +15,6 @@ public class PetroTechSocienty : MadaraBase
     }
 
     public override string Name => "Petro Tech Society";
-    public override string[] IndexerUrls => new[] { "https://www.petrotechsociety.org/" };
+    public override string[] IndexerUrls => new[] { "https://www.petrotechsociety.org" };
+    public override int ChapterMode => 1;
 }
-

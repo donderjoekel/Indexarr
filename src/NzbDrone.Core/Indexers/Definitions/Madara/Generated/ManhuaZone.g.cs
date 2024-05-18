@@ -15,6 +15,6 @@ public class ManhuaZone : MadaraBase
     }
 
     public override string Name => "Manhua Zone";
-    public override string[] IndexerUrls => new[] { "https://manhuazone.org/" };
+    public override string[] IndexerUrls => new[] { "https://manhuazone.org" };
+    public override int ChapterMode => 1;
 }
-

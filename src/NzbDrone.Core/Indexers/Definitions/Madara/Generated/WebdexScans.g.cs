@@ -15,6 +15,6 @@ public class WebdexScans : MadaraBase
     }
 
     public override string Name => "Webdex Scans";
-    public override string[] IndexerUrls => new[] { "https://webdexscans.com/" };
+    public override string[] IndexerUrls => new[] { "https://webdexscans.com" };
+    public override int ChapterMode => 1;
 }
-

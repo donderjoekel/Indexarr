@@ -5,133 +5,175 @@ using System.Net.Http;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
-using NzbDrone.Common.Extensions;
+using NLog;
 using NzbDrone.Common.Http;
-using NzbDrone.Core.Indexers.Definitions.Mangarr;
+using NzbDrone.Core.Indexers.Definitions.Indexarr;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.ThingiProvider;
 
 namespace NzbDrone.Core.Indexers.Definitions.Madara;
 
-public class MadaraResponseParser : MangarrResponseParser
+public class MadaraResponseParser : IndexarrResponseParser
 {
     private readonly IIndexerHttpClient _httpClient;
+    private readonly MadaraBase _madaraBase;
+    private readonly Logger _logger;
 
-    public MadaraResponseParser(ProviderDefinition providerDefinition, IIndexerHttpClient httpClient)
+    public MadaraResponseParser(
+        ProviderDefinition providerDefinition,
+        IIndexerHttpClient httpClient,
+        MadaraBase madaraBase,
+        Logger logger)
         : base(providerDefinition)
     {
         _httpClient = httpClient;
+        _madaraBase = madaraBase;
+        _logger = logger;
     }
 
-    protected override IList<TorrentInfo> ParseRssResponse(HttpResponse response)
+    protected override IList<MangaInfo> ParseFullIndexResponse(HttpResponse response)
     {
-        var releases = new List<TorrentInfo>();
+        var mangaInfos = ParseResponse(response, false);
+        var page = 1;
+        while (true)
+        {
+            var request = ((MadaraRequestGenerator)_madaraBase.GetRequestGenerator()).GetPageRequest(page);
+            var customResponse = _madaraBase.ExecuteRequest(request.HttpRequest);
+            var partialMangaInfos = ParseResponse(customResponse.HttpResponse, false);
+            if (partialMangaInfos.Count == 0)
+            {
+                break;
+            }
 
+            mangaInfos.AddRange(partialMangaInfos);
+            page++;
+        }
+
+        return mangaInfos;
+    }
+
+    protected override IList<MangaInfo> ParseTestIndexResponse(HttpResponse response)
+    {
+        return ParseResponse(response, true);
+    }
+
+    private List<MangaInfo> ParseResponse(HttpResponse response, bool isTest)
+    {
+        var mangaInfos = new List<MangaInfo>();
         var document = new HtmlParser().ParseDocument(response.Content);
-        var elements = document.QuerySelectorAll<IHtmlDivElement>(".page-item-detail");
+        var elements = document.QuerySelectorAll<IHtmlDivElement>("div.page-item-detail");
+
         foreach (var element in elements)
         {
-            var titleElement = element.QuerySelector<IHtmlAnchorElement>(".post-title a");
-            var title = titleElement.TextContent.Trim();
-
-            var chapterElements = element.QuerySelectorAll<IHtmlDivElement>(".chapter-item");
-            foreach (var chapterElement in chapterElements)
+            try
             {
-                var chapterUrlElement = chapterElement.QuerySelector<IHtmlAnchorElement>(".chapter a");
-                var chapterUrl = chapterUrlElement.Href;
-                var chapterTitle = chapterUrlElement.TextContent.Trim();
-                var episode = ParseChapterToEpisode(chapterTitle);
-
-                var parsedDate = new DateTime(1910, 1, 1, 0, 0, 0);
-                var dateElement = chapterElement.QuerySelector<IHtmlAnchorElement>(".post-on a");
-                if (dateElement != null)
+                var anchor = element.QuerySelector<IHtmlAnchorElement>(".post-title a");
+                var title = anchor.TextContent.Trim();
+                var url = anchor.Href;
+                var chapters = GetChapters(url, title);
+                mangaInfos.Add(new MangaInfo
                 {
-                    var date = dateElement.GetAttribute("title", string.Empty);
-                    if (!string.IsNullOrWhiteSpace(date))
-                    {
-                        // TODO: Parse date
-                        // parsedDate = DateTime.Parse(date);
-                    }
-                }
+                    Title = title,
+                    Url = url,
+                    Chapters = chapters
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Failed to parse manga info");
+                continue;
+            }
 
-                releases.Add(CreateTorrentInfo(chapterUrl, title, episode, parsedDate));
+            // We want to early out if it is a test parse because we don't want to unnecessarily parse too many items
+            if (isTest)
+            {
+                return mangaInfos;
             }
         }
 
-        return releases;
+        return mangaInfos;
     }
 
-    protected override IList<TorrentInfo> ParseSearchResponse(HttpResponse response, string query, string season, string episode)
+    private List<ChapterInfo> GetChapters(string url, string title)
     {
-        var releases = new List<TorrentInfo>();
-
-        var document = new HtmlParser().ParseDocument(response.Content);
-        var elements = document.QuerySelectorAll<IHtmlDivElement>(".c-tabs-item__content");
-        foreach (var element in elements)
+        _logger.Info("Requesting chapters for '{0}' from {1}", title, url);
+        var request = GetChaptersRequest(url);
+        var response = _madaraBase.ExecuteRequest(request);
+        var mangaDocument = new HtmlParser().ParseDocument(response.Content);
+        var chapters = new List<ChapterInfo>();
+        var chapterElements = mangaDocument.QuerySelectorAll<IHtmlListItemElement>("li.wp-manga-chapter").ToList();
+        if (!chapterElements.Any())
         {
-            var titleElement = element.QuerySelector<IHtmlAnchorElement>(".post-title a");
-            var title = titleElement.TextContent.Trim();
-
-            var request = new HttpRequest(titleElement.Href + "ajax/chapters/")
-            {
-                Method = HttpMethod.Post
-            };
-
-            var result = _httpClient.Execute(request);
-
-            document = new HtmlParser().ParseDocument(result.Content);
-            var chapterElements = document.QuerySelectorAll<IHtmlListItemElement>(".wp-manga-chapter");
-            foreach (var chapterElement in chapterElements)
-            {
-                var urlElement = chapterElement.QuerySelector<IHtmlAnchorElement>("a");
-                var url = urlElement.Href;
-                var chapterTitle = urlElement.TextContent.Trim();
-                var parsedEpisode = ParseChapterToEpisode(chapterTitle);
-
-                if (episode.IsNotNullOrWhiteSpace() && episode != parsedEpisode)
-                {
-                    continue;
-                }
-
-                var releaseDateElement = chapterElement.QuerySelector<IHtmlSpanElement>(".chapter-release-date");
-                var parsedDate = DateTime.Today;
-                if (releaseDateElement != null)
-                {
-                    var releaseDate = releaseDateElement.TextContent.Trim();
-                    if (!string.IsNullOrWhiteSpace(releaseDate))
-                    {
-                        parsedDate = DateTime.Parse(releaseDate);
-                    }
-                }
-
-                releases.Add(CreateTorrentInfo(url, title, parsedEpisode, parsedDate));
-            }
+            _logger.Warn("No chapters found for '{0}' from {1}", title, url);
+            return chapters;
         }
 
-        return releases;
+        foreach (var chapterElement in chapterElements)
+        {
+            var anchor = chapterElement.QuerySelector<IHtmlAnchorElement>("a");
+            var chapterTitle = anchor.TextContent.Trim();
+            if (!TryParseChapterNameToChapterNumber(chapterTitle, out var chapterNumber))
+            {
+                _logger.Warn("Unable to parse '{0}' as number for '{1}' from {2}", chapterTitle, title, url);
+                continue;
+            }
+
+            var releaseDateElement = chapterElement.QuerySelector<IHtmlSpanElement>(".chapter-release-date");
+            var parsedDate = DateTime.Today;
+            if (releaseDateElement != null)
+            {
+                var releaseDate = releaseDateElement.TextContent.Trim();
+                if (!TryParseDateTime(releaseDate, out parsedDate))
+                {
+                    _logger.Warn("Unable to parse '{0}' as date for '{1}' from {2}", releaseDate, title, url);
+                }
+            }
+            else
+            {
+                _logger.Warn("No release date found for '{0}' from {1}", chapterTitle, url);
+            }
+
+            chapters.Add(new ChapterInfo()
+            {
+                Volume = 1,
+                Url = anchor.Href,
+                Date = parsedDate,
+                Number = chapterNumber
+            });
+        }
+
+        return chapters;
     }
 
-    public override IList<string> ParseChapterResponse(string content)
+    private HttpRequest GetChaptersRequest(string url)
     {
-        var document = new HtmlParser().ParseDocument(content);
-        var elements = document.QuerySelectorAll<IHtmlImageElement>(".wp-manga-chapter-img");
+        HttpRequest request = null;
 
-        if (!elements.Any())
+        switch (_madaraBase.ChapterMode)
         {
-            elements = document.QuerySelectorAll<IHtmlImageElement>(".reading-content img");
+            case 0:
+                request = new HttpRequest(url + "wp-admin/admin-ajax.php")
+                {
+                    Method = HttpMethod.Post
+                };
+                break;
+            case 1:
+                request = new HttpRequest(url + "ajax/chapters/")
+                {
+                    Method = HttpMethod.Post
+                };
+                break;
+            case 2:
+                request = new HttpRequest(url)
+                {
+                    Method = HttpMethod.Post
+                };
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
 
-        return elements.Select(GetUrl).ToList();
-
-        string GetUrl(IHtmlImageElement element)
-        {
-            var url = element.GetAttribute("data-src");
-            if (string.IsNullOrEmpty(url))
-            {
-                url = element.GetAttribute("src");
-            }
-
-            return url?.Trim() ?? string.Empty;
-        }
+        request.Headers.ContentType = "application/x-www-form-urlencoded";
+        return request;
     }
 }

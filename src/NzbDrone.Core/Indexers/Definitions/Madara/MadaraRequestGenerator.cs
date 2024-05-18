@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using NzbDrone.Common.Http;
-using NzbDrone.Core.Indexers.Definitions.Mangarr;
+using NzbDrone.Core.Indexers.Definitions.Indexarr;
 using NzbDrone.Core.Indexers.Settings;
 using NzbDrone.Core.Parser;
 
 namespace NzbDrone.Core.Indexers.Definitions.Madara;
 
-public class MadaraRequestGenerator : MangarrRequestGenerator
+public class MadaraRequestGenerator : IndexarrRequestGenerator
 {
     private readonly NoAuthTorrentBaseSettings _settings;
 
@@ -16,37 +16,14 @@ public class MadaraRequestGenerator : MangarrRequestGenerator
         _settings = settings;
     }
 
-    protected override IndexerRequest GetRssRequest()
+    protected override IndexerRequest GetFullIndexRequest()
     {
-        var httpRequest = new HttpRequest(_settings.BaseUrl + "wp-admin/admin-ajax.php");
-        httpRequest.Method = HttpMethod.Post;
-        httpRequest.Headers.ContentType = "application/x-www-form-urlencoded";
-        httpRequest.AllowAutoRedirect = true;
-
-        var data = new Dictionary<string, string>()
-        {
-            { "action", "madara_load_more" },
-            { "page", "0" },
-            { "template", "madara-core/content/content-archive" },
-            { "vars[meta_key]", "_latest_update" },
-            { "vars[meta_query][0][relation]", "AND" },
-            { "vars[meta_query][relation]", "AND" },
-            { "vars[order]", "desc" },
-            { "vars[orderby]", "meta_value_num" },
-            { "vars[paged]", "1" },
-            { "vars[post_status]", "publish" },
-            { "vars[post_type]", "wp-manga" },
-            { "vars[posts_per_page]", "20" },
-            { "vars[timerange]", "" },
-        };
-
-        httpRequest.SetContent(data.GetQueryString());
-        return new IndexerRequest(httpRequest);
+        return GetPageRequest(0);
     }
 
-    protected override IndexerRequest GetSearchRequest(string query)
+    public IndexarrRequest GetPageRequest(int page)
     {
-        var httpRequest = new HttpRequest(_settings.BaseUrl + "wp-admin/admin-ajax.php");
+        var httpRequest = new HttpRequest(_settings.BaseUrl + "/wp-admin/admin-ajax.php");
         httpRequest.Method = HttpMethod.Post;
         httpRequest.Headers.ContentType = "application/x-www-form-urlencoded";
         httpRequest.AllowAutoRedirect = true;
@@ -54,19 +31,26 @@ public class MadaraRequestGenerator : MangarrRequestGenerator
         var data = new Dictionary<string, string>()
         {
             { "action", "madara_load_more" },
-            { "page", "0" },
-            { "template", "madara-core/content/content-search" },
-            { "vars[manga_archives_item_layout]", "big_thumbnail" },
-            { "vars[meta_query][0][relation]", "AND" },
-            { "vars[meta_query][relation]", "AND" },
+            { "page", page.ToString() },
+            { "template", "madara-core/content/content-archive" },
             { "vars[paged]", "1" },
-            { "vars[post_status]", "publish" },
+            { "vars[orderby]", "post_title" },
+            { "vars[template]", "archive" },
             { "vars[post_type]", "wp-manga" },
-            { "vars[s]", query },
-            { "vars[template]", "search" },
+            { "vars[post_status]", "publish" },
+            { "vars[order]", "ASC" },
+            { "vars[meta_query][relation]", "AND" },
+            { "vars[manga_archives_item_layout]", "big_thumbnail" },
         };
 
         httpRequest.SetContent(data.GetQueryString());
-        return new IndexerRequest(httpRequest);
+        return new IndexarrRequest(httpRequest);
+    }
+
+    protected override IndexerRequest GetTestIndexRequest()
+    {
+        var request = GetPageRequest(0);
+        request.IsTest = true;
+        return request;
     }
 }

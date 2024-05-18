@@ -15,6 +15,6 @@ public class MangaBee : MadaraBase
     }
 
     public override string Name => "Manga Bee";
-    public override string[] IndexerUrls => new[] { "https://mangazin.org/" };
+    public override string[] IndexerUrls => new[] { "https://mangazin.org" };
+    public override int ChapterMode => 1;
 }
-

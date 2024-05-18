@@ -15,6 +15,6 @@ public class KunManga : MadaraBase
     }
 
     public override string Name => "Kun Manga";
-    public override string[] IndexerUrls => new[] { "https://kunmanga.com/" };
+    public override string[] IndexerUrls => new[] { "https://kunmanga.com" };
+    public override int ChapterMode => 1;
 }
-

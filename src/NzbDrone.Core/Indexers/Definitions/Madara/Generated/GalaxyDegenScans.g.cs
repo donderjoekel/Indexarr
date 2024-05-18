@@ -15,6 +15,6 @@ public class GalaxyDegenScans : MadaraBase
     }
 
     public override string Name => "Galaxy Degen Scans";
-    public override string[] IndexerUrls => new[] { "https://gdscans.com/" };
+    public override string[] IndexerUrls => new[] { "https://gdscans.com" };
+    public override int ChapterMode => 1;
 }
-

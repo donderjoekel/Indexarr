@@ -15,6 +15,6 @@ public class MangaGoYaoi : MadaraBase
     }
 
     public override string Name => "Manga Go Yaoi";
-    public override string[] IndexerUrls => new[] { "https://mangagoyaoi.com/" };
+    public override string[] IndexerUrls => new[] { "https://mangagoyaoi.com" };
+    public override int ChapterMode => 1;
 }
-

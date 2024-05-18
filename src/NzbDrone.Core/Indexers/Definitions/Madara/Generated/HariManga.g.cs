@@ -15,6 +15,6 @@ public class HariManga : MadaraBase
     }
 
     public override string Name => "Hari Manga";
-    public override string[] IndexerUrls => new[] { "https://harimanga.com/" };
+    public override string[] IndexerUrls => new[] { "https://harimanga.com" };
+    public override int ChapterMode => 1;
 }
-

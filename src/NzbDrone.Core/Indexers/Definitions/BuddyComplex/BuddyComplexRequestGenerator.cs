@@ -1,12 +1,10 @@
-﻿using System.Collections.Specialized;
-using NzbDrone.Common.Http;
-using NzbDrone.Core.Indexers.Definitions.Mangarr;
+﻿using NzbDrone.Common.Http;
+using NzbDrone.Core.Indexers.Definitions.Indexarr;
 using NzbDrone.Core.Indexers.Settings;
-using NzbDrone.Core.Parser;
 
 namespace NzbDrone.Core.Indexers.Definitions.BuddyComplex;
 
-public class BuddyComplexRequestGenerator : MangarrRequestGenerator
+public class BuddyComplexRequestGenerator : IndexarrRequestGenerator
 {
     private readonly NoAuthTorrentBaseSettings _settings;
 
@@ -15,20 +13,13 @@ public class BuddyComplexRequestGenerator : MangarrRequestGenerator
         _settings = settings;
     }
 
-    protected override IndexerRequest GetRssRequest()
+    protected override IndexerRequest GetFullIndexRequest()
     {
         return new IndexerRequest(_settings.BaseUrl, HttpAccept.Html);
     }
 
-    protected override IndexerRequest GetSearchRequest(string query)
+    protected override IndexerRequest GetTestIndexRequest()
     {
-        var parameters = new NameValueCollection()
-        {
-            { "name", query }
-        };
-
-        return new IndexerRequest(
-            _settings.BaseUrl + "search?page=1&q=" + parameters.GetQueryString(),
-            HttpAccept.Html);
+        return new IndexerRequest(_settings.BaseUrl, HttpAccept.Html);
     }
 }

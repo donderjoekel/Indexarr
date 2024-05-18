@@ -15,6 +15,6 @@ public class BananaManga : MadaraBase
     }
 
     public override string Name => "Banana Manga";
-    public override string[] IndexerUrls => new[] { "https://bananamanga.net/" };
+    public override string[] IndexerUrls => new[] { "https://bananamanga.net" };
+    public override int ChapterMode => 1;
 }
-

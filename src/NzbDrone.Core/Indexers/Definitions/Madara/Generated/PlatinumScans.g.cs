@@ -15,6 +15,6 @@ public class PlatinumScans : MadaraBase
     }
 
     public override string Name => "Platinum Crown";
-    public override string[] IndexerUrls => new[] { "https://platinumscans.com/" };
+    public override string[] IndexerUrls => new[] { "https://platinumscans.com" };
+    public override int ChapterMode => 1;
 }
-

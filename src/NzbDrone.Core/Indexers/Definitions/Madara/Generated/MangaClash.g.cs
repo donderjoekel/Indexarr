@@ -15,6 +15,6 @@ public class MangaClash : MadaraBase
     }
 
     public override string Name => "Manga Clash";
-    public override string[] IndexerUrls => new[] { "https://toonclash.com/" };
+    public override string[] IndexerUrls => new[] { "https://toonclash.com" };
+    public override int ChapterMode => 1;
 }
-

@@ -15,6 +15,6 @@ public class ManyComic : MadaraBase
     }
 
     public override string Name => "Many Comic";
-    public override string[] IndexerUrls => new[] { "https://manycomic.com/" };
+    public override string[] IndexerUrls => new[] { "https://manycomic.com" };
+    public override int ChapterMode => 1;
 }
-

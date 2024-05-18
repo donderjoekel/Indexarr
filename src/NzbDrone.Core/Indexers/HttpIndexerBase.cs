@@ -351,18 +351,42 @@ namespace NzbDrone.Core.Indexers
             }
         }
 
+        protected virtual void ModifyRequest(HttpRequest request)
+        {
+            request.Cookies.Clear();
+
+            if (Cookies != null)
+            {
+                foreach (var cookie in Cookies)
+                {
+                    request.Cookies.Add(cookie.Key, cookie.Value);
+                }
+            }
+        }
+
         protected virtual async Task<IndexerResponse> FetchIndexerResponse(IndexerRequest request)
         {
-            _logger.Debug("Downloading Feed " + request.HttpRequest.ToString(false));
+            var response = await ExecuteRequestAsync(request.HttpRequest);
+            return new IndexerResponse(request, response.HttpResponse);
+        }
 
-            if (request.HttpRequest.RateLimit < RateLimit)
+        public Response ExecuteRequest(HttpRequest request)
+        {
+            return ExecuteRequestAsync(request).GetAwaiter().GetResult();
+        }
+
+        public async Task<Response> ExecuteRequestAsync(HttpRequest request)
+        {
+            _logger.Debug("Downloading Feed " + request.ToString(false));
+
+            if (request.RateLimit < RateLimit)
             {
-                request.HttpRequest.RateLimit = RateLimit;
+                request.RateLimit = RateLimit;
             }
 
             if (_configService.LogIndexerResponse)
             {
-                request.HttpRequest.LogResponseContent = true;
+                request.LogResponseContent = true;
             }
 
             var originalUrl = request.Url;
@@ -373,15 +397,15 @@ namespace NzbDrone.Core.Indexers
             {
                 foreach (var cookie in Cookies)
                 {
-                    request.HttpRequest.Cookies.Add(cookie.Key, cookie.Value);
+                    request.Cookies.Add(cookie.Key, cookie.Value);
                 }
             }
 
-            request.HttpRequest.SuppressHttpError = true;
-            request.HttpRequest.Encoding ??= Encoding;
+            request.SuppressHttpError = true;
+            request.Encoding ??= Encoding;
 
             var response = await RetryStrategy
-                .ExecuteAsync(static async (state, _) => await state._httpClient.ExecuteProxiedAsync(state.HttpRequest, state.Definition), (_httpClient, request.HttpRequest, Definition))
+                .ExecuteAsync(static async (state, _) => await state._httpClient.ExecuteProxiedAsync(state.request, state.Definition), (_httpClient, request, Definition))
                 .ConfigureAwait(false);
 
             // Check response to see if auth is needed, if needed try again
@@ -391,10 +415,10 @@ namespace NzbDrone.Core.Indexers
 
                 await DoLogin();
 
-                request.HttpRequest.Url = originalUrl;
+                request.Url = originalUrl;
                 ModifyRequest(request);
 
-                response = await _httpClient.ExecuteProxiedAsync(request.HttpRequest, Definition);
+                response = await _httpClient.ExecuteProxiedAsync(request, Definition);
             }
 
             if (CloudFlareDetectionService.IsCloudflareProtected(response))
@@ -403,7 +427,7 @@ namespace NzbDrone.Core.Indexers
             }
 
             // Throw common http errors here before we try to parse
-            if (response.HasHttpError && (request.HttpRequest.SuppressHttpErrorStatusCodes == null || !request.HttpRequest.SuppressHttpErrorStatusCodes.Contains(response.StatusCode)))
+            if (response.HasHttpError && (request.SuppressHttpErrorStatusCodes == null || !request.SuppressHttpErrorStatusCodes.Contains(response.StatusCode)))
             {
                 if (response.Request.LogHttpError)
                 {
@@ -412,18 +436,18 @@ namespace NzbDrone.Core.Indexers
 
                 if (response.StatusCode == HttpStatusCode.TooManyRequests)
                 {
-                    throw new TooManyRequestsException(request.HttpRequest, response);
+                    throw new TooManyRequestsException(request, response);
                 }
 
                 if (response.HasHttpServerError)
                 {
-                    throw new HttpException(request.HttpRequest, response);
+                    throw new HttpException(request, response);
                 }
             }
 
-            UpdateCookies(request.HttpRequest.Cookies, DateTime.Now.AddDays(30));
+            UpdateCookies(request.Cookies, DateTime.Now.AddDays(30));
 
-            return new IndexerResponse(request, response);
+            return new Response(request, response);
         }
 
         protected async Task<HttpResponse> ExecuteAuth(HttpRequest request)

@@ -15,6 +15,6 @@ public class JiManga : MadaraBase
     }
 
     public override string Name => "Ji Manga";
-    public override string[] IndexerUrls => new[] { "https://s2manga.io/" };
+    public override string[] IndexerUrls => new[] { "https://s2manga.io" };
+    public override int ChapterMode => 1;
 }
-

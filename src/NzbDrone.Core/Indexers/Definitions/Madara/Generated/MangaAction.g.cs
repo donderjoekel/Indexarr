@@ -15,6 +15,6 @@ public class MangaAction : MadaraBase
     }
 
     public override string Name => "Manga Action";
-    public override string[] IndexerUrls => new[] { "https://mangaaction.com/" };
+    public override string[] IndexerUrls => new[] { "https://mangaaction.com" };
+    public override int ChapterMode => 1;
 }
-

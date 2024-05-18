@@ -15,6 +15,6 @@ public class NovelCrow : MadaraBase
     }
 
     public override string Name => "Novel Crow";
-    public override string[] IndexerUrls => new[] { "https://novelcrow.com/" };
+    public override string[] IndexerUrls => new[] { "https://novelcrow.com" };
+    public override int ChapterMode => 1;
 }
-

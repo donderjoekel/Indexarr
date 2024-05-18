@@ -15,6 +15,6 @@ public class ArcaneScans : MadaraBase
     }
 
     public override string Name => "Arcane Scans";
-    public override string[] IndexerUrls => new[] { "https://arcanescans.com/" };
+    public override string[] IndexerUrls => new[] { "https://arcanescans.com" };
+    public override int ChapterMode => 1;
 }
-

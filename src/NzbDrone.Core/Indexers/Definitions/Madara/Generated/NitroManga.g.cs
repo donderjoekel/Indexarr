@@ -15,6 +15,6 @@ public class NitroManga : MadaraBase
     }
 
     public override string Name => "Nitro Manga";
-    public override string[] IndexerUrls => new[] { "https://nitromanga.com/" };
+    public override string[] IndexerUrls => new[] { "https://nitromanga.com" };
+    public override int ChapterMode => 1;
 }
-

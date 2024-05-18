@@ -15,6 +15,6 @@ public class MangaManiacs : MadaraBase
     }
 
     public override string Name => "Manga Maniacs";
-    public override string[] IndexerUrls => new[] { "https://mangamaniacs.org/" };
+    public override string[] IndexerUrls => new[] { "https://mangamaniacs.org" };
+    public override int ChapterMode => 1;
 }
-

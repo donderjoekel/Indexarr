@@ -15,6 +15,6 @@ public class ZandyNoFansub : MadaraBase
     }
 
     public override string Name => "Zandy no Fansub";
-    public override string[] IndexerUrls => new[] { "https://zandynofansub.aishiteru.org/" };
+    public override string[] IndexerUrls => new[] { "https://zandynofansub.aishiteru.org" };
+    public override int ChapterMode => 1;
 }
-

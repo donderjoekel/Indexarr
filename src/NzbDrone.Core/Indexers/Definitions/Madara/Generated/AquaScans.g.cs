@@ -15,6 +15,6 @@ public class AquaScans : MadaraBase
     }
 
     public override string Name => "AQUA Scans";
-    public override string[] IndexerUrls => new[] { "https://aquascans.com/" };
+    public override string[] IndexerUrls => new[] { "https://aquascans.com" };
+    public override int ChapterMode => 1;
 }
-

@@ -15,6 +15,6 @@ public class MangaRyu : MadaraBase
     }
 
     public override string Name => "Manga Ryu";
-    public override string[] IndexerUrls => new[] { "https://mangaryu.com/" };
+    public override string[] IndexerUrls => new[] { "https://mangaryu.com" };
+    public override int ChapterMode => 1;
 }
-

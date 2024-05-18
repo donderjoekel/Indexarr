@@ -15,6 +15,6 @@ public class NovelMic : MadaraBase
     }
 
     public override string Name => "Novel Mic";
-    public override string[] IndexerUrls => new[] { "https://novelmic.com/" };
+    public override string[] IndexerUrls => new[] { "https://novelmic.com" };
+    public override int ChapterMode => 1;
 }
-

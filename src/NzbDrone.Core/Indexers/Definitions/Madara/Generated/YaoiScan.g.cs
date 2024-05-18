@@ -15,6 +15,6 @@ public class YaoiScan : MadaraBase
     }
 
     public override string Name => "Yaoi Scan";
-    public override string[] IndexerUrls => new[] { "https://yaoiscan.com/" };
+    public override string[] IndexerUrls => new[] { "https://yaoiscan.com" };
+    public override int ChapterMode => 1;
 }
-

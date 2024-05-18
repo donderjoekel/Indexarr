@@ -15,6 +15,6 @@ public class Manhuaga : MadaraBase
     }
 
     public override string Name => "Manhuaga";
-    public override string[] IndexerUrls => new[] { "https://manhuaga.com/" };
+    public override string[] IndexerUrls => new[] { "https://manhuaga.com" };
+    public override int ChapterMode => 1;
 }
-

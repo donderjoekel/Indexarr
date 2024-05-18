@@ -15,6 +15,6 @@ public class SumManga : MadaraBase
     }
 
     public override string Name => "Sum Manga";
-    public override string[] IndexerUrls => new[] { "https://summanga.com/" };
+    public override string[] IndexerUrls => new[] { "https://summanga.com" };
+    public override int ChapterMode => 1;
 }
-

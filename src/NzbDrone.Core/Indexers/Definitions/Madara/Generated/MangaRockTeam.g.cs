@@ -15,6 +15,6 @@ public class MangaRockTeam : MadaraBase
     }
 
     public override string Name => "Manga Rock Team";
-    public override string[] IndexerUrls => new[] { "https://mangarockteam.com/" };
+    public override string[] IndexerUrls => new[] { "https://mangarockteam.com" };
+    public override int ChapterMode => 1;
 }
-

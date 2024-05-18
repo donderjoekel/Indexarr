@@ -15,6 +15,6 @@ public class NightComic : MadaraBase
     }
 
     public override string Name => "Night Comic";
-    public override string[] IndexerUrls => new[] { "https://www.nightcomic.com/" };
+    public override string[] IndexerUrls => new[] { "https://www.nightcomic.com" };
+    public override int ChapterMode => 1;
 }
-

@@ -15,6 +15,6 @@ public class MangaKiss : MadaraBase
     }
 
     public override string Name => "Manga Kiss";
-    public override string[] IndexerUrls => new[] { "https://mangakiss.org/" };
+    public override string[] IndexerUrls => new[] { "https://mangakiss.org" };
+    public override int ChapterMode => 1;
 }
-

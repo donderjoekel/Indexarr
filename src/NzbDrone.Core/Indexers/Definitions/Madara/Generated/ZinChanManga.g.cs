@@ -15,6 +15,6 @@ public class ZinChanManga : MadaraBase
     }
 
     public override string Name => "Zin Chan Manga";
-    public override string[] IndexerUrls => new[] { "https://zinchanmanga.com/" };
+    public override string[] IndexerUrls => new[] { "https://zinchanmanga.com" };
+    public override int ChapterMode => 1;
 }
-

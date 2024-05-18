@@ -15,6 +15,6 @@ public class MangaTyrant : MadaraBase
     }
 
     public override string Name => "Manga Tyrant";
-    public override string[] IndexerUrls => new[] { "https://mangatyrant.com/" };
+    public override string[] IndexerUrls => new[] { "https://mangatyrant.com" };
+    public override int ChapterMode => 1;
 }
-

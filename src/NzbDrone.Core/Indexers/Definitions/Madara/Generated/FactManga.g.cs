@@ -15,6 +15,6 @@ public class FactManga : MadaraBase
     }
 
     public override string Name => "Fact Manga";
-    public override string[] IndexerUrls => new[] { "https://factmanga.com/" };
+    public override string[] IndexerUrls => new[] { "https://factmanga.com" };
+    public override int ChapterMode => 1;
 }
-

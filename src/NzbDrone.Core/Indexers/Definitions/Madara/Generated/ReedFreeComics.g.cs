@@ -15,6 +15,6 @@ public class ReedFreeComics : MadaraBase
     }
 
     public override string Name => "Read Free Comics";
-    public override string[] IndexerUrls => new[] { "https://readfreecomics.com/" };
+    public override string[] IndexerUrls => new[] { "https://readfreecomics.com" };
+    public override int ChapterMode => 1;
 }
-

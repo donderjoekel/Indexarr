@@ -15,6 +15,6 @@ public class FreeMangaTop : MadaraBase
     }
 
     public override string Name => "Free Manga Top";
-    public override string[] IndexerUrls => new[] { "https://freemangatop.com/" };
+    public override string[] IndexerUrls => new[] { "https://freemangatop.com" };
+    public override int ChapterMode => 1;
 }
-

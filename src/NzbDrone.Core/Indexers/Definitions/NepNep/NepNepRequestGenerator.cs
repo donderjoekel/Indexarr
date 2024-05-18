@@ -1,12 +1,10 @@
-﻿using System.Collections.Specialized;
-using NzbDrone.Common.Http;
-using NzbDrone.Core.Indexers.Definitions.Mangarr;
+﻿using NzbDrone.Common.Http;
+using NzbDrone.Core.Indexers.Definitions.Indexarr;
 using NzbDrone.Core.Indexers.Settings;
-using NzbDrone.Core.Parser;
 
 namespace NzbDrone.Core.Indexers.Definitions.NepNep;
 
-public class NepNepRequestGenerator : MangarrRequestGenerator
+public class NepNepRequestGenerator : IndexarrRequestGenerator
 {
     private readonly NoAuthTorrentBaseSettings _settings;
 
@@ -15,18 +13,13 @@ public class NepNepRequestGenerator : MangarrRequestGenerator
         _settings = settings;
     }
 
-    protected override IndexerRequest GetRssRequest()
+    protected override IndexerRequest GetFullIndexRequest()
     {
-        return new IndexerRequest(_settings.BaseUrl, HttpAccept.Html);
+        return new IndexarrRequest(_settings.BaseUrl + "search/", HttpAccept.Html, false);
     }
 
-    protected override IndexerRequest GetSearchRequest(string query)
+    protected override IndexerRequest GetTestIndexRequest()
     {
-        var parameters = new NameValueCollection()
-        {
-            { "name", query }
-        };
-
-        return new IndexerRequest(_settings.BaseUrl + "search/?" + parameters.GetQueryString(), HttpAccept.Html);
+        return new IndexarrRequest(_settings.BaseUrl + "search/", HttpAccept.Html, true);
     }
 }

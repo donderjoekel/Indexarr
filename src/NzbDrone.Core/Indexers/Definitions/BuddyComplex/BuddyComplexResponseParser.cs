@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using AngleSharp.Dom;
-using AngleSharp.Html.Dom;
-using AngleSharp.Html.Parser;
-using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
-using NzbDrone.Core.Indexers.Definitions.Mangarr;
+using NzbDrone.Core.Indexers.Definitions.Indexarr;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.ThingiProvider;
 
 namespace NzbDrone.Core.Indexers.Definitions.BuddyComplex;
 
-public class BuddyComplexResponseParser : MangarrResponseParser
+public class BuddyComplexResponseParser : IndexarrResponseParser
 {
     private readonly IIndexerHttpClient _httpClient;
 
@@ -22,7 +17,7 @@ public class BuddyComplexResponseParser : MangarrResponseParser
         _httpClient = httpClient;
     }
 
-    protected override IList<TorrentInfo> ParseRssResponse(HttpResponse response)
+    /*protected override IList<TorrentInfo> ParseRssResponse(HttpResponse response)
     {
         var releases = new List<TorrentInfo>();
         var document = new HtmlParser().ParseDocument(response.Content);
@@ -101,5 +96,15 @@ public class BuddyComplexResponseParser : MangarrResponseParser
     {
         var match = Regex.Match(content, @"chapImages\s=\s'(.+)(?=')");
         return match.Groups[1].Value.Split(',');
+    }*/
+
+    protected override IList<MangaInfo> ParseFullIndexResponse(HttpResponse response)
+    {
+        throw new NotImplementedException();
+    }
+
+    protected override IList<MangaInfo> ParseTestIndexResponse(HttpResponse response)
+    {
+        throw new NotImplementedException();
     }
 }
