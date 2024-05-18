@@ -17,9 +17,9 @@
     <ProwlarrOutputType Condition="$(MSBuildProjectName.Contains('.Test'))">Test</ProwlarrOutputType>
     <ProwlarrOutputType Condition="'$(MSBuildProjectName)'=='ServiceInstall'">Exe</ProwlarrOutputType>
     <ProwlarrOutputType Condition="'$(MSBuildProjectName)'=='ServiceUninstall'">Exe</ProwlarrOutputType>
-    <ProwlarrOutputType Condition="'$(MSBuildProjectName)'=='Prowlarr'">Exe</ProwlarrOutputType>
-    <ProwlarrOutputType Condition="'$(MSBuildProjectName)'=='Prowlarr.Console'">Exe</ProwlarrOutputType>
-    <ProwlarrOutputType Condition="'$(MSBuildProjectName)'=='Prowlarr.Update'">Update</ProwlarrOutputType>
+    <ProwlarrOutputType Condition="'$(MSBuildProjectName)'=='Indexarr'">Exe</ProwlarrOutputType>
+    <ProwlarrOutputType Condition="'$(MSBuildProjectName)'=='Indexarr.Console'">Exe</ProwlarrOutputType>
+    <ProwlarrOutputType Condition="'$(MSBuildProjectName)'=='Indexarr.Update'">Update</ProwlarrOutputType>
 
     <!-- Specifies whether it's one of our own libraries -->
     <ProwlarrProject>false</ProwlarrProject>
