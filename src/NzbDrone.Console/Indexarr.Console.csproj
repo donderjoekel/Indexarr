@@ -6,7 +6,7 @@
     <ApplicationIcon>..\NzbDrone.Host\Prowlarr.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="!$(RuntimeIdentifier.StartsWith('win'))">
-    <AssemblyName>Prowlarr</AssemblyName>
+    <AssemblyName>Indexarr</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\NzbDrone.Host\Indexarr.Host.csproj" />
