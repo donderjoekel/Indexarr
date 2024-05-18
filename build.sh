@@ -64,17 +64,10 @@ Build()
     rm -rf $testPackageFolder
 
     slnFile=src/Indexarr.sln
-    platform=Posix
 
     dotnet clean $slnFile -c Debug
     dotnet clean $slnFile -c Release
-
-    if [[ -z "$RID" || -z "$FRAMEWORK" ]];
-    then
-        dotnet msbuild -restore $slnFile -p:Configuration=Release -p:Platform=$platform -t:PublishAllRids
-    else
-        dotnet msbuild -restore $slnFile -p:Configuration=Release -p:Platform=$platform -p:RuntimeIdentifiers=$RID -t:PublishAllRids
-    fi
+    dotnet msbuild -restore $slnFile -p:Configuration=Release -p:Platform=Posix -p:RuntimeIdentifiers=linux-x64 -t:PublishAllRids
 
     ProgressEnd 'Build'
 }
