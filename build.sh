@@ -64,12 +64,7 @@ Build()
     rm -rf $testPackageFolder
 
     slnFile=src/Indexarr.sln
-
-    if [ $os = "windows" ]; then
-        platform=Windows
-    else
-        platform=Posix
-    fi
+    platform=Posix
 
     dotnet clean $slnFile -c Debug
     dotnet clean $slnFile -c Release
@@ -144,80 +139,6 @@ PackageLinux()
     fi
 
     ProgressEnd "Creating $runtime Package for $framework"
-}
-
-# PackageMacOS()
-# {
-#     local framework="$1"
-#     local runtime="$2"
-
-#     ProgressStart "Creating $runtime Package for $framework"
-
-#     local folder=$artifactsFolder/$runtime/$framework/Indexarr
-
-#     PackageFiles "$folder" "$framework" "$runtime"
-
-#     echo "Removing Service helpers"
-#     rm -f $folder/ServiceUninstall.*
-#     rm -f $folder/ServiceInstall.*
-
-#     echo "Removing Indexarr.Windows"
-#     rm $folder/Indexarr.Windows.*
-
-#     echo "Adding Indexarr.Mono to UpdatePackage"
-#     cp $folder/Indexarr.Mono.* $folder/Indexarr.Update
-#     if [ "$framework" = "$framework" ]; then
-#         cp $folder/Mono.Posix.NETStandard.* $folder/Indexarr.Update
-#         cp $folder/libMonoPosixHelper.* $folder/Indexarr.Update
-#     fi
-
-#     ProgressEnd "Creating $runtime Package for $framework"
-# }
-
-# PackageMacOSApp()
-# {
-#     local framework="$1"
-#     local runtime="$2"
-
-#     ProgressStart "Creating $runtime App Package for $framework"
-
-#     local folder=$artifactsFolder/$runtime-app/$framework
-
-#     rm -rf $folder
-#     mkdir -p $folder
-#     cp -r distribution/macOS/Indexarr.app $folder
-#     mkdir -p $folder/Indexarr.app/Contents/MacOS
-
-#     echo "Copying Binaries"
-#     cp -r $artifactsFolder/$runtime/$framework/Indexarr/* $folder/Indexarr.app/Contents/MacOS
-
-#     echo "Removing Update Folder"
-#     rm -r $folder/Indexarr.app/Contents/MacOS/Indexarr.Update
-
-#     ProgressEnd "Creating $runtime App Package for $framework"
-# }
-
-PackageWindows()
-{
-    local framework="$1"
-    local runtime="$2"
-
-    ProgressStart "Creating Windows Package for $framework"
-
-    local folder=$artifactsFolder/$runtime/$framework/Indexarr
-
-    PackageFiles "$folder" "$framework" "$runtime"
-    cp -r $outputFolder/$framework-windows/$runtime/publish/* $folder
-
-    echo "Removing Indexarr.Mono"
-    rm -f $folder/Indexarr.Mono.*
-    rm -f $folder/Mono.Posix.NETStandard.*
-    rm -f $folder/libMonoPosixHelper.*
-
-    echo "Adding Indexarr.Windows to UpdatePackage"
-    cp $folder/Indexarr.Windows.* $folder/Indexarr.Update
-
-    ProgressEnd "Creating Windows Package for $framework"
 }
 
 Package()
@@ -395,14 +316,7 @@ then
 
     if [[ -z "$RID" || -z "$FRAMEWORK" ]];
     then
-        PackageTests "$framework" "win-x64"
-        PackageTests "$framework" "win-x86"
         PackageTests "$framework" "linux-x64"
-        PackageTests "$framework" "linux-musl-x64"
-        if [ "$ENABLE_EXTRA_PLATFORMS" = "YES" ];
-        then
-            PackageTests "$framework" "freebsd-x64"
-        fi
     else
         PackageTests "$FRAMEWORK" "$RID"
     fi
@@ -429,17 +343,7 @@ then
 
     if [[ -z "$RID" || -z "$FRAMEWORK" ]];
     then
-        Package "$framework" "win-x64"
-        Package "$framework" "win-x86"
         Package "$framework" "linux-x64"
-        Package "$framework" "linux-musl-x64"
-        Package "$framework" "linux-arm64"
-        Package "$framework" "linux-musl-arm64"
-        Package "$framework" "linux-arm"
-        if [ "$ENABLE_EXTRA_PLATFORMS" = "YES" ];
-        then
-            Package "$framework" "freebsd-x64"
-        fi
     else
         Package "$FRAMEWORK" "$RID"
     fi
