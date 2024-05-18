@@ -13,6 +13,7 @@ using NzbDrone.Core.Housekeeping;
 using NzbDrone.Core.IndexerVersions;
 using NzbDrone.Core.Indexing.Commands;
 using NzbDrone.Core.Lifecycle;
+using NzbDrone.Core.Matching.Commands;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Update.Commands;
@@ -117,6 +118,12 @@ namespace NzbDrone.Core.Jobs
                         Interval = 12 * 60,
                         TypeName = typeof(FullIndexCommand).FullName
                     },
+
+                    new ScheduledTask()
+                    {
+                        Interval = 4 * 60,
+                        TypeName = typeof(DirectMatchCommand).FullName
+                    }
                 };
 
             var currentTasks = _scheduledTaskRepository.All().ToList();
