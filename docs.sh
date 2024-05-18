@@ -29,7 +29,9 @@ dotnet msbuild -restore $slnFile -p:Configuration=Debug -p:Platform=$platform -p
 dotnet new tool-manifest
 dotnet tool install --version 6.5.0 Swashbuckle.AspNetCore.Cli
 
-dotnet tool run swagger tofile --output ./src/Indexarr.Api.V1/openapi.json "$outputFolder/net6.0/$RUNTIME/indexarr.console.dll" v1 &
+ls -la $outputFolder/net6.0
+
+dotnet tool run swagger tofile --output ./src/Indexarr.Api.V1/openapi.json "$outputFolder/net6.0/$RUNTIME/Indexarr.Console.dll" v1 &
 
 sleep 30
 
