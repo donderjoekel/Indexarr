@@ -65,9 +65,21 @@ Build()
 
     slnFile=src/Indexarr.sln
 
+    if [ $os = "windows" ]; then
+        platform=Windows
+    else
+        platform=Posix
+    fi
+
     dotnet clean $slnFile -c Debug
     dotnet clean $slnFile -c Release
-    dotnet msbuild -restore $slnFile -p:Configuration=Release -p:Platform=Posix -p:RuntimeIdentifiers=linux-musl-x64;linux-musl-arm64 -t:PublishAllRids
+
+    if [[ -z "$RID" || -z "$FRAMEWORK" ]];
+    then
+        dotnet msbuild -restore $slnFile -p:Configuration=Release -p:Platform=$platform -t:PublishAllRids
+    else
+        dotnet msbuild -restore $slnFile -p:Configuration=Release -p:Platform=$platform -p:RuntimeIdentifiers=$RID -t:PublishAllRids
+    fi
 
     ProgressEnd 'Build'
 }
@@ -310,6 +322,11 @@ then
     if [[ -z "$RID" || -z "$FRAMEWORK" ]];
     then
         PackageTests "$framework" "linux-x64"
+        PackageTests "$framework" "linux-musl-x64"
+        if [ "$ENABLE_EXTRA_PLATFORMS" = "YES" ];
+        then
+            PackageTests "$framework" "freebsd-x64"
+        fi
     else
         PackageTests "$FRAMEWORK" "$RID"
     fi
@@ -337,6 +354,14 @@ then
     if [[ -z "$RID" || -z "$FRAMEWORK" ]];
     then
         Package "$framework" "linux-x64"
+        Package "$framework" "linux-musl-x64"
+        Package "$framework" "linux-arm64"
+        Package "$framework" "linux-musl-arm64"
+        Package "$framework" "linux-arm"
+        if [ "$ENABLE_EXTRA_PLATFORMS" = "YES" ];
+        then
+            Package "$framework" "freebsd-x64"
+        fi
     else
         Package "$FRAMEWORK" "$RID"
     fi
