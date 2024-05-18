@@ -67,7 +67,7 @@ Build()
 
     dotnet clean $slnFile -c Debug
     dotnet clean $slnFile -c Release
-    dotnet msbuild -restore $slnFile -p:Configuration=Release -p:Platform=Posix -p:RuntimeIdentifiers=linux-x64 -t:PublishAllRids
+    dotnet msbuild -restore $slnFile -p:Configuration=Release -p:Platform=Posix -p:RuntimeIdentifiers=linux-musl-x64;linux-musl-arm64 -t:PublishAllRids
 
     ProgressEnd 'Build'
 }
