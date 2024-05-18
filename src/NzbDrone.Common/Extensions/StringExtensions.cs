@@ -185,6 +185,16 @@ namespace NzbDrone.Common.Extensions
             return encoding.GetString(WebUtility.UrlEncodeToBytes(bytes, 0, bytes.Length));
         }
 
+        public static string HtmlDecode(this string searchString)
+        {
+            if (string.IsNullOrEmpty(searchString))
+            {
+                return string.Empty;
+            }
+
+            return WebUtility.HtmlDecode(searchString);
+        }
+
         public static string UrlDecode(this string searchString, Encoding encoding)
         {
             if (string.IsNullOrEmpty(searchString))
@@ -269,6 +279,15 @@ namespace NzbDrone.Common.Extensions
             }
 
             return true;
+        }
+
+        public static string ReplaceQuotations(this string input)
+        {
+            return input
+                .Replace("’", "'")
+                .Replace("‘", "'")
+                .Replace("“", "\"")
+                .Replace("”", "\"");
         }
     }
 }
