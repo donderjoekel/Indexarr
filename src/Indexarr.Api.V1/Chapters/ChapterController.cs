@@ -50,6 +50,10 @@ public class ChapterController : RestController<ChapterResource>
             resources.AddRange(chapters.Select(c => c.ToResource()));
         }
 
-        return resources;
+        return resources.OrderBy(x => x.Volume).ThenBy(x => x.Number).Select((value, i) =>
+        {
+            value.AbsoluteNumber = i + 1;
+            return value;
+        }).ToList();
     }
 }

@@ -6,6 +6,7 @@ namespace Prowlarr.Api.V1.Chapters;
 
 public class ChapterResource : RestResource
 {
+    public int AbsoluteNumber { get; set; }
     public int Volume { get; set; }
     public decimal Number { get; set; }
     public DateTime Date { get; set; }
