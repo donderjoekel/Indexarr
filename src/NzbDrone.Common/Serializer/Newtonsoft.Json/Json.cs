@@ -26,10 +26,13 @@ namespace NzbDrone.Common.Serializer
                 NullValueHandling = NullValueHandling.Ignore,
                 Formatting = Formatting.Indented,
                 DefaultValueHandling = DefaultValueHandling.Include,
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
+                ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new SnakeCaseNamingStrategy()
+                }
             };
 
-            serializerSettings.Converters.Add(new StringEnumConverter { NamingStrategy = new CamelCaseNamingStrategy() });
+            serializerSettings.Converters.Add(new StringEnumConverter { NamingStrategy = new SnakeCaseNamingStrategy() });
             serializerSettings.Converters.Add(new VersionConverter());
             serializerSettings.Converters.Add(new HttpUriConverter());
 
