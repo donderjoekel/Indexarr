@@ -15,10 +15,10 @@ inputs:
     description: 'Git branch used for this build'
     required: true
   major_version:
-    description: 'Prowlarr major version'
+    description: 'Indexarr major version'
     required: true
   version:
-    description: 'Prowlarr version'
+    description: 'Indexarr version'
     required: true
 
 runs:
@@ -41,8 +41,8 @@ runs:
       run: |
         echo "FRAMEWORK=${{ inputs.framework }}" >> "$GITHUB_ENV"
         echo "BRANCH=${{ inputs.branch }}" >> "$GITHUB_ENV"
-        echo "PROWLARR_MAJOR_VERSION=${{ inputs.major_version }}" >> "$GITHUB_ENV"
-        echo "PROWLARR_VERSION=${{ inputs.version }}" >> "$GITHUB_ENV"
+        echo "INDEXARR_MAJOR_VERSION=${{ inputs.major_version }}" >> "$GITHUB_ENV"
+        echo "INDEXARR_VERSION=${{ inputs.version }}" >> "$GITHUB_ENV"
 
     - name: Create Packages
       shell: bash

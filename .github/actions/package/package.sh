@@ -12,8 +12,8 @@ for runtime in _output/*
 do
   name="${runtime##*/}"
   folderName="$runtime/$framework"
-  prowlarrFolder="$folderName/Prowlarr"
-  archiveName="Prowlarr.$BRANCH.$PROWLARR_VERSION.$name"
+  indexarrFolder="$folderName/Indexarr"
+  archiveName="Indexarr.$BRANCH.$INDEXARR_VERSION.$name"
 
   if [[ "$name" == 'UI' ]]; then
     continue
@@ -22,12 +22,12 @@ do
   echo "Creating package for $name"
 
   echo "Copying UI"
-  cp -r $uiFolder $prowlarrFolder
+  cp -r $uiFolder $indexarrFolder
   
   echo "Setting permissions"
-  find $prowlarrFolder -name "ffprobe" -exec chmod a+x {} \;
-  find $prowlarrFolder -name "Prowlarr" -exec chmod a+x {} \;
-  find $prowlarrFolder -name "Prowlarr.Update" -exec chmod a+x {} \;
+  find $indexarrFolder -name "ffprobe" -exec chmod a+x {} \;
+  find $indexarrFolder -name "Indexarr" -exec chmod a+x {} \;
+  find $indexarrFolder -name "Indexarr.Update" -exec chmod a+x {} \;
   
   # if [[ "$name" == *"osx"* ]]; then
   #   echo "Creating macOS package"
@@ -38,30 +38,30 @@ do
   #   rm -rf $packageFolder
   #   mkdir $packageFolder
       
-  #   cp -r distribution/macOS/Prowlarr.app $packageFolder
-  #   mkdir -p $packageFolder/Prowlarr.app/Contents/MacOS
+  #   cp -r distribution/macOS/Indexarr.app $packageFolder
+  #   mkdir -p $packageFolder/Indexarr.app/Contents/MacOS
       
   #   echo "Copying Binaries"
-  #   cp -r $prowlarrFolder/* $packageFolder/Prowlarr.app/Contents/MacOS
+  #   cp -r $indexarrFolder/* $packageFolder/Indexarr.app/Contents/MacOS
       
   #   echo "Removing Update Folder"
-  #   rm -r $packageFolder/Prowlarr.app/Contents/MacOS/Prowlarr.Update
+  #   rm -r $packageFolder/Indexarr.app/Contents/MacOS/Indexarr.Update
               
   #   echo "Packaging macOS app Artifact"
-  #   (cd $packageFolder; zip -rq "../../$artifactsFolder/$archiveName-app.zip" ./Prowlarr.app)
+  #   (cd $packageFolder; zip -rq "../../$artifactsFolder/$archiveName-app.zip" ./Indexarr.app)
   # fi
 
   echo "Packaging Artifact"
   if [[ "$name" == *"linux"* ]] || [[ "$name" == *"osx"* ]] || [[ "$name" == *"freebsd"* ]]; then
-    tar -zcf "./$artifactsFolder/$archiveName.tar.gz" -C $folderName Prowlarr
+    tar -zcf "./$artifactsFolder/$archiveName.tar.gz" -C $folderName Indexarr
 	fi
     
   if [[ "$name" == *"win"* ]]; then
     if [ "$RUNNER_OS" = "Windows" ]
       then
-        (cd $folderName; 7z a -tzip "../../../$artifactsFolder/$archiveName.zip" ./Prowlarr)
+        (cd $folderName; 7z a -tzip "../../../$artifactsFolder/$archiveName.zip" ./Indexarr)
       else
-      (cd $folderName; zip -rq "../../../$artifactsFolder/$archiveName.zip" ./Prowlarr)
+      (cd $folderName; zip -rq "../../../$artifactsFolder/$archiveName.zip" ./Indexarr)
     fi
 	fi
 done
