@@ -20,9 +20,9 @@ ProgressEnd()
 
 UpdateVersionNumber()
 {
-    if [ "$PROWLARR_VERSION" != "" ]; then
-        echo "Updating version info to: $PROWLARR_VERSION"
-        sed -i'' -e "s/<AssemblyVersion>[0-9.*]\+<\/AssemblyVersion>/<AssemblyVersion>$PROWLARR_VERSION<\/AssemblyVersion>/g" src/Directory.Build.props
+    if [ "$INDEXARR_VERSION" != "" ]; then
+        echo "Updating version info to: $INDEXARR_VERSION"
+        sed -i'' -e "s/<AssemblyVersion>[0-9.*]\+<\/AssemblyVersion>/<AssemblyVersion>$INDEXARR_VERSION<\/AssemblyVersion>/g" src/Directory.Build.props
         sed -i'' -e "s/<AssemblyConfiguration>[\$()A-Za-z-]\+<\/AssemblyConfiguration>/<AssemblyConfiguration>${BRANCH}<\/AssemblyConfiguration>/g" src/Directory.Build.props
     fi
 }
@@ -63,7 +63,7 @@ Build()
     rm -rf $outputFolder
     rm -rf $testPackageFolder
 
-    slnFile=src/Prowlarr.sln
+    slnFile=src/Indexarr.sln
 
     if [ $os = "windows" ]; then
         platform=Windows
@@ -107,7 +107,7 @@ PackageFiles()
     rm -rf $folder
     mkdir -p $folder
     cp -r $outputFolder/$framework/$runtime/publish/* $folder
-    cp -r $outputFolder/Prowlarr.Update/$framework/$runtime/publish $folder/Prowlarr.Update
+    cp -r $outputFolder/Indexarr.Update/$framework/$runtime/publish $folder/Indexarr.Update
     
     if [ "$FRONTEND" = "YES" ];
     then
@@ -125,7 +125,7 @@ PackageLinux()
 
     ProgressStart "Creating $runtime Package for $framework"
 
-    local folder=$artifactsFolder/$runtime/$framework/Prowlarr
+    local folder=$artifactsFolder/$runtime/$framework/Indexarr
 
     PackageFiles "$folder" "$framework" "$runtime"
 
@@ -133,14 +133,14 @@ PackageLinux()
     rm -f $folder/ServiceUninstall.*
     rm -f $folder/ServiceInstall.*
 
-    echo "Removing Prowlarr.Windows"
-    rm $folder/Prowlarr.Windows.*
+    echo "Removing Indexarr.Windows"
+    rm $folder/Indexarr.Windows.*
 
-    echo "Adding Prowlarr.Mono to UpdatePackage"
-    cp $folder/Prowlarr.Mono.* $folder/Prowlarr.Update
+    echo "Adding Indexarr.Mono to UpdatePackage"
+    cp $folder/Indexarr.Mono.* $folder/Indexarr.Update
     if [ "$framework" = "$framework" ]; then
-        cp $folder/Mono.Posix.NETStandard.* $folder/Prowlarr.Update
-        cp $folder/libMonoPosixHelper.* $folder/Prowlarr.Update
+        cp $folder/Mono.Posix.NETStandard.* $folder/Indexarr.Update
+        cp $folder/libMonoPosixHelper.* $folder/Indexarr.Update
     fi
 
     ProgressEnd "Creating $runtime Package for $framework"
@@ -153,7 +153,7 @@ PackageLinux()
 
 #     ProgressStart "Creating $runtime Package for $framework"
 
-#     local folder=$artifactsFolder/$runtime/$framework/Prowlarr
+#     local folder=$artifactsFolder/$runtime/$framework/Indexarr
 
 #     PackageFiles "$folder" "$framework" "$runtime"
 
@@ -161,14 +161,14 @@ PackageLinux()
 #     rm -f $folder/ServiceUninstall.*
 #     rm -f $folder/ServiceInstall.*
 
-#     echo "Removing Prowlarr.Windows"
-#     rm $folder/Prowlarr.Windows.*
+#     echo "Removing Indexarr.Windows"
+#     rm $folder/Indexarr.Windows.*
 
-#     echo "Adding Prowlarr.Mono to UpdatePackage"
-#     cp $folder/Prowlarr.Mono.* $folder/Prowlarr.Update
+#     echo "Adding Indexarr.Mono to UpdatePackage"
+#     cp $folder/Indexarr.Mono.* $folder/Indexarr.Update
 #     if [ "$framework" = "$framework" ]; then
-#         cp $folder/Mono.Posix.NETStandard.* $folder/Prowlarr.Update
-#         cp $folder/libMonoPosixHelper.* $folder/Prowlarr.Update
+#         cp $folder/Mono.Posix.NETStandard.* $folder/Indexarr.Update
+#         cp $folder/libMonoPosixHelper.* $folder/Indexarr.Update
 #     fi
 
 #     ProgressEnd "Creating $runtime Package for $framework"
@@ -185,14 +185,14 @@ PackageLinux()
 
 #     rm -rf $folder
 #     mkdir -p $folder
-#     cp -r distribution/macOS/Prowlarr.app $folder
-#     mkdir -p $folder/Prowlarr.app/Contents/MacOS
+#     cp -r distribution/macOS/Indexarr.app $folder
+#     mkdir -p $folder/Indexarr.app/Contents/MacOS
 
 #     echo "Copying Binaries"
-#     cp -r $artifactsFolder/$runtime/$framework/Prowlarr/* $folder/Prowlarr.app/Contents/MacOS
+#     cp -r $artifactsFolder/$runtime/$framework/Indexarr/* $folder/Indexarr.app/Contents/MacOS
 
 #     echo "Removing Update Folder"
-#     rm -r $folder/Prowlarr.app/Contents/MacOS/Prowlarr.Update
+#     rm -r $folder/Indexarr.app/Contents/MacOS/Indexarr.Update
 
 #     ProgressEnd "Creating $runtime App Package for $framework"
 # }
@@ -204,18 +204,18 @@ PackageWindows()
 
     ProgressStart "Creating Windows Package for $framework"
 
-    local folder=$artifactsFolder/$runtime/$framework/Prowlarr
+    local folder=$artifactsFolder/$runtime/$framework/Indexarr
 
     PackageFiles "$folder" "$framework" "$runtime"
     cp -r $outputFolder/$framework-windows/$runtime/publish/* $folder
 
-    echo "Removing Prowlarr.Mono"
-    rm -f $folder/Prowlarr.Mono.*
+    echo "Removing Indexarr.Mono"
+    rm -f $folder/Indexarr.Mono.*
     rm -f $folder/Mono.Posix.NETStandard.*
     rm -f $folder/libMonoPosixHelper.*
 
-    echo "Adding Prowlarr.Windows to UpdatePackage"
-    cp $folder/Prowlarr.Windows.* $folder/Prowlarr.Update
+    echo "Adding Indexarr.Windows to UpdatePackage"
+    cp $folder/Indexarr.Windows.* $folder/Indexarr.Update
 
     ProgressEnd "Creating Windows Package for $framework"
 }
@@ -279,7 +279,7 @@ UploadArtifacts()
     do
         local runtime=$(basename "$dir")
 
-        echo "##teamcity[publishArtifacts '$artifactsFolder/$runtime/$framework/** => Prowlarr.$BRANCH.$PROWLARR_VERSION.$runtime.zip']"
+        echo "##teamcity[publishArtifacts '$artifactsFolder/$runtime/$framework/** => Indexarr.$BRANCH.$INDEXARR_VERSION.$runtime.zip']"
     done
 
     # Debian Package / Windows installer / macOS app

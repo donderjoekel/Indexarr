@@ -12,11 +12,11 @@ on:
         type: string
         required: true
       major_version:
-        description: 'Prowlarr major version'
+        description: 'Indexarr major version'
         type: string
         required: true
       version:
-        description: 'Prowlarr version'
+        description: 'Indexarr version'
         type: string
         required: true
     # secrets:
@@ -97,7 +97,7 @@ jobs:
     - name: Create release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: _artifacts/Prowlarr.*
+        artifacts: _artifacts/Indexarr.*
         commit: ${{ github.sha }}
         generateReleaseNotes: false
         body: ${{ steps.generate-release-notes.outputs.result }}

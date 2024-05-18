@@ -7,13 +7,13 @@ on:
       - develop
       - main
     paths-ignore:
-      - 'src/Prowlarr.Api.*/openapi.json'
+      - 'src/Indexarr.Api.*/openapi.json'
   pull_request:
     branches:
       - develop
     paths-ignore:
       - 'src/NzbDrone.Core/Localization/Core/**'
-      - 'src/Prowlarr.Api.*/openapi.json'
+      - 'src/Indexarr.Api.*/openapi.json'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -22,7 +22,7 @@ concurrency:
 env:
   FRAMEWORK: net6.0
   RAW_BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
-  PROWLARR_MAJOR_VERSION: 0
+  INDEXARR_MAJOR_VERSION: 0
   VERSION: 0.1.0
 
 jobs:
@@ -44,16 +44,16 @@ jobs:
       shell: bash
       run: |
         # Add 800 to the build number because GitHub won't let us pick an arbitrary starting point
-        PROWLARR_VERSION="${{ env.VERSION }}.$((${{ github.run_number }}+800))"
+        INDEXARR_VERSION="${{ env.VERSION }}.$((${{ github.run_number }}+800))"
         DOTNET_VERSION=$(jq -r '.sdk.version' global.json)
 
         echo "SDK_PATH=${{ env.DOTNET_ROOT }}/sdk/${DOTNET_VERSION}" >> "$GITHUB_ENV"
-        echo "PROWLARR_VERSION=$PROWLARR_VERSION" >> "$GITHUB_ENV"
+        echo "INDEXARR_VERSION=$INDEXARR_VERSION" >> "$GITHUB_ENV"
         echo "BRANCH=${RAW_BRANCH_NAME/\//-}" >> "$GITHUB_ENV"
 
         echo "framework=${{ env.FRAMEWORK }}" >> "$GITHUB_OUTPUT"
-        echo "major_version=${{ env.PROWLARR_MAJOR_VERSION }}" >> "$GITHUB_OUTPUT"
-        echo "version=$PROWLARR_VERSION" >> "$GITHUB_OUTPUT"
+        echo "major_version=${{ env.INDEXARR_MAJOR_VERSION }}" >> "$GITHUB_OUTPUT"
+        echo "version=$INDEXARR_VERSION" >> "$GITHUB_OUTPUT"
 
     - name: Enable Extra Platforms In SDK
       shell: bash
@@ -159,7 +159,7 @@ jobs:
   #     with:
   #       os: ${{ matrix.os }}
   #       artifact: ${{ matrix.artifact }}
-  #       pattern: Prowlarr.*.Test.dll
+  #       pattern: Indexarr.*.Test.dll
   #       filter: ${{ matrix.filter }}
 
   # unit_test_postgres:
@@ -174,7 +174,7 @@ jobs:
   #     with:
   #       os: ubuntu-latest
   #       artifact: tests-linux-x64
-  #       pattern: Prowlarr.*.Test.dll
+  #       pattern: Indexarr.*.Test.dll
   #       filter: TestCategory!=ManualTest&TestCategory!=WINDOWS&TestCategory!=IntegrationTest&TestCategory!=AutomationTest
   #       use_postgres: true
 
@@ -189,17 +189,17 @@ jobs:
   #           artifact: tests-linux-x64
   #           filter: TestCategory!=ManualTest&TestCategory!=WINDOWS&TestCategory=IntegrationTest
   #           binary_artifact: build_linux
-  #           binary_path: linux-x64/${{ needs.backend.outputs.framework }}/Prowlarr
+  #           binary_path: linux-x64/${{ needs.backend.outputs.framework }}/Indexarr
   #         - os: macos-latest
   #           artifact: tests-osx-x64
   #           filter: TestCategory!=ManualTest&TestCategory!=WINDOWS&TestCategory=IntegrationTest
   #           binary_artifact: build_macos
-  #           binary_path: osx-x64/${{ needs.backend.outputs.framework }}/Prowlarr
+  #           binary_path: osx-x64/${{ needs.backend.outputs.framework }}/Indexarr
   #         - os: windows-latest
   #           artifact: tests-win-x64
   #           filter: TestCategory!=ManualTest&TestCategory!=LINUX&TestCategory=IntegrationTest
   #           binary_artifact: build_windows
-  #           binary_path: win-x64/${{ needs.backend.outputs.framework }}/Prowlarr
+  #           binary_path: win-x64/${{ needs.backend.outputs.framework }}/Indexarr
   #   runs-on: ${{ matrix.os }}
   #   steps:
   #   - name: Check out
@@ -210,7 +210,7 @@ jobs:
   #     with:
   #       os: ${{ matrix.os }}
   #       artifact: ${{ matrix.artifact }}
-  #       pattern: Prowlarr.*.Test.dll
+  #       pattern: Indexarr.*.Test.dll
   #       filter: ${{ matrix.filter }}
   #       integration_tests: true
   #       binary_artifact: ${{ matrix.binary_artifact }}
