@@ -1,11 +1,11 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Prowlarr",
-    "description": "Prowlarr API docs",
+    "title": "Indexarr",
+    "description": "Indexarr API docs",
     "license": {
       "name": "GPL-3.0",
-      "url": "https://github.com/Prowlarr/Prowlarr/blob/develop/LICENSE"
+      "url": "https://github.com/Indexarr/Indexarr/blob/develop/LICENSE"
     },
     "version": "1.0.0"
   },
@@ -666,6 +666,68 @@
         }
       }
     },
+    "/api/v1/chapter/{id}": {
+      "get": {
+        "tags": [
+          "Chapter"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChapterResource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/chapter/mangaupdates": {
+      "get": {
+        "tags": [
+          "Chapter"
+        ],
+        "parameters": [
+          {
+            "name": "mangaUpdatesId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChapterResource"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/command/{id}": {
       "get": {
         "tags": [
@@ -981,302 +1043,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/api/v1/downloadclient/{id}": {
-      "get": {
-        "tags": [
-          "DownloadClient"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DownloadClientResource"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "DownloadClient"
-        ],
-        "parameters": [
-          {
-            "name": "forceSave",
-            "in": "query",
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DownloadClientResource"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DownloadClientResource"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "DownloadClient"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/v1/downloadclient": {
-      "get": {
-        "tags": [
-          "DownloadClient"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DownloadClientResource"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "DownloadClient"
-        ],
-        "parameters": [
-          {
-            "name": "forceSave",
-            "in": "query",
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DownloadClientResource"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DownloadClientResource"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/downloadclient/bulk": {
-      "put": {
-        "tags": [
-          "DownloadClient"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DownloadClientBulkResource"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DownloadClientResource"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "DownloadClient"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DownloadClientBulkResource"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/v1/downloadclient/schema": {
-      "get": {
-        "tags": [
-          "DownloadClient"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DownloadClientResource"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/downloadclient/test": {
-      "post": {
-        "tags": [
-          "DownloadClient"
-        ],
-        "parameters": [
-          {
-            "name": "forceTest",
-            "in": "query",
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DownloadClientResource"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/v1/downloadclient/testall": {
-      "post": {
-        "tags": [
-          "DownloadClient"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/v1/downloadclient/action/{name}": {
-      "post": {
-        "tags": [
-          "DownloadClient"
-        ],
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DownloadClientResource"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
           }
         }
       }
@@ -3381,32 +3147,6 @@
       }
     },
     "/api/v1/search": {
-      "post": {
-        "tags": [
-          "Search"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ReleaseResource"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ReleaseResource"
-                }
-              }
-            }
-          }
-        }
-      },
       "get": {
         "tags": [
           "Search"
@@ -3475,37 +3215,6 @@
                   "items": {
                     "$ref": "#/components/schemas/ReleaseResource"
                   }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/search/bulk": {
-      "post": {
-        "tags": [
-          "Search"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ReleaseResource"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ReleaseResource"
                 }
               }
             }
@@ -4272,6 +3981,32 @@
         ],
         "type": "string"
       },
+      "ChapterResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "absoluteNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "volume": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "number": {
+            "type": "number",
+            "format": "double"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
       "Command": {
         "type": "object",
         "properties": {
@@ -4490,58 +4225,6 @@
         },
         "additionalProperties": false
       },
-      "DownloadClientBulkResource": {
-        "type": "object",
-        "properties": {
-          "ids": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "nullable": true
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "nullable": true
-          },
-          "applyTags": {
-            "$ref": "#/components/schemas/ApplyTags"
-          },
-          "enable": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "priority": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "DownloadClientCategory": {
-        "type": "object",
-        "properties": {
-          "clientCategory": {
-            "type": "string",
-            "nullable": true
-          },
-          "categories": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "DownloadClientConfigResource": {
         "type": "object",
         "properties": {
@@ -4552,86 +4235,9 @@
         },
         "additionalProperties": false
       },
-      "DownloadClientResource": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "fields": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Field"
-            },
-            "nullable": true
-          },
-          "implementationName": {
-            "type": "string",
-            "nullable": true
-          },
-          "implementation": {
-            "type": "string",
-            "nullable": true
-          },
-          "configContract": {
-            "type": "string",
-            "nullable": true
-          },
-          "infoLink": {
-            "type": "string",
-            "nullable": true
-          },
-          "message": {
-            "$ref": "#/components/schemas/ProviderMessage"
-          },
-          "tags": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "nullable": true
-          },
-          "presets": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DownloadClientResource"
-            },
-            "nullable": true
-          },
-          "enable": {
-            "type": "boolean"
-          },
-          "protocol": {
-            "$ref": "#/components/schemas/DownloadProtocol"
-          },
-          "priority": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "categories": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DownloadClientCategory"
-            },
-            "nullable": true
-          },
-          "supportsCategories": {
-            "type": "boolean"
-          }
-        },
-        "additionalProperties": false
-      },
       "DownloadProtocol": {
         "enum": [
           "unknown",
-          "usenet",
           "torrent"
         ],
         "type": "string"
@@ -5374,10 +4980,6 @@
             "$ref": "#/components/schemas/IndexerCapabilityResource"
           },
           "priority": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "downloadClientId": {
             "type": "integer",
             "format": "int32"
           },
