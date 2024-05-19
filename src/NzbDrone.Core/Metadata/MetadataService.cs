@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using NLog;
+using NzbDrone.Core.Indexing.Events;
 using NzbDrone.Core.Mangas;
 using NzbDrone.Core.Mangas.Events;
 using NzbDrone.Core.Messaging.Events;
@@ -13,7 +14,7 @@ public interface IMetadataService
 }
 
 public class MetadataService : IMetadataService,
-                               IHandle<MangaCreatedEvent>
+                               IHandle<FullIndexCompletedEvent>
 {
     private readonly IMangaUpdatesService _mangaUpdatesService;
     private readonly IMangaService _mangaService;
@@ -39,11 +40,9 @@ public class MetadataService : IMetadataService,
 
     private void RefreshTitles(Manga manga)
     {
-        var titles = new List<string>();
-        titles.AddRange(GetMangaUpdatesTitles(manga));
-        titles.AddRange(GetMyAnimeListTitles(manga));
-        titles.AddRange(GetAniListTitles(manga));
-        _mangaService.UpdateTitles(manga.Id, titles);
+        _mangaService.UpdateMangaUpdatesTitles(manga.Id, GetMangaUpdatesTitles(manga));
+        _mangaService.UpdateAniListTitles(manga.Id, GetAniListTitles(manga));
+        _mangaService.UpdateMyAnimeListTitles(manga.Id, GetMyAnimeListTitles(manga));
     }
 
     private IEnumerable<string> GetMangaUpdatesTitles(Manga manga)
@@ -61,5 +60,38 @@ public class MetadataService : IMetadataService,
     private IEnumerable<string> GetAniListTitles(Manga manga)
     {
         return Enumerable.Empty<string>();
+    }
+
+    public void Handle(FullIndexCompletedEvent message)
+    {
+        _logger.Info("Starting refresh of all titles");
+
+        var mangas = _mangaService.GetMangasWithoutMangaUpdatesTitles();
+        foreach (var manga in mangas)
+        {
+            _mangaService.UpdateMangaUpdatesTitles(
+                manga.Id,
+                _mangaUpdatesService.GetTitles(manga.MangaUpdatesId!.Value));
+        }
+
+        mangas = _mangaService.GetMangasWithoutAniListTitles();
+        foreach (var manga in mangas)
+        {
+            // TODO: Implement when AniList is implemented
+            /*_mangaService.UpdateAniListTitles(
+                manga.Id,
+                _mangaUpdatesService.GetTitles(manga.MangaUpdatesId!.Value));*/
+        }
+
+        mangas = _mangaService.GetMangasWithoutMyAnimeListTitles();
+        foreach (var manga in mangas)
+        {
+            // TODO: Implement when MyAnimeList is implemented
+            /*_mangaService.UpdateMyAnimeListTitles(
+                manga.Id,
+                _mangaUpdatesService.GetTitles(manga.MangaUpdatesId!.Value));*/
+        }
+
+        _logger.Info("Finished refresh of all titles");
     }
 }
