@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Messaging.Events;
@@ -11,6 +12,10 @@ public interface IMangaRepository : IBasicRepository<Manga>
     Manga GetByMyAnimeListId(int myAnimeListId);
     Manga GetByAniListId(int aniListId);
     Manga GetByTitle(string title);
+
+    IEnumerable<Manga> GetMangasWithoutMangaUpdatesTitles();
+    IEnumerable<Manga> GetMangasWithoutAniListTitles();
+    IEnumerable<Manga> GetMangasWithoutMyAnimeListTitles();
 }
 
 public class MangaRepository : BasicRepository<Manga>, IMangaRepository
@@ -40,11 +45,33 @@ public class MangaRepository : BasicRepository<Manga>, IMangaRepository
         return All().FirstOrDefault(x => TitleMatches(x, title));
     }
 
+    public IEnumerable<Manga> GetMangasWithoutMangaUpdatesTitles()
+    {
+        return Query(x => x.MangaUpdatesId.HasValue && !x.MangaUpdatesTitles.Any());
+    }
+
+    public IEnumerable<Manga> GetMangasWithoutAniListTitles()
+    {
+        return Query(x => x.AniListId.HasValue && !x.AniListTitles.Any());
+    }
+
+    public IEnumerable<Manga> GetMangasWithoutMyAnimeListTitles()
+    {
+        return Query(x => x.MyAnimeListId.HasValue && !x.MyAnimeListTitles.Any());
+    }
+
     private bool TitleMatches(Manga manga, string title)
     {
-        foreach (var mangaTitle in manga.Titles)
+        return TitleMatches(title, manga.MangaUpdatesTitles) ||
+               TitleMatches(title, manga.MyAnimeListTitles) ||
+               TitleMatches(title, manga.AniListTitles);
+    }
+
+    private bool TitleMatches(string title, IEnumerable<string> titles)
+    {
+        foreach (var existingTitle in titles)
         {
-            if (title.ReplaceQuotations().EqualsIgnoreCase(mangaTitle.ReplaceQuotations()))
+            if (title.ReplaceQuotations().EqualsIgnoreCase(existingTitle.ReplaceQuotations()))
             {
                 return true;
             }

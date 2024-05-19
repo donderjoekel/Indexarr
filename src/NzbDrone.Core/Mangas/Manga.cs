@@ -7,11 +7,15 @@ public class Manga : ModelBase
 {
     public Manga()
     {
-        Titles = new List<string>();
+        MangaUpdatesTitles = new List<string>();
+        AniListTitles = new List<string>();
+        MyAnimeListTitles = new List<string>();
     }
 
     public long? MangaUpdatesId { get; set; }
     public int? MyAnimeListId { get; set; }
     public int? AniListId { get; set; }
-    public List<string> Titles { get; set; }
+    public List<string> MangaUpdatesTitles { get; set; }
+    public List<string> AniListTitles { get; set; }
+    public List<string> MyAnimeListTitles { get; set; }
 }
