@@ -106,45 +106,12 @@ public class NepNepResponseParser : IndexarrResponseParser
             resetEvent.Set();
         });
 
-        /*var tasks = new List<Task>();
-
-        foreach (var item in directory)
-        {
-            tasks.Add(Task.Run(() =>
-            {
-                try
-                {
-                    semaphore.Wait();
-                    var mangaUrl = Settings.BaseUrl + "manga/" + item.Index;
-                    var chapters = GetChapters(item, mangaUrl);
-                    resetEvent.WaitOne();
-                    mangas.Add(new MangaInfo()
-                    {
-                        Title = item.Slug,
-                        Url = mangaUrl,
-                        Chapters = chapters
-                    });
-                }
-                catch (Exception e)
-                {
-                    _logger.Error(e, "Failed to parse manga info");
-                }
-                finally
-                {
-                    resetEvent.Set();
-                    semaphore.Release();
-                }
-            }));
-        }
-
-        Task.WhenAll(tasks).GetAwaiter().GetResult();*/
-
         return mangas;
     }
 
     private List<Parser.Model.ChapterInfo> GetChapters(DirectoryItem item, string mangaUrl)
     {
-        _logger.Info("Requesting chapters for '{0}' from {1}", item.Slug, mangaUrl);
+        _logger.Debug("Requesting chapters for '{0}' from {1}", item.Slug, mangaUrl);
         var request = new HttpRequest(mangaUrl);
         var customResponse = _nepNepBase.ExecuteRequest(request);
         var match = Regex.Match(customResponse.Content, @"(?=Chapters =).+?(\[.+?\])\;");
@@ -152,7 +119,7 @@ public class NepNepResponseParser : IndexarrResponseParser
         var chapters = JsonConvert.DeserializeObject<List<ChapterInfo>>(json);
         if (chapters == null)
         {
-            _logger.Warn("No chapters found for '{0}' from {1}", item.Slug, mangaUrl);
+            _logger.Error("No chapters found for '{0}' from {1}", item.Slug, mangaUrl);
             return new List<Parser.Model.ChapterInfo>();
         }
 

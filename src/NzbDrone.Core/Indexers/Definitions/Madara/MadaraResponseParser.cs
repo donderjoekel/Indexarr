@@ -96,7 +96,7 @@ public class MadaraResponseParser : IndexarrResponseParser
 
     private List<ChapterInfo> GetChapters(string url, string title)
     {
-        _logger.Info("Requesting chapters for '{0}' from {1}", title, url);
+        _logger.Debug("Requesting chapters for '{0}' from {1}", title, url);
         var request = GetChaptersRequest(url);
         var response = _madaraBase.ExecuteRequest(request);
         var mangaDocument = new HtmlParser().ParseDocument(response.Content);
@@ -104,7 +104,7 @@ public class MadaraResponseParser : IndexarrResponseParser
         var chapterElements = mangaDocument.QuerySelectorAll<IHtmlListItemElement>("li.wp-manga-chapter").ToList();
         if (!chapterElements.Any())
         {
-            _logger.Warn("No chapters found for '{0}' from {1}", title, url);
+            _logger.Error("No chapters found for '{0}' from {1}", title, url);
             return chapters;
         }
 
