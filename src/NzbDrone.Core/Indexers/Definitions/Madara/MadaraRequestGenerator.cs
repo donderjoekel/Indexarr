@@ -34,6 +34,7 @@ public class MadaraRequestGenerator : IndexarrRequestGenerator
             { "page", page.ToString() },
             { "template", "madara-core/content/content-archive" },
             { "vars[paged]", "1" },
+            { "vars[posts_per_page]", "100" },
             { "vars[orderby]", "post_title" },
             { "vars[template]", "archive" },
             { "vars[post_type]", "wp-manga" },
