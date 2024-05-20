@@ -14,7 +14,7 @@ namespace NzbDrone.Core.Metadata.MangaUpdates;
 
 public interface IMangaUpdatesService
 {
-    bool TryDirectMatchTitleToId(string title, out long mangaUpdatesId);
+    bool TryMatchTitle(string title, out long mangaUpdatesId);
     IEnumerable<string> GetTitles(long mangaUpdatesId);
 }
 
@@ -33,7 +33,7 @@ public class MangaUpdatesService : MetadataSource, IMangaUpdatesService
         _requestBuilder = requestBuilder.Services;
     }
 
-    public bool TryDirectMatchTitleToId(string title, out long mangaUpdatesId)
+    public bool TryMatchTitle(string title, out long mangaUpdatesId)
     {
         var httpRequest = _requestBuilder.Create()
             .WithRateLimit(1)
@@ -75,14 +75,20 @@ public class MangaUpdatesService : MetadataSource, IMangaUpdatesService
 
     private bool IsMatch(SeriesSearchResultResource resource, string title)
     {
-        var replacedTitle = title.ReplaceQuotations();
+        return IsMatch(resource, title, s => s.HtmlDecode().ReplaceQuotations()) ||
+               IsMatch(resource, title, s => s.HtmlDecode().ReplaceQuotations().StripNonAlphaNumeric());
+    }
 
-        if (replacedTitle.EqualsIgnoreCase(resource.HitTitle.HtmlDecode().ReplaceQuotations()))
+    private bool IsMatch(SeriesSearchResultResource resource, string title, Func<string, string> titleTransform)
+    {
+        var replacedTitle = titleTransform(title);
+
+        if (replacedTitle.EqualsIgnoreCase(titleTransform(resource.HitTitle)))
         {
             return true;
         }
 
-        if (replacedTitle.EqualsIgnoreCase(resource.Record.Title.HtmlDecode().ReplaceQuotations()))
+        if (replacedTitle.EqualsIgnoreCase(titleTransform(resource.Record.Title)))
         {
             return true;
         }
@@ -105,7 +111,7 @@ public class MangaUpdatesService : MetadataSource, IMangaUpdatesService
 
         foreach (var associated in series.Associated)
         {
-            if (replacedTitle.EqualsIgnoreCase(associated.Title.HtmlDecode().ReplaceQuotations()))
+            if (replacedTitle.EqualsIgnoreCase(titleTransform(associated.Title)))
             {
                 return true;
             }

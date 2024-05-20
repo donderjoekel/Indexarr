@@ -289,5 +289,10 @@ namespace NzbDrone.Common.Extensions
                 .Replace("“", "\"")
                 .Replace("”", "\"");
         }
+
+        public static string StripNonAlphaNumeric(this string input)
+        {
+            return new string(input.Where(char.IsLetterOrDigit).ToArray());
+        }
     }
 }
