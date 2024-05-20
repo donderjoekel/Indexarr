@@ -20,8 +20,8 @@ public abstract class IndexarrResponseParser : IParseIndexerResponse
 
     private static readonly Regex[] ChapterRegexes = new[]
     {
-        new Regex(@"[Cc]hapter\s(\d+(\.\d+)?)"),
-        new Regex(@"[Cc]h.(\d+(\.\d+)?)")
+        new Regex(@"[Cc]hapter\s?(\d+(\.\d+)?)"),
+        new Regex(@"[Cc]h.*\s*(\d+(\.\d+)?)")
     };
 
     private readonly ProviderDefinition _providerDefinition;
