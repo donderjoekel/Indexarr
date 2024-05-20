@@ -123,6 +123,15 @@ public class MadaraResponseParser : IndexarrResponseParser
             if (releaseDateElement != null)
             {
                 var releaseDate = releaseDateElement.TextContent.Trim();
+                if (string.IsNullOrWhiteSpace(releaseDate))
+                {
+                    var innerAnchor = releaseDateElement.QuerySelector<IHtmlAnchorElement>("a");
+                    if (innerAnchor != null)
+                    {
+                        releaseDate = innerAnchor.Title;
+                    }
+                }
+
                 if (!TryParseDateTime(releaseDate, out parsedDate))
                 {
                     _logger.Warn("Unable to parse '{0}' as date for '{1}' from {2}", releaseDate, title, url);
