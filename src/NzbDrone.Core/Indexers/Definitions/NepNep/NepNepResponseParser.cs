@@ -92,19 +92,21 @@ public class NepNepResponseParser : IndexarrResponseParser
         var resetEvent = new AutoResetEvent(true);
         var mangas = new List<MangaInfo>();
 
-        ConcurrentWork.CreateAndRun(25, directory, item => () =>
-        {
-            var mangaUrl = Settings.BaseUrl + "manga/" + item.Index;
-            var chapters = GetChapters(item, mangaUrl);
-            resetEvent.WaitOne();
-            mangas.Add(new MangaInfo()
+        ConcurrentWork.CreateAndRun(25,
+            directory,
+            item => () =>
             {
-                Title = item.Slug,
-                Url = mangaUrl,
-                Chapters = chapters
+                var mangaUrl = Settings.BaseUrl + "manga/" + item.Index;
+                var chapters = GetChapters(item, mangaUrl);
+                resetEvent.WaitOne();
+                mangas.Add(new MangaInfo()
+                {
+                    Title = item.Slug,
+                    Url = mangaUrl,
+                    Chapters = chapters
+                });
+                resetEvent.Set();
             });
-            resetEvent.Set();
-        });
 
         return mangas;
     }
@@ -114,7 +116,7 @@ public class NepNepResponseParser : IndexarrResponseParser
         _logger.Debug("Requesting chapters for '{0}' from {1}", item.Slug, mangaUrl);
         var request = new HttpRequest(mangaUrl);
         var customResponse = _nepNepBase.ExecuteRequest(request);
-        var match = Regex.Match(customResponse.Content, @"(?=Chapters =).+?(\[.+?\])\;");
+        var match = Regex.Match(customResponse.Content, @"(?=Chapters =).+?(\[.+?\])\;", RegexOptions.IgnoreCase);
         var json = match.Groups[1].Value;
         var chapters = JsonConvert.DeserializeObject<List<ChapterInfo>>(json);
         if (chapters == null)

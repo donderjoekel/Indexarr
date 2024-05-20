@@ -2,7 +2,7 @@
 
 public class DataResource
 {
-    public int Id { get; set; }
+    public int MalId { get; set; }
     public string Title { get; set; }
     public string TitleEnglish { get; set; }
     public string TitleJapanese { get; set; }

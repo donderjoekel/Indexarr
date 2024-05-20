@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using NLog;
@@ -14,7 +15,7 @@ namespace NzbDrone.Core.Metadata.MangaUpdates;
 
 public interface IMangaUpdatesService
 {
-    bool TryMatchTitle(string title, out long mangaUpdatesId);
+    bool TryMatchTitle(string title, [NotNullWhen(true)] out long? mangaUpdatesId);
     IEnumerable<string> GetTitles(long mangaUpdatesId);
 }
 
@@ -33,7 +34,7 @@ public class MangaUpdatesService : MetadataSource, IMangaUpdatesService
         _requestBuilder = requestBuilder.Services;
     }
 
-    public bool TryMatchTitle(string title, out long mangaUpdatesId)
+    public bool TryMatchTitle(string title, out long? mangaUpdatesId)
     {
         var httpRequest = _requestBuilder.Create()
             .WithRateLimit(1)
@@ -50,7 +51,7 @@ public class MangaUpdatesService : MetadataSource, IMangaUpdatesService
         var resource = data.Results.Where(Filter).FirstOrDefault(x => IsMatch(x, title));
         if (resource == null)
         {
-            mangaUpdatesId = -1;
+            mangaUpdatesId = null;
             return false;
         }
 
@@ -75,8 +76,8 @@ public class MangaUpdatesService : MetadataSource, IMangaUpdatesService
 
     private bool IsMatch(SeriesSearchResultResource resource, string title)
     {
-        return IsMatch(resource, title, s => s.HtmlDecode().ReplaceQuotations()) ||
-               IsMatch(resource, title, s => s.HtmlDecode().ReplaceQuotations().StripNonAlphaNumeric());
+        return IsMatch(resource, title, x => x.HtmlDecode().ReplaceQuotations()) ||
+               IsMatch(resource, title, x => x.HtmlDecode().ReplaceQuotations().StripNonAlphaNumeric());
     }
 
     private bool IsMatch(SeriesSearchResultResource resource, string title, Func<string, string> titleTransform)

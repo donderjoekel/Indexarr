@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using Indexarr.Core.Metadata.Jikan.Resource;
@@ -13,7 +15,7 @@ namespace NzbDrone.Core.Metadata.Jikan;
 
 public interface IJikanService
 {
-    bool TryDirectMatchToTitleId(string title, out int myAnimeListId);
+    bool TryMatchTitle(string title, [NotNullWhen(true)] out int? myAnimeListId);
     IEnumerable<string> GetTitles(int myAnimeListId);
 }
 
@@ -27,7 +29,7 @@ public class JikanService : MetadataSource, IJikanService
         _requestBuilder = requestBuilder.Services;
     }
 
-    public bool TryDirectMatchToTitleId(string title, out int myAnimeListId)
+    public bool TryMatchTitle(string title, out int? myAnimeListId)
     {
         var request = _requestBuilder.Create()
             .Resource("manga")
@@ -39,11 +41,11 @@ public class JikanService : MetadataSource, IJikanService
         var resource = data.Data.FirstOrDefault(x => IsMatch(x, title));
         if (resource == null)
         {
-            myAnimeListId = -1;
+            myAnimeListId = null;
             return false;
         }
 
-        myAnimeListId = resource.Id;
+        myAnimeListId = resource.MalId;
         return true;
     }
 
@@ -55,9 +57,6 @@ public class JikanService : MetadataSource, IJikanService
             yield break;
         }
 
-        yield return manga.Data.Title;
-        yield return manga.Data.TitleEnglish;
-        yield return manga.Data.TitleJapanese;
         foreach (var titleResource in manga.Data.Titles)
         {
             yield return titleResource.Title;
@@ -66,11 +65,17 @@ public class JikanService : MetadataSource, IJikanService
 
     private bool IsMatch(DataResource resource, string title)
     {
-        var replacedTitle = title.ReplaceQuotations();
+        return IsMatch(resource, title, x => x.HtmlDecode().ReplaceQuotations()) ||
+               IsMatch(resource, title, x => x.HtmlDecode().ReplaceQuotations().StripNonAlphaNumeric());
+    }
+
+    private bool IsMatch(DataResource resource, string title, Func<string, string> titleTransform)
+    {
+        var replacedTitle = titleTransform(title);
 
         foreach (var resourceTitle in resource.Titles)
         {
-            if (replacedTitle.EqualsIgnoreCase(resourceTitle.Title.HtmlDecode().ReplaceQuotations()))
+            if (replacedTitle.EqualsIgnoreCase(titleTransform(resourceTitle.Title)))
             {
                 return true;
             }

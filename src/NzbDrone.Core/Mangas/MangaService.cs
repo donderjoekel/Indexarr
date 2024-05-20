@@ -9,7 +9,7 @@ public interface IMangaService
 {
     Manga GetByMangaUpdatesId(long mangaUpdatesId);
     bool TryFindByTitle(string title, out Manga manga);
-    Manga CreateWithMangaUpdatesId(long mangaUpdatesId);
+    Manga CreateWithIds(long? mangaUpdatesId = null, int? myAnimeListId = null);
 
     IEnumerable<Manga> GetMangasWithoutMangaUpdatesTitles();
     IEnumerable<Manga> GetMangasWithoutAniListTitles();
@@ -42,11 +42,12 @@ public class MangaService : IMangaService
         return manga != null;
     }
 
-    public Manga CreateWithMangaUpdatesId(long mangaUpdatesId)
+    public Manga CreateWithIds(long? mangaUpdatesId = null, int? myAnimeListId = null)
     {
-        var manga = new Manga
+        var manga = new Manga()
         {
-            MangaUpdatesId = mangaUpdatesId
+            MangaUpdatesId = mangaUpdatesId,
+            MyAnimeListId = myAnimeListId
         };
 
         var createdManga = _mangaRepository.Insert(manga);
