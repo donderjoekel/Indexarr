@@ -5,6 +5,7 @@ using NzbDrone.Core.IndexedMangas;
 using NzbDrone.Core.Indexing.Events;
 using NzbDrone.Core.Mangas;
 using NzbDrone.Core.Matching.Commands;
+using NzbDrone.Core.Matching.Events;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Metadata.Jikan;
@@ -17,31 +18,44 @@ public interface IMatchingService
 }
 
 public class MatchingService : IMatchingService,
-                               IExecute<DirectMatchCommand>,
-                               IHandle<FullIndexCompletedEvent>
+                               IExecute<MatchMangasCommand>,
+                               IHandle<IndexCompletedEvent>
 {
     private readonly IMangaUpdatesService _mangaUpdatesService;
     private readonly IIndexedMangaService _indexedMangaService;
     private readonly Logger _logger;
     private readonly IMangaService _mangaService;
     private readonly IJikanService _jikanService;
+    private readonly IEventAggregator _eventAggregator;
 
     public MatchingService(IMangaUpdatesService mangaUpdatesService,
         IIndexedMangaService indexedMangaService,
         Logger logger,
         IMangaService mangaService,
-        IJikanService jikanService)
+        IJikanService jikanService,
+        IEventAggregator eventAggregator)
     {
         _mangaUpdatesService = mangaUpdatesService;
         _indexedMangaService = indexedMangaService;
         _logger = logger;
         _mangaService = mangaService;
         _jikanService = jikanService;
+        _eventAggregator = eventAggregator;
     }
 
-    public void Execute(DirectMatchCommand message)
+    public void Execute(MatchMangasCommand message)
     {
-        _logger.Info("Starting direct match process");
+        MatchMangas(true);
+    }
+
+    public void Handle(IndexCompletedEvent message)
+    {
+        MatchMangas(false);
+    }
+
+    private void MatchMangas(bool full)
+    {
+        _logger.Info("Starting match process");
         var indexMangas = _indexedMangaService.GetWithoutLinkedManga().ToList();
         _logger.Info("Attempting to link {Count} mangas", indexMangas.Count);
 
@@ -49,7 +63,14 @@ public class MatchingService : IMatchingService,
         {
             try
             {
-                TryLinkIndexedManga(indexedManga);
+                if (full)
+                {
+                    TryLinkIndexedManga(indexedManga);
+                }
+                else
+                {
+                    TryMatch(indexedManga);
+                }
             }
             catch (Exception e)
             {
@@ -59,7 +80,8 @@ public class MatchingService : IMatchingService,
             }
         }
 
-        _logger.Info("Finished direct match process");
+        _logger.Info("Finished match process");
+        _eventAggregator.PublishEvent(new MatchingCompletedEvent());
     }
 
     private void TryLinkIndexedManga(IndexedManga indexedManga)
@@ -104,28 +126,5 @@ public class MatchingService : IMatchingService,
 
         var manga = _mangaService.CreateWithIds(mangaUpdatesId, myAnimeListId);
         _indexedMangaService.LinkToManga(indexedManga.Id, manga.Id);
-    }
-
-    public void Handle(FullIndexCompletedEvent message)
-    {
-        _logger.Info("Starting direct match process");
-        var indexMangas = _indexedMangaService.GetWithoutLinkedManga().ToList();
-        _logger.Info("Attempting to link {Count} mangas", indexMangas.Count);
-
-        foreach (var indexedManga in indexMangas)
-        {
-            try
-            {
-                TryMatch(indexedManga);
-            }
-            catch (Exception e)
-            {
-                _logger.Error(e, "An error occurred while trying to link {Title}", indexedManga.Title);
-                _logger.Info("Ending early due to error");
-                return;
-            }
-        }
-
-        _logger.Info("Finished direct match process");
     }
 }
