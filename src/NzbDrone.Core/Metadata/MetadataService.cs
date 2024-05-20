@@ -37,6 +37,7 @@ public class MetadataService : IMetadataService,
         var mangas = _mangaService.GetMangasWithoutMangaUpdatesTitles();
         foreach (var manga in mangas)
         {
+            _logger.Info("Refrshing MangaUpdates titles for {Manga}", manga.Id);
             _mangaService.UpdateMangaUpdatesTitles(manga.Id,
                 _mangaUpdatesService.GetTitles(manga.MangaUpdatesId!.Value));
         }
@@ -44,6 +45,7 @@ public class MetadataService : IMetadataService,
         mangas = _mangaService.GetMangasWithoutMyAnimeListTitles();
         foreach (var manga in mangas)
         {
+            _logger.Info("Refrshing MyAnimeList titles for {Manga}", manga.Id);
             _mangaService.UpdateMyAnimeListTitles(manga.Id,
                 _jikanService.GetTitles(manga.MyAnimeListId!.Value));
         }

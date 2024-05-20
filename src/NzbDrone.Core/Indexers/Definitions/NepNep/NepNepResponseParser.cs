@@ -113,7 +113,7 @@ public class NepNepResponseParser : IndexarrResponseParser
 
     private List<Parser.Model.ChapterInfo> GetChapters(DirectoryItem item, string mangaUrl)
     {
-        _logger.Debug("Requesting chapters for '{0}' from {1}", item.Slug, mangaUrl);
+        _logger.Info("Requesting chapters for '{0}' from {1}", item.Slug, mangaUrl);
         var request = new HttpRequest(mangaUrl);
         var customResponse = _nepNepBase.ExecuteRequest(request);
         var match = Regex.Match(customResponse.Content, @"(?=Chapters =).+?(\[.+?\])\;", RegexOptions.IgnoreCase);
