@@ -7,6 +7,7 @@ using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 using NLog;
 using NzbDrone.Common.Http;
+using NzbDrone.Core.Concurrency;
 using NzbDrone.Core.Indexers.Definitions.Indexarr;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.ThingiProvider;
@@ -15,18 +16,15 @@ namespace NzbDrone.Core.Indexers.Definitions.Madara;
 
 public class MadaraResponseParser : IndexarrResponseParser
 {
-    private readonly IIndexerHttpClient _httpClient;
     private readonly MadaraBase _madaraBase;
     private readonly Logger _logger;
 
     public MadaraResponseParser(
         ProviderDefinition providerDefinition,
-        IIndexerHttpClient httpClient,
         MadaraBase madaraBase,
         Logger logger)
         : base(providerDefinition)
     {
-        _httpClient = httpClient;
         _madaraBase = madaraBase;
         _logger = logger;
     }
@@ -59,9 +57,55 @@ public class MadaraResponseParser : IndexarrResponseParser
 
     private List<MangaInfo> ParseResponse(HttpResponse response, bool isTest)
     {
-        var mangaInfos = new List<MangaInfo>();
+        List<MangaInfo> mangaInfos;
         var document = new HtmlParser().ParseDocument(response.Content);
         var elements = document.QuerySelectorAll<IHtmlDivElement>("div.page-item-detail");
+
+        if (!isTest)
+        {
+            mangaInfos = RunConcurrently(elements);
+        }
+        else
+        {
+            mangaInfos = RunSequentially(elements);
+        }
+
+        return mangaInfos;
+    }
+
+    private List<MangaInfo> RunConcurrently(IEnumerable<IHtmlDivElement> elements)
+    {
+        var mangaInfos = new List<MangaInfo>();
+
+        ConcurrentWork.CreateAndRun(5,
+            elements,
+            element => () =>
+            {
+                try
+                {
+                    var anchor = element.QuerySelector<IHtmlAnchorElement>(".post-title a");
+                    var title = anchor.TextContent.Trim();
+                    var url = anchor.Href;
+                    var chapters = GetChapters(url, title);
+                    mangaInfos.Add(new MangaInfo
+                    {
+                        Title = title,
+                        Url = url,
+                        Chapters = chapters
+                    });
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e, "Failed to parse manga info");
+                }
+            });
+
+        return mangaInfos;
+    }
+
+    private List<MangaInfo> RunSequentially(IEnumerable<IHtmlDivElement> elements)
+    {
+        var mangaInfos = new List<MangaInfo>();
 
         foreach (var element in elements)
         {
@@ -85,10 +129,7 @@ public class MadaraResponseParser : IndexarrResponseParser
             }
 
             // We want to early out if it is a test parse because we don't want to unnecessarily parse too many items
-            if (isTest)
-            {
-                return mangaInfos;
-            }
+            return mangaInfos;
         }
 
         return mangaInfos;
@@ -96,7 +137,7 @@ public class MadaraResponseParser : IndexarrResponseParser
 
     private List<ChapterInfo> GetChapters(string url, string title)
     {
-        _logger.Debug("Requesting chapters for '{0}' from {1}", title, url);
+        _logger.Info("Requesting chapters for '{0}' from {1}", title, url);
         var request = GetChaptersRequest(url);
         var response = _madaraBase.ExecuteRequest(request);
         var mangaDocument = new HtmlParser().ParseDocument(response.Content);
