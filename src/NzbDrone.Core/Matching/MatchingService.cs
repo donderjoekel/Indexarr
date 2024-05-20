@@ -74,7 +74,7 @@ public class MatchingService : IMatchingService,
 
     private void TryDirectMatchToMangaUpdates(IndexedManga indexedManga)
     {
-        if (!_mangaUpdatesService.TryDirectMatchTitleToId(indexedManga.Title, out var mangaUpdatesId))
+        if (!_mangaUpdatesService.TryMatchTitle(indexedManga.Title, out var mangaUpdatesId))
         {
             _logger.Info("Failed to find direct match for {Title}", indexedManga.Title);
             return;

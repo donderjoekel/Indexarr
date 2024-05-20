@@ -14,7 +14,7 @@ namespace NzbDrone.Core.Metadata.MangaUpdates;
 
 public interface IMangaUpdatesService
 {
-    bool TryDirectMatchTitleToId(string title, out long mangaUpdatesId);
+    bool TryMatchTitle(string title, out long mangaUpdatesId);
     IEnumerable<string> GetTitles(long mangaUpdatesId);
 }
 
@@ -33,7 +33,7 @@ public class MangaUpdatesService : MetadataSource, IMangaUpdatesService
         _requestBuilder = requestBuilder.Services;
     }
 
-    public bool TryDirectMatchTitleToId(string title, out long mangaUpdatesId)
+    public bool TryMatchTitle(string title, out long mangaUpdatesId)
     {
         var httpRequest = _requestBuilder.Create()
             .WithRateLimit(1)
