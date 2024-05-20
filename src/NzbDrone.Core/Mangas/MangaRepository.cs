@@ -71,7 +71,7 @@ public class MangaRepository : BasicRepository<Manga>, IMangaRepository
     {
         foreach (var existingTitle in titles)
         {
-            if (title.ReplaceQuotations().EqualsIgnoreCase(existingTitle.ReplaceQuotations()))
+            if (title.HtmlDecode().ReplaceQuotations().EqualsIgnoreCase(existingTitle.ReplaceQuotations()))
             {
                 return true;
             }
