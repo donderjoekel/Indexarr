@@ -50,7 +50,7 @@ public class IndexingService : IIndexingService,
             _logger.Info("Finished full index for {Indexer}", indexer.Name);
         }
 
-        _eventAggregator.PublishEvent(new FullIndexCompletedEvent());
+        _eventAggregator.PublishEvent(new IndexCompletedEvent());
     }
 
     private void ProcessManga(MangaInfo manga)

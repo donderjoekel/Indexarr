@@ -2,6 +2,6 @@
 
 namespace NzbDrone.Core.Indexing.Events;
 
-public class FullIndexCompletedEvent : IEvent
+public class IndexCompletedEvent : IEvent
 {
 }

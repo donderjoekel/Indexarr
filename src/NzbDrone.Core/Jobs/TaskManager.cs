@@ -122,7 +122,7 @@ namespace NzbDrone.Core.Jobs
                     new ScheduledTask()
                     {
                         Interval = 4 * 60,
-                        TypeName = typeof(DirectMatchCommand).FullName
+                        TypeName = typeof(MatchMangasCommand).FullName
                     }
                 };
 
