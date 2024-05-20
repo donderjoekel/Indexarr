@@ -32,7 +32,7 @@ public class MetadataService : IMetadataService,
 
     public void Handle(MatchingCompletedEvent message)
     {
-        _logger.Info("Starting refresh of all titles");
+        _logger.Info("Starting metadata refresh");
 
         var mangas = _mangaService.GetMangasWithoutMangaUpdatesTitles();
         foreach (var manga in mangas)
@@ -58,6 +58,6 @@ public class MetadataService : IMetadataService,
                 _mangaUpdatesService.GetTitles(manga.MangaUpdatesId!.Value));
         }*/
 
-        _logger.Info("Finished refresh of all titles");
+        _logger.Info("Finished metadata refresh");
     }
 }
