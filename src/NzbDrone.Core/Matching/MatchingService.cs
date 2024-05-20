@@ -63,6 +63,8 @@ public class MatchingService : IMatchingService,
         {
             try
             {
+                _logger.Info("Attempting to match {Title}", indexedManga.Title);
+
                 if (full)
                 {
                     TryLinkIndexedManga(indexedManga);
