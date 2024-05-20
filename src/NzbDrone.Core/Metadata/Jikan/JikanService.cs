@@ -45,7 +45,7 @@ public class JikanService : MetadataSource, IJikanService
             return false;
         }
 
-        myAnimeListId = resource.Id;
+        myAnimeListId = resource.MalId;
         return true;
     }
 
