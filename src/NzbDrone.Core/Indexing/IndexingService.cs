@@ -80,7 +80,9 @@ public class IndexingService : IIndexingService,
         }
 
         LogDuplicateChapters(manga);
-        ConcurrentWork.CreateAndRun(5, manga.Chapters, x => () => ProcessChapter(indexedManga, manga, x));
+        ConcurrentWork.CreateAndRun(5,
+            manga.Chapters,
+            x => () => ProcessChapter(indexedManga, manga, x));
     }
 
     private void LogDuplicateChapters(MangaInfo manga)
