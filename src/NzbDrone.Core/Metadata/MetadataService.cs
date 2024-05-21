@@ -1,7 +1,9 @@
 ﻿using NLog;
 using NzbDrone.Core.Mangas;
 using NzbDrone.Core.Matching.Events;
+using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Messaging.Events;
+using NzbDrone.Core.Metadata.Commands;
 using NzbDrone.Core.Metadata.Jikan;
 using NzbDrone.Core.Metadata.MangaUpdates;
 
@@ -12,7 +14,8 @@ public interface IMetadataService
 }
 
 public class MetadataService : IMetadataService,
-                               IHandle<MatchingCompletedEvent>
+                               IHandle<MatchingCompletedEvent>,
+                               IExecute<MetadataRefreshCommand>
 {
     private readonly IMangaUpdatesService _mangaUpdatesService;
     private readonly IMangaService _mangaService;
@@ -31,6 +34,16 @@ public class MetadataService : IMetadataService,
     }
 
     public void Handle(MatchingCompletedEvent message)
+    {
+        RefreshMetadata();
+    }
+
+    public void Execute(MetadataRefreshCommand message)
+    {
+        RefreshMetadata();
+    }
+
+    private void RefreshMetadata()
     {
         _logger.Info("Starting metadata refresh");
 
