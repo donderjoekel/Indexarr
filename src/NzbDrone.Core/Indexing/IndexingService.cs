@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Text;
 using NLog;
 using NzbDrone.Core.Chapters;
 using NzbDrone.Core.Concurrency;
@@ -77,7 +79,31 @@ public class IndexingService : IIndexingService,
             return;
         }
 
+        LogDuplicateChapters(manga);
         ConcurrentWork.CreateAndRun(5, manga.Chapters, x => () => ProcessChapter(indexedManga, manga, x));
+    }
+
+    private void LogDuplicateChapters(MangaInfo manga)
+    {
+        var groups = manga.Chapters.GroupBy(x => $"{x.Volume}-{x.Number}").ToList();
+        foreach (var grouping in groups)
+        {
+            var chapterInfos = grouping.ToList();
+            var count = chapterInfos.Count;
+            if (count <= 1)
+            {
+                continue;
+            }
+
+            var sb = new StringBuilder();
+            sb.AppendLine("Found multiple chapters with the same number:");
+            foreach (var chapterInfo in chapterInfos)
+            {
+                sb.AppendLine($"{chapterInfo.Volume}-{chapterInfo.Number} : {chapterInfo.Url}");
+            }
+
+            _logger.Warn(sb.ToString);
+        }
     }
 
     private void ProcessChapter(IndexedManga indexedManga, MangaInfo manga, ChapterInfo chapter)
