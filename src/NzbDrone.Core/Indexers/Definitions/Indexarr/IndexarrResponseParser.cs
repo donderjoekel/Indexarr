@@ -73,6 +73,11 @@ public abstract class IndexarrResponseParser : IParseIndexerResponse
 
     protected bool TryParseChapterNameToChapterNumber(string chapterName, out decimal chapterNumber)
     {
+        if (decimal.TryParse(chapterName, out chapterNumber))
+        {
+            return true;
+        }
+
         chapterNumber = -1;
 
         foreach (var chapterRegex in ChapterRegexes)
