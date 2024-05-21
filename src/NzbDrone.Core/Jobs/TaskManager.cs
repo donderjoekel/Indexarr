@@ -16,6 +16,7 @@ using NzbDrone.Core.Lifecycle;
 using NzbDrone.Core.Matching.Commands;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Messaging.Events;
+using NzbDrone.Core.Metadata.Commands;
 using NzbDrone.Core.Update.Commands;
 
 namespace NzbDrone.Core.Jobs
@@ -123,6 +124,12 @@ namespace NzbDrone.Core.Jobs
                     {
                         Interval = 4 * 60,
                         TypeName = typeof(MatchMangasCommand).FullName
+                    },
+
+                    new ScheduledTask()
+                    {
+                        Interval = 12 * 60,
+                        TypeName = typeof(MetadataRefreshCommand).FullName
                     }
                 };
 
