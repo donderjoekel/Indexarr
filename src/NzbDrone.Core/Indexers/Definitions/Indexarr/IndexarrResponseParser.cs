@@ -20,8 +20,39 @@ public abstract class IndexarrResponseParser : IParseIndexerResponse
 
     private static readonly Regex[] ChapterRegexes = new[]
     {
-        new Regex(@"chapter\s?(\d+(\.\d+)?)", RegexOptions.IgnoreCase),
-        new Regex(@"ch.*\s*(\d+(\.\d+)?)", RegexOptions.IgnoreCase)
+        /*
+         * chapter 1
+         * chapter - 1
+         * chapter - 1.1
+         */
+        new Regex(@"chapter\s?-*\s*(\d+(\.\d+)?)", RegexOptions.IgnoreCase),
+        /*
+         * ch.1
+         * ch.1.1
+         * ch. 1
+         * ch. 1.1
+         */
+        new Regex(@"ch.\s*(\d+(\.\d+)?)", RegexOptions.IgnoreCase),
+        /*
+         * ch-1
+         * ch-1.1
+         * ch - 1
+         * ch - 1.1
+         */
+        new Regex(@"ch-\s*(\d+(\.\d+)?)", RegexOptions.IgnoreCase),
+        /*
+         * episode 1
+         * episode - 1
+         * episode - 1.1
+         */
+        new Regex(@"episode\s?-*\s*(\d+(\.\d+)?)", RegexOptions.IgnoreCase),
+        /*
+         * ch1
+         * ch1.1
+         * ch 1
+         * ch 1.1
+         */
+        new Regex(@"ch\s*(\d+(\.\d+)?)", RegexOptions.IgnoreCase), // This one should always be last
     };
 
     private readonly ProviderDefinition _providerDefinition;

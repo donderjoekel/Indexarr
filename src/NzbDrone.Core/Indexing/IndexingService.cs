@@ -61,7 +61,7 @@ public class IndexingService : IIndexingService,
 
         try
         {
-            _logger.Info("Prccessing {Title}", manga.Title);
+            _logger.Info("Proccessing {Title}", manga.Title);
             if (_indexedMangaService.Exists(manga))
             {
                 _logger.Debug("Updating {Title}", manga.Title);
