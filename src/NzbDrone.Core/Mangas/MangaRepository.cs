@@ -47,17 +47,17 @@ public class MangaRepository : BasicRepository<Manga>, IMangaRepository
 
     public IEnumerable<Manga> GetMangasWithoutMangaUpdatesTitles()
     {
-        return Query(x => x.MangaUpdatesId.HasValue && x.MangaUpdatesTitles.Count > 0);
+        return Query(x => x.MangaUpdatesId != null).Where(x => x.MangaUpdatesTitles.Count == 0);
     }
 
     public IEnumerable<Manga> GetMangasWithoutAniListTitles()
     {
-        return Query(x => x.AniListId.HasValue && x.AniListTitles.Count > 0);
+        return Query(x => x.AniListId != null).Where(x => x.AniListTitles.Count == 0);
     }
 
     public IEnumerable<Manga> GetMangasWithoutMyAnimeListTitles()
     {
-        return Query(x => x.MyAnimeListId.HasValue && x.MyAnimeListTitles.Count > 0);
+        return Query(x => x.MyAnimeListId != null).Where(x => x.MyAnimeListTitles.Count == 0);
     }
 
     private bool TitleMatches(Manga manga, string title)
