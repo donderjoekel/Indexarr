@@ -81,7 +81,7 @@ public class IndexingService : IIndexingService,
 
         LogDuplicateChapters(manga);
         ConcurrentWork.CreateAndRun(5,
-            manga.Chapters,
+            manga.Chapters.DistinctBy(x => $"{x.Volume}-{x.Number}"),
             x => () => ProcessChapter(indexedManga, manga, x));
     }
 
