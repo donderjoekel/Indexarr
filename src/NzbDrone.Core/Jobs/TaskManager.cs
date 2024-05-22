@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Indexarr.Core.Purging.Commands;
 using NLog;
 using NzbDrone.Common.Cache;
 using NzbDrone.Core.Applications;
@@ -130,6 +131,12 @@ namespace NzbDrone.Core.Jobs
                     {
                         Interval = 12 * 60,
                         TypeName = typeof(MetadataRefreshCommand).FullName
+                    },
+
+                    new ScheduledTask()
+                    {
+                        Interval = int.MaxValue,
+                        TypeName = typeof(PurgeCommand).FullName
                     }
                 };
 
