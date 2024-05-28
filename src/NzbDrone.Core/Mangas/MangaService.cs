@@ -7,6 +7,9 @@ namespace NzbDrone.Core.Mangas;
 
 public interface IMangaService
 {
+    Manga Find(int id);
+    IEnumerable<Manga> All();
+
     Manga GetByMangaUpdatesId(long mangaUpdatesId);
     bool TryFindByTitle(string title, out Manga manga);
     Manga CreateWithIds(long? mangaUpdatesId = null, int? myAnimeListId = null);
@@ -29,6 +32,16 @@ public class MangaService : IMangaService
     {
         _mangaRepository = mangaRepository;
         _eventAggregator = eventAggregator;
+    }
+
+    public Manga Find(int id)
+    {
+        return _mangaRepository.Find(id);
+    }
+
+    public IEnumerable<Manga> All()
+    {
+        return _mangaRepository.All();
     }
 
     public Manga GetByMangaUpdatesId(long mangaUpdatesId)
