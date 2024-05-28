@@ -13,7 +13,7 @@ public abstract class IndexarrResponseParser : IParseIndexerResponse
     private static readonly Regex InDaysRegex = new Regex(@"in (\d+) days", RegexOptions.IgnoreCase);
     private static readonly Regex InHoursRegex = new Regex(@"in (\d+) hours", RegexOptions.IgnoreCase);
     private static readonly Regex SecondsAgoRegex = new Regex(@"(\d+) seconds? ago", RegexOptions.IgnoreCase);
-    private static readonly Regex MinutesAgoRegex = new Regex(@"(\d+) minutes? ago", RegexOptions.IgnoreCase);
+    private static readonly Regex MinutesAgoRegex = new Regex(@"(\d+) (?:minutes?|mins?) ago", RegexOptions.IgnoreCase);
     private static readonly Regex HoursAgoRegex = new Regex(@"(\d+) hours? ago", RegexOptions.IgnoreCase);
     private static readonly Regex DaysAgoRegex = new Regex(@"(\d+) days? ago", RegexOptions.IgnoreCase);
     private static readonly Regex MonthsAgoRegex = new Regex(@"(\d+) months? ago", RegexOptions.IgnoreCase);
