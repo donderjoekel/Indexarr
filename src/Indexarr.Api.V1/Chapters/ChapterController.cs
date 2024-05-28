@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.Chapters;
 using NzbDrone.Core.IndexedMangas;
@@ -31,11 +32,39 @@ public class ChapterController : RestController<ChapterResource>
         throw new NotImplementedException();
     }
 
-    [HttpGet("mangaupdates")]
+    [HttpGet("mangaupdates/{mangaUpdatesId:long}")]
+    [AllowAnonymous]
     [Produces("application/json")]
     public List<ChapterResource> GetByMangaUpdatesId(long mangaUpdatesId)
     {
         var manga = _mangaService.GetByMangaUpdatesId(mangaUpdatesId);
+        if (manga == null)
+        {
+            return new List<ChapterResource>();
+        }
+
+        var resources = new List<ChapterResource>();
+        var indexedMangas = _indexedMangaService.GetByMangaId(manga.Id);
+
+        foreach (var indexedManga in indexedMangas)
+        {
+            var chapters = _chapterService.GetForIndexedManga(indexedManga.Id);
+            resources.AddRange(chapters.Select(c => c.ToResource()));
+        }
+
+        return resources.OrderBy(x => x.Volume).ThenBy(x => x.Number).Select((value, i) =>
+        {
+            value.AbsoluteNumber = i + 1;
+            return value;
+        }).ToList();
+    }
+
+    [HttpGet("anilist/{aniListId:int}")]
+    [AllowAnonymous]
+    [Produces("application/json")]
+    public List<ChapterResource> GetByAniListId(int aniListId)
+    {
+        var manga = _mangaService.GetByAniListId(aniListId);
         if (manga == null)
         {
             return new List<ChapterResource>();
