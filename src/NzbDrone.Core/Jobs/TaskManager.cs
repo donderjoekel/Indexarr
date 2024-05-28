@@ -123,13 +123,13 @@ namespace NzbDrone.Core.Jobs
 
                     new ScheduledTask()
                     {
-                        Interval = 4 * 60,
+                        Interval = int.MaxValue,
                         TypeName = typeof(MatchMangasCommand).FullName
                     },
 
                     new ScheduledTask()
                     {
-                        Interval = 12 * 60,
+                        Interval = int.MaxValue,
                         TypeName = typeof(MetadataRefreshCommand).FullName
                     },
 
