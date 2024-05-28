@@ -15,15 +15,15 @@ public class MangaResource : RestResource
 
 public static class MangaResourceMapper
 {
-    public static MangaResource ToResource(this Manga manga)
+    public static MangaResource ToResource(this Manga model)
     {
         return new MangaResource()
         {
-            Id = manga.Id,
-            MangaUpdatesId = manga.MangaUpdatesId,
-            MyAnimeListId = manga.MyAnimeListId,
-            AniListId = manga.AniListId,
-            Titles = manga.MangaUpdatesTitles.Concat(manga.AniListTitles).Concat(manga.MyAnimeListTitles).ToList()
+            Id = model.Id,
+            MangaUpdatesId = model.MangaUpdatesId,
+            MyAnimeListId = model.MyAnimeListId,
+            AniListId = model.AniListId,
+            Titles = model.MangaUpdatesTitles.Concat(model.AniListTitles).Concat(model.MyAnimeListTitles).ToList()
         };
     }
 }
