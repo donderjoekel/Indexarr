@@ -11,6 +11,8 @@ public interface IMangaService
     IEnumerable<Manga> All();
 
     Manga GetByMangaUpdatesId(long mangaUpdatesId);
+    Manga GetByAniListId(int aniListId);
+
     bool TryFindByTitle(string title, out Manga manga);
     Manga CreateWithIds(long? mangaUpdatesId = null, int? myAnimeListId = null);
 
@@ -47,6 +49,11 @@ public class MangaService : IMangaService
     public Manga GetByMangaUpdatesId(long mangaUpdatesId)
     {
         return _mangaRepository.GetByMangaUpdatesId(mangaUpdatesId);
+    }
+
+    public Manga GetByAniListId(int aniListId)
+    {
+        return _mangaRepository.GetByAniListId(aniListId);
     }
 
     public bool TryFindByTitle(string title, out Manga manga)
