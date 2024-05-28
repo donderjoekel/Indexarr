@@ -696,7 +696,7 @@
         }
       }
     },
-    "/api/v1/chapter/mangaupdates": {
+    "/api/v1/chapter/mangaupdates/{mangaUpdatesId}": {
       "get": {
         "tags": [
           "Chapter"
@@ -704,10 +704,44 @@
         "parameters": [
           {
             "name": "mangaUpdatesId",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChapterResource"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/chapter/anilist/{aniListId}": {
+      "get": {
+        "tags": [
+          "Chapter"
+        ],
+        "parameters": [
+          {
+            "name": "aniListId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
             }
           }
         ],
@@ -1465,6 +1499,58 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HostConfigResource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/indexedmanga/{id}": {
+      "get": {
+        "tags": [
+          "IndexedManga"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndexedMangaResource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/indexedmanga": {
+      "get": {
+        "tags": [
+          "IndexedManga"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IndexedMangaResource"
+                  }
                 }
               }
             }
@@ -2258,6 +2344,58 @@
               "text/plain": {
                 "schema": {
                   "$ref": "#/components/schemas/IActionResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/manga/{id}": {
+      "get": {
+        "tags": [
+          "Manga"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MangaResource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/manga": {
+      "get": {
+        "tags": [
+          "Manga"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MangaResource"
+                  }
                 }
               }
             }
@@ -4634,6 +4772,33 @@
         "type": "object",
         "additionalProperties": false
       },
+      "IndexedMangaResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mangaId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "indexerId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "IndexerBulkResource": {
         "type": "object",
         "properties": {
@@ -5211,6 +5376,38 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/LogResource"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MangaResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mangaUpdatesId": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "myAnimeListId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "aniListId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "titles": {
+            "type": "array",
+            "items": {
+              "type": "string"
             },
             "nullable": true
           }
