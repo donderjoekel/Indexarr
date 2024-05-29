@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using NLog;
 using NzbDrone.Core.Chapters;
 using NzbDrone.Core.Concurrency;
+using NzbDrone.Core.Drone;
+using NzbDrone.Core.Drone.Events;
 using NzbDrone.Core.IndexedMangas;
 using NzbDrone.Core.Indexers;
 using NzbDrone.Core.Indexing.Commands;
@@ -19,40 +23,72 @@ public interface IIndexingService
 }
 
 public class IndexingService : IIndexingService,
-    IExecute<FullIndexCommand>
+    IExecute<FullIndexCommand>,
+    IExecute<PartialIndexCommand>,
+    IHandle<PartialIndexFinishedEvent>
 {
     private readonly Logger _logger;
     private readonly IIndexerFactory _indexerFactory;
     private readonly IIndexedMangaService _indexedMangaService;
     private readonly IChapterService _chapterService;
     private readonly IEventAggregator _eventAggregator;
+    private readonly IDroneService _droneService;
+    private readonly List<Guid> _indexInProgress;
+
+    private SemaphoreSlim _semaphore;
 
     public IndexingService(Logger logger,
         IIndexerFactory indexerFactory,
         IIndexedMangaService indexedMangaService,
         IChapterService chapterService,
-        IEventAggregator eventAggregator)
+        IEventAggregator eventAggregator,
+        IDroneService droneService)
     {
         _logger = logger;
         _indexerFactory = indexerFactory;
         _indexedMangaService = indexedMangaService;
         _chapterService = chapterService;
         _eventAggregator = eventAggregator;
+        _droneService = droneService;
+
+        _indexInProgress = new List<Guid>();
     }
 
     public void Execute(FullIndexCommand message)
     {
+        if (!_droneService.IsMainDrone())
+        {
+            return;
+        }
+
+        _semaphore = new SemaphoreSlim(_droneService.GetDroneCount());
+
         var indexers = _indexerFactory.Enabled();
 
         foreach (var indexer in indexers)
         {
-            _logger.Info("Starting full index for {Indexer}", indexer.Name);
-            var result = indexer.FullIndex().GetAwaiter().GetResult();
-            ConcurrentWork.CreateAndRun(5, result.Mangas, info => () => ProcessManga(info));
-            _logger.Info("Finished full index for {Indexer}", indexer.Name);
+            _semaphore.Wait();
+            if (_droneService.DispatchPartialIndex(indexer.Definition.Id))
+            {
+                _indexInProgress.Add(indexer.Definition.Id);
+            }
+            else
+            {
+                _semaphore.Release();
+            }
         }
 
         _eventAggregator.PublishEvent(new IndexCompletedEvent());
+    }
+
+    public void Execute(PartialIndexCommand message)
+    {
+        var indexer = _indexerFactory.GetByGuid(message.IndexerId);
+        _logger.Info("Starting full index for {Indexer}", indexer.Name);
+        var result = indexer.FullIndex().GetAwaiter().GetResult();
+        ConcurrentWork.CreateAndRun(5, result.Mangas, info => () => ProcessManga(info));
+        _logger.Info("Finished full index for {Indexer}", indexer.Name);
+        _droneService.DispatchPartialIndexFinished(message.IndexerId);
     }
 
     private void ProcessManga(MangaInfo manga)
@@ -126,6 +162,20 @@ public class IndexingService : IIndexingService,
         catch (Exception e)
         {
             _logger.Error(e, "Error processing chapter {Title} - {Chapter}", manga.Title, chapter.Number);
+        }
+    }
+
+    public void Handle(PartialIndexFinishedEvent message)
+    {
+        var guid = Guid.Parse(message.IndexerId);
+        if (_indexInProgress.Contains(guid))
+        {
+            _indexInProgress.Remove(guid);
+            _semaphore.Release();
+        }
+        else
+        {
+            _logger.Error("Received an invalid partial index finished event for {IndexerId}", message.IndexerId);
         }
     }
 }

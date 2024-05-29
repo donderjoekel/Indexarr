@@ -8,6 +8,8 @@ using NzbDrone.Core.Applications;
 using NzbDrone.Core.Backup;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Configuration.Events;
+using NzbDrone.Core.Drone;
+using NzbDrone.Core.Drone.Commands;
 using NzbDrone.Core.HealthCheck;
 using NzbDrone.Core.History;
 using NzbDrone.Core.Housekeeping;
@@ -137,6 +139,18 @@ namespace NzbDrone.Core.Jobs
                     {
                         Interval = int.MaxValue,
                         TypeName = typeof(PurgeCommand).FullName
+                    },
+
+                    new ScheduledTask()
+                    {
+                        Interval = DroneService.RefreshInterval,
+                        TypeName = typeof(RegisterDroneCommand).FullName
+                    },
+
+                    new ScheduledTask()
+                    {
+                        Interval = DroneService.RefreshInterval * 2,
+                        TypeName = typeof(RemoveUnresponsiveDronesCommand).FullName
                     }
                 };
 
