@@ -38,4 +38,12 @@ public class DroneController : RestController<DroneResource>
         _droneService.StartPartialIndex(indexerId);
         return Ok();
     }
+
+    [HttpGet("finish/{indexerId}")]
+    [AllowAnonymous]
+    public IActionResult FinishIndex(string indexerId)
+    {
+        _droneService.FinishPartialIndex(indexerId);
+        return Ok();
+    }
 }

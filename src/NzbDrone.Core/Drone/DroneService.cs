@@ -3,8 +3,10 @@ using System.Linq;
 using NLog;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Drone.Commands;
+using NzbDrone.Core.Drone.Events;
 using NzbDrone.Core.Indexing.Commands;
 using NzbDrone.Core.Messaging.Commands;
+using NzbDrone.Core.Messaging.Events;
 
 namespace NzbDrone.Core.Drone;
 
@@ -12,9 +14,11 @@ public interface IDroneService
 {
     bool IsMainDrone();
     int GetDroneCount();
-    bool RequestPartialIndex(Guid indexerId);
     void RegisterDrone(string address);
+    bool DispatchPartialIndex(Guid indexerId);
+    void DispatchPartialIndexFinished(Guid indexerId);
     void StartPartialIndex(string indexerId);
+    void FinishPartialIndex(string indexerId);
 }
 
 public class DroneService : IDroneService,
@@ -28,18 +32,21 @@ public class DroneService : IDroneService,
     private readonly IHttpClient _httpClient;
     private readonly Logger _logger;
     private readonly IManageCommandQueue _commandQueue;
+    private readonly IEventAggregator _eventAggregator;
 
     private readonly string _hostAddress;
 
     public DroneService(IDroneRepository droneRepository,
         IHttpClient httpClient,
         Logger logger,
-        IManageCommandQueue commandQueue)
+        IManageCommandQueue commandQueue,
+        IEventAggregator eventAggregator)
     {
         _droneRepository = droneRepository;
         _httpClient = httpClient;
         _logger = logger;
         _commandQueue = commandQueue;
+        _eventAggregator = eventAggregator;
 
         _hostAddress = Environment.GetEnvironmentVariable("HOST_ADDRESS");
     }
@@ -54,7 +61,7 @@ public class DroneService : IDroneService,
         return _droneRepository.Count();
     }
 
-    public bool RequestPartialIndex(Guid indexerId)
+    public bool DispatchPartialIndex(Guid indexerId)
     {
         var drone = _droneRepository.All().FirstOrDefault(x => !x.IsBusy);
 
@@ -78,6 +85,11 @@ public class DroneService : IDroneService,
             _logger.Error(e);
             return false;
         }
+    }
+
+    public void DispatchPartialIndexFinished(Guid indexerId)
+    {
+        _httpClient.Get(new HttpRequest(_hostAddress + "/api/v1/drone/finish/" + indexerId));
     }
 
     public void RegisterDrone(string address)
@@ -113,6 +125,15 @@ public class DroneService : IDroneService,
         };
 
         _commandQueue.Push(command);
+    }
+
+    public void FinishPartialIndex(string indexerId)
+    {
+        _eventAggregator.PublishEvent(
+            new PartialIndexFinishedEvent()
+            {
+                IndexerId = indexerId
+            });
     }
 
     public void Execute(RegisterDroneCommand message)
