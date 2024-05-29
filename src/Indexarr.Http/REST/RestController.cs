@@ -26,9 +26,9 @@ namespace Prowlarr.Http.REST
         protected ResourceValidator<TResource> PutValidator { get; private set; }
         protected ResourceValidator<TResource> SharedValidator { get; private set; }
 
-        protected void ValidateId(int id)
+        protected void ValidateId(Guid id)
         {
-            if (id <= 0)
+            if (id == Guid.Empty)
             {
                 throw new BadRequestException(id + " is not a valid ID");
             }
@@ -47,7 +47,7 @@ namespace Prowlarr.Http.REST
 
         [RestGetById]
         [Produces("application/json")]
-        public abstract TResource GetResourceById(int id);
+        public abstract TResource GetResourceById(Guid id);
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
@@ -66,9 +66,9 @@ namespace Prowlarr.Http.REST
                 foreach (var resource in resourceArgs)
                 {
                     // Map route Id to body resource if not set in request
-                    if (Request.Method == "PUT" && resource.Id == 0 && context.RouteData.Values.TryGetValue("id", out var routeId))
+                    if (Request.Method == "PUT" && resource.Id == Guid.Empty && context.RouteData.Values.TryGetValue("id", out var routeId))
                     {
-                        resource.Id = Convert.ToInt32(routeId);
+                        resource.Id = Guid.Parse(routeId.ToString());
                     }
 
                     ValidateResource(resource, skipValidate, skipShared);
@@ -81,7 +81,7 @@ namespace Prowlarr.Http.REST
             {
                 if (context.ActionArguments.TryGetValue("id", out var idObj))
                 {
-                    ValidateId((int)idObj);
+                    ValidateId((Guid)idObj);
                 }
             }
 
@@ -137,13 +137,13 @@ namespace Prowlarr.Http.REST
             }
         }
 
-        protected ActionResult<TResource> Accepted(int id)
+        protected ActionResult<TResource> Accepted(Guid id)
         {
             var result = GetResourceById(id);
             return AcceptedAtAction(nameof(GetResourceById), new { id = id }, result);
         }
 
-        protected ActionResult<TResource> Created(int id)
+        protected ActionResult<TResource> Created(Guid id)
         {
             var result = GetResourceById(id);
             return CreatedAtAction(nameof(GetResourceById), new { id = id }, result);

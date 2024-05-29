@@ -9,7 +9,7 @@ namespace NzbDrone.Core.Datastore.Migration
         protected override void MainDbUpgrade()
         {
             Alter.Table("IndexedManga")
-                .AlterColumn("MangaId").AsInt32().Nullable()
+                .AlterColumn("MangaId").AsGuid().Nullable()
                 .AddColumn("Title").AsString().NotNullable();
         }
     }

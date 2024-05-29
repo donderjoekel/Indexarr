@@ -11,15 +11,15 @@ namespace NzbDrone.Core.History
     {
         History MostRecentForDownloadId(string downloadId);
         List<History> FindByDownloadId(string downloadId);
-        List<History> FindDownloadHistory(int indexerId);
-        List<History> GetByIndexerId(int indexerId, HistoryEventType? eventType);
-        void DeleteForIndexers(List<int> indexerIds);
-        History MostRecentForIndexer(int indexerId);
+        List<History> FindDownloadHistory(Guid indexerId);
+        List<History> GetByIndexerId(Guid indexerId, HistoryEventType? eventType);
+        void DeleteForIndexers(List<Guid> indexerIds);
+        History MostRecentForIndexer(Guid indexerId);
         List<History> Between(DateTime start, DateTime end);
         List<History> Since(DateTime date, HistoryEventType? eventType);
         void Cleanup(int days);
-        int CountSince(int indexerId, DateTime date, List<HistoryEventType> eventTypes);
-        History FindFirstForIndexerSince(int indexerId, DateTime date, List<HistoryEventType> eventTypes, int limit);
+        int CountSince(Guid indexerId, DateTime date, List<HistoryEventType> eventTypes);
+        History FindFirstForIndexerSince(Guid indexerId, DateTime date, List<HistoryEventType> eventTypes, int limit);
     }
 
     public class HistoryRepository : BasicRepository<History>, IHistoryRepository
@@ -39,7 +39,7 @@ namespace NzbDrone.Core.History
             return Query(x => x.DownloadId == downloadId);
         }
 
-        public List<History> FindDownloadHistory(int indexerId)
+        public List<History> FindDownloadHistory(Guid indexerId)
         {
             var allowed = new[] { HistoryEventType.ReleaseGrabbed };
 
@@ -47,7 +47,7 @@ namespace NzbDrone.Core.History
                          allowed.Contains(h.EventType));
         }
 
-        public List<History> GetByIndexerId(int indexerId, HistoryEventType? eventType)
+        public List<History> GetByIndexerId(Guid indexerId, HistoryEventType? eventType)
         {
             var query = Query(x => x.IndexerId == indexerId);
 
@@ -59,7 +59,7 @@ namespace NzbDrone.Core.History
             return query.OrderByDescending(h => h.Date).ToList();
         }
 
-        public void DeleteForIndexers(List<int> indexerIds)
+        public void DeleteForIndexers(List<Guid> indexerIds)
         {
             Delete(c => indexerIds.Contains(c.IndexerId));
         }
@@ -71,7 +71,7 @@ namespace NzbDrone.Core.History
             Delete(c => c.Date <= cleanDate);
         }
 
-        public History MostRecentForIndexer(int indexerId)
+        public History MostRecentForIndexer(Guid indexerId)
         {
             return Query(x => x.IndexerId == indexerId).MaxBy(h => h.Date);
         }
@@ -95,7 +95,7 @@ namespace NzbDrone.Core.History
             return Query(builder).OrderBy(h => h.Date).ToList();
         }
 
-        public int CountSince(int indexerId, DateTime date, List<HistoryEventType> eventTypes)
+        public int CountSince(Guid indexerId, DateTime date, List<HistoryEventType> eventTypes)
         {
             var intEvents = eventTypes.Select(t => (int)t).ToList();
 
@@ -113,7 +113,7 @@ namespace NzbDrone.Core.History
             }
         }
 
-        public History FindFirstForIndexerSince(int indexerId, DateTime date, List<HistoryEventType> eventTypes, int limit)
+        public History FindFirstForIndexerSince(Guid indexerId, DateTime date, List<HistoryEventType> eventTypes, int limit)
         {
             var intEvents = eventTypes.Select(t => (int)t).ToList();
 

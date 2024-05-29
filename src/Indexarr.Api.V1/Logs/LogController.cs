@@ -25,7 +25,7 @@ namespace Prowlarr.Api.V1.Logs
 
             if (pageSpec.SortKey == "time")
             {
-                pageSpec.SortKey = "id";
+                pageSpec.SortKey = "Id";
             }
 
             if (level.IsNotNullOrWhiteSpace())
@@ -55,7 +55,7 @@ namespace Prowlarr.Api.V1.Logs
 
             var response = pageSpec.ApplyToPage(_logService.Paged, LogResourceMapper.ToResource);
 
-            if (pageSpec.SortKey == "id")
+            if (pageSpec.SortKey == "Id")
             {
                 response.SortKey = "time";
             }

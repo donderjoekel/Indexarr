@@ -8,7 +8,7 @@ namespace NzbDrone.Core.Jobs
     public interface IScheduledTaskRepository : IBasicRepository<ScheduledTask>
     {
         ScheduledTask GetDefinition(Type type);
-        void SetLastExecutionTime(int id, DateTime executionTime, DateTime startTime);
+        void SetLastExecutionTime(Guid id, DateTime executionTime, DateTime startTime);
     }
 
     public class ScheduledTaskRepository : BasicRepository<ScheduledTask>, IScheduledTaskRepository
@@ -23,7 +23,7 @@ namespace NzbDrone.Core.Jobs
             return Query(c => c.TypeName == type.FullName).Single();
         }
 
-        public void SetLastExecutionTime(int id, DateTime executionTime, DateTime startTime)
+        public void SetLastExecutionTime(Guid id, DateTime executionTime, DateTime startTime)
         {
             var task = new ScheduledTask
             {

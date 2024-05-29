@@ -10,12 +10,12 @@ namespace NzbDrone.Core.Indexers
 {
     public interface IIndexerStatusService : IProviderStatusServiceBase<IndexerStatus>
     {
-        ReleaseInfo GetLastRssSyncReleaseInfo(int indexerId);
-        IDictionary<string, string> GetIndexerCookies(int indexerId);
-        DateTime GetIndexerCookiesExpirationDate(int indexerId);
+        ReleaseInfo GetLastRssSyncReleaseInfo(Guid indexerId);
+        IDictionary<string, string> GetIndexerCookies(Guid indexerId);
+        DateTime GetIndexerCookiesExpirationDate(Guid indexerId);
 
-        void UpdateRssSyncStatus(int indexerId, ReleaseInfo releaseInfo);
-        void UpdateCookies(int indexerId, IDictionary<string, string> cookies, DateTime? expiration);
+        void UpdateRssSyncStatus(Guid indexerId, ReleaseInfo releaseInfo);
+        void UpdateCookies(Guid indexerId, IDictionary<string, string> cookies, DateTime? expiration);
     }
 
     public class IndexerStatusService : ProviderStatusServiceBase<IIndexer, IndexerStatus>, IIndexerStatusService
@@ -25,22 +25,22 @@ namespace NzbDrone.Core.Indexers
         {
         }
 
-        public ReleaseInfo GetLastRssSyncReleaseInfo(int indexerId)
+        public ReleaseInfo GetLastRssSyncReleaseInfo(Guid indexerId)
         {
             return GetProviderStatus(indexerId).LastRssSyncReleaseInfo;
         }
 
-        public IDictionary<string, string> GetIndexerCookies(int indexerId)
+        public IDictionary<string, string> GetIndexerCookies(Guid indexerId)
         {
             return GetProviderStatus(indexerId)?.Cookies ?? null;
         }
 
-        public DateTime GetIndexerCookiesExpirationDate(int indexerId)
+        public DateTime GetIndexerCookiesExpirationDate(Guid indexerId)
         {
             return GetProviderStatus(indexerId)?.CookiesExpirationDate ?? DateTime.Now.AddDays(12);
         }
 
-        public void UpdateRssSyncStatus(int indexerId, ReleaseInfo releaseInfo)
+        public void UpdateRssSyncStatus(Guid indexerId, ReleaseInfo releaseInfo)
         {
             lock (_syncRoot)
             {
@@ -52,9 +52,9 @@ namespace NzbDrone.Core.Indexers
             }
         }
 
-        public void UpdateCookies(int indexerId, IDictionary<string, string> cookies, DateTime? expiration)
+        public void UpdateCookies(Guid indexerId, IDictionary<string, string> cookies, DateTime? expiration)
         {
-            if (indexerId > 0)
+            if (indexerId != Guid.Empty)
             {
                 lock (_syncRoot)
                 {

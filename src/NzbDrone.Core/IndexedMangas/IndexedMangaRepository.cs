@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Messaging.Events;
@@ -7,8 +8,8 @@ namespace NzbDrone.Core.IndexedMangas;
 
 public interface IIndexedMangaRepository : IBasicRepository<IndexedManga>
 {
-    IEnumerable<IndexedManga> GetByMangaId(int mangaId);
-    IEnumerable<IndexedManga> GetForIndexer(int indexerId);
+    IEnumerable<IndexedManga> GetByMangaId(Guid mangaId);
+    IEnumerable<IndexedManga> GetForIndexer(Guid indexerId);
     IndexedManga GetByUrl(string url);
     IEnumerable<IndexedManga> GetWithoutLinkedManga();
 }
@@ -20,12 +21,12 @@ public class IndexedMangaRepository : BasicRepository<IndexedManga>, IIndexedMan
     {
     }
 
-    public IEnumerable<IndexedManga> GetByMangaId(int mangaId)
+    public IEnumerable<IndexedManga> GetByMangaId(Guid mangaId)
     {
         return Query(x => x.MangaId == mangaId);
     }
 
-    public IEnumerable<IndexedManga> GetForIndexer(int indexerId)
+    public IEnumerable<IndexedManga> GetForIndexer(Guid indexerId)
     {
         return Query(x => x.IndexerId == indexerId);
     }

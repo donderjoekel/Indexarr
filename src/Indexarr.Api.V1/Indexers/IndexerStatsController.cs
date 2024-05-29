@@ -30,8 +30,8 @@ namespace Prowlarr.Api.V1.Indexers
         {
             var statsStartDate = startDate ?? DateTime.MinValue;
             var statsEndDate = endDate ?? DateTime.Now;
-            var parsedIndexers = new List<int>();
-            var parsedTags = new List<int>();
+            var parsedIndexers = new List<Guid>();
+            var parsedTags = new List<Guid>();
 
             var allIndexers = _indexerFactory.All().Select(_indexerFactory.GetInstance).ToList();
 
@@ -60,7 +60,7 @@ namespace Prowlarr.Api.V1.Indexers
 
             if (indexers.IsNotNullOrWhiteSpace())
             {
-                parsedIndexers.AddRange(indexers.Split(',').Select(x => Convert.ToInt32(x)));
+                parsedIndexers.AddRange(indexers.Split(',').Select(Guid.Parse));
 
                 indexerIds = indexerIds.Intersect(parsedIndexers).ToList();
             }

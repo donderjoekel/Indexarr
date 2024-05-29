@@ -45,7 +45,7 @@ namespace Prowlarr.Api.V1.Search
         }
 
         [NonAction]
-        public override ReleaseResource GetResourceById(int id)
+        public override ReleaseResource GetResourceById(Guid id)
         {
             throw new NotImplementedException();
         }

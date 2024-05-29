@@ -5,7 +5,7 @@ namespace NzbDrone.Core.Datastore
 {
     public class ModelNotFoundException : NzbDroneException
     {
-        public ModelNotFoundException(Type modelType, int modelId)
+        public ModelNotFoundException(Type modelType, Guid modelId)
             : base("{0} with ID {1} does not exist", modelType.Name, modelId)
         {
         }

@@ -6,7 +6,7 @@ namespace NzbDrone.Core.Chapters;
 
 public class Chapter : ModelBase
 {
-    public int IndexedMangaId { get; set; }
+    public Guid IndexedMangaId { get; set; }
     public int Volume { get; set; }
     public decimal Number { get; set; }
     public string Url { get; set; }

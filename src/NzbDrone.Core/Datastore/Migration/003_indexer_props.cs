@@ -20,7 +20,7 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("Priority").AsInt32().WithDefaultValue(1);
 
             Create.TableForModel("DownloadClientStatus")
-                .WithColumn("ProviderId").AsInt32().NotNullable().Unique()
+                .WithColumn("ProviderId").AsGuid().NotNullable().Unique()
                 .WithColumn("InitialFailure").AsDateTime().Nullable()
                 .WithColumn("MostRecentFailure").AsDateTime().Nullable()
                 .WithColumn("EscalationLevel").AsInt32().NotNullable()

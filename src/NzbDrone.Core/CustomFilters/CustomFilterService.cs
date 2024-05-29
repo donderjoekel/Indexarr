@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,8 +8,8 @@ namespace NzbDrone.Core.CustomFilters
     {
         CustomFilter Add(CustomFilter customFilter);
         List<CustomFilter> All();
-        void Delete(int id);
-        CustomFilter Get(int id);
+        void Delete(Guid id);
+        CustomFilter Get(Guid id);
         CustomFilter Update(CustomFilter customFilter);
     }
 
@@ -31,12 +32,12 @@ namespace NzbDrone.Core.CustomFilters
             return _repo.Update(customFilter);
         }
 
-        public void Delete(int id)
+        public void Delete(Guid id)
         {
             _repo.Delete(id);
         }
 
-        public CustomFilter Get(int id)
+        public CustomFilter Get(Guid id)
         {
             return _repo.Get(id);
         }

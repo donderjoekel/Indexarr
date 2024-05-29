@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Messaging.Events;
@@ -7,7 +8,7 @@ namespace NzbDrone.Core.ThingiProvider.Status
     public interface IProviderStatusRepository<TModel> : IBasicRepository<TModel>
         where TModel : ProviderStatusBase, new()
     {
-        TModel FindByProviderId(int providerId);
+        TModel FindByProviderId(Guid providerId);
     }
 
     public class ProviderStatusRepository<TModel> : BasicRepository<TModel>, IProviderStatusRepository<TModel>
@@ -18,7 +19,7 @@ namespace NzbDrone.Core.ThingiProvider.Status
         {
         }
 
-        public TModel FindByProviderId(int providerId)
+        public TModel FindByProviderId(Guid providerId)
         {
             return Query(x => x.ProviderId == providerId).SingleOrDefault();
         }

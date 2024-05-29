@@ -14,7 +14,7 @@ namespace NzbDrone.Core.Datastore.Migration
             Rename.Column("EnableRss").OnTable("Indexers").To("Enable");
 
             Create.TableForModel("ApplicationStatus")
-                .WithColumn("ProviderId").AsInt32().NotNullable().Unique()
+                .WithColumn("ProviderId").AsGuid().NotNullable().Unique()
                 .WithColumn("InitialFailure").AsDateTime().Nullable()
                 .WithColumn("MostRecentFailure").AsDateTime().Nullable()
                 .WithColumn("EscalationLevel").AsInt32().NotNullable()

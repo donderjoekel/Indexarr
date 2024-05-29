@@ -27,7 +27,7 @@ public class ChapterController : RestController<ChapterResource>
         _mangaService = mangaService;
     }
 
-    public override ChapterResource GetResourceById(int id)
+    public override ChapterResource GetResourceById(Guid id)
     {
         throw new NotImplementedException();
     }

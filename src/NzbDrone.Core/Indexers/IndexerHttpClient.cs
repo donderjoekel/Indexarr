@@ -55,7 +55,7 @@ namespace NzbDrone.Core.Indexers
         private IList<IIndexerProxy> GetProxies(ProviderDefinition definition)
         {
             // Skip DB call if no tags on the indexers
-            if (definition is { Id: > 0 } && definition.Tags.Count == 0)
+            if (definition.Id != Guid.Empty && definition.Tags.Count == 0)
             {
                 return Array.Empty<IIndexerProxy>();
             }
@@ -69,7 +69,7 @@ namespace NzbDrone.Core.Indexers
                 .OrderBy(p => p is FlareSolverr)
                 .ToList();
 
-            if (!selectedProxies.Any() && definition is not { Id: not 0 })
+            if (!selectedProxies.Any() && definition.Id != Guid.Empty)
             {
                 selectedProxies = new List<IIndexerProxy>();
                 selectedProxies.AddIfNotNull(proxies.Find(p => p is FlareSolverr));

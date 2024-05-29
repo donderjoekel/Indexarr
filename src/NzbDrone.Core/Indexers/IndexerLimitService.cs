@@ -28,7 +28,7 @@ namespace NzbDrone.Core.Indexers
 
         public bool AtDownloadLimit(IndexerDefinition indexer)
         {
-            if (indexer is { Id: > 0 } && ((IIndexerSettings)indexer.Settings).BaseSettings.GrabLimit.HasValue)
+            if (indexer.Id != Guid.Empty && ((IIndexerSettings)indexer.Settings).BaseSettings.GrabLimit.HasValue)
             {
                 var intervalLimitHours = CalculateIntervalLimitHours(indexer);
                 var grabCount = _historyService.CountSince(indexer.Id, DateTime.Now.AddHours(-1 * intervalLimitHours), new List<HistoryEventType> { HistoryEventType.ReleaseGrabbed });
@@ -49,7 +49,7 @@ namespace NzbDrone.Core.Indexers
 
         public bool AtQueryLimit(IndexerDefinition indexer)
         {
-            if (indexer is { Id: > 0 } && ((IIndexerSettings)indexer.Settings).BaseSettings.QueryLimit.HasValue)
+            if (indexer.Id != Guid.Empty && ((IIndexerSettings)indexer.Settings).BaseSettings.QueryLimit.HasValue)
             {
                 var intervalLimitHours = CalculateIntervalLimitHours(indexer);
                 var queryCount = _historyService.CountSince(indexer.Id, DateTime.Now.AddHours(-1 * intervalLimitHours), new List<HistoryEventType> { HistoryEventType.IndexerQuery, HistoryEventType.IndexerRss });
@@ -70,7 +70,7 @@ namespace NzbDrone.Core.Indexers
 
         public int CalculateRetryAfterDownloadLimit(IndexerDefinition indexer)
         {
-            if (indexer is { Id: > 0 } && ((IIndexerSettings)indexer.Settings).BaseSettings.GrabLimit.HasValue)
+            if (indexer.Id != Guid.Empty && ((IIndexerSettings)indexer.Settings).BaseSettings.GrabLimit.HasValue)
             {
                 var intervalLimitHours = CalculateIntervalLimitHours(indexer);
                 var grabLimit = ((IIndexerSettings)indexer.Settings).BaseSettings.GrabLimit.GetValueOrDefault();
@@ -88,7 +88,7 @@ namespace NzbDrone.Core.Indexers
 
         public int CalculateRetryAfterQueryLimit(IndexerDefinition indexer)
         {
-            if (indexer is { Id: > 0 } && ((IIndexerSettings)indexer.Settings).BaseSettings.QueryLimit.HasValue)
+            if (indexer.Id != Guid.Empty && ((IIndexerSettings)indexer.Settings).BaseSettings.QueryLimit.HasValue)
             {
                 var intervalLimitHours = CalculateIntervalLimitHours(indexer);
                 var queryLimit = ((IIndexerSettings)indexer.Settings).BaseSettings.QueryLimit.GetValueOrDefault();
@@ -106,7 +106,7 @@ namespace NzbDrone.Core.Indexers
 
         public int CalculateIntervalLimitHours(IndexerDefinition indexer)
         {
-            if (indexer is { Id: > 0 })
+            if (indexer.Id != Guid.Empty)
             {
                 return ((IIndexerSettings)indexer.Settings).BaseSettings.LimitsUnit switch
                 {

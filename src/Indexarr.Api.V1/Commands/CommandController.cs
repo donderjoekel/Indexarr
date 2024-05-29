@@ -24,7 +24,7 @@ namespace Prowlarr.Api.V1.Commands
         private readonly IManageCommandQueue _commandQueueManager;
         private readonly KnownTypes _knownTypes;
         private readonly Debouncer _debouncer;
-        private readonly Dictionary<int, CommandResource> _pendingUpdates;
+        private readonly Dictionary<Guid, CommandResource> _pendingUpdates;
 
         private readonly CommandPriorityComparer _commandPriorityComparer = new CommandPriorityComparer();
 
@@ -37,12 +37,12 @@ namespace Prowlarr.Api.V1.Commands
             _knownTypes = knownTypes;
 
             _debouncer = new Debouncer(SendUpdates, TimeSpan.FromSeconds(0.1));
-            _pendingUpdates = new Dictionary<int, CommandResource>();
+            _pendingUpdates = new Dictionary<Guid, CommandResource>();
 
             PostValidator.RuleFor(c => c.Name).NotBlank();
         }
 
-        public override CommandResource GetResourceById(int id)
+        public override CommandResource GetResourceById(Guid id)
         {
             return _commandQueueManager.Get(id).ToResource();
         }
@@ -83,7 +83,7 @@ namespace Prowlarr.Api.V1.Commands
         }
 
         [RestDeleteById]
-        public void CancelCommand(int id)
+        public void CancelCommand(Guid id)
         {
             _commandQueueManager.Cancel(id);
         }

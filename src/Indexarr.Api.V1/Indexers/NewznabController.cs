@@ -54,9 +54,9 @@ namespace NzbDrone.Api.V1.Indexers
             _logger = logger;
         }
 
-        [HttpGet("/api/v1/indexer/{id:int}/newznab")]
-        [HttpGet("{id:int}/api")]
-        public async Task<IActionResult> GetNewznabResponse(int id, [FromQuery] NewznabRequest request)
+        [HttpGet("/api/v1/indexer/{id:guid}/newznab")]
+        [HttpGet("{id:guid}/api")]
+        public async Task<IActionResult> GetNewznabResponse(Guid id, [FromQuery] NewznabRequest request)
         {
             var requestType = request.t;
             request.source = Request.GetSource();
@@ -78,7 +78,7 @@ namespace NzbDrone.Api.V1.Indexers
                 }
             }
 
-            if (id == 0)
+            if (id == Guid.Empty)
             {
                 switch (requestType)
                 {
@@ -178,7 +178,7 @@ namespace NzbDrone.Api.V1.Indexers
                 case "music":
                 case "book":
                 case "movie":
-                    var results = await _releaseSearchService.Search(request, new List<int> { indexerDef.Id }, false);
+                    var results = await _releaseSearchService.Search(request, new List<Guid> { indexerDef.Id }, false);
 
                     var blockedIndexerStatusPost = GetBlockedIndexerStatus(indexer);
 
@@ -205,9 +205,9 @@ namespace NzbDrone.Api.V1.Indexers
             }
         }
 
-        [HttpGet("/api/v1/indexer/{id:int}/download")]
-        [HttpGet("{id:int}/download")]
-        public async Task<object> GetDownload(int id, string link, string file)
+        [HttpGet("/api/v1/indexer/{id:guid}/download")]
+        [HttpGet("{id:guid}/download")]
+        public async Task<object> GetDownload(Guid id, string link, string file)
         {
             var indexerDef = _indexerFactory.Get(id);
 

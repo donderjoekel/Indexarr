@@ -67,7 +67,7 @@ namespace NzbDrone.Core.Applications
         {
             var result = base.Test(definition);
 
-            if (definition.Id == 0)
+            if (definition.Id == Guid.Empty)
             {
                 return result;
             }

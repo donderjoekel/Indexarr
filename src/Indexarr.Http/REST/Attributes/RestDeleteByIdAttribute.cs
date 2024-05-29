@@ -7,7 +7,7 @@ namespace NzbDrone.Http.REST.Attributes
     public class RestDeleteByIdAttribute : HttpDeleteAttribute
     {
         public RestDeleteByIdAttribute()
-            : base("{id:int}")
+            : base("{id:guid}")
         {
         }
     }

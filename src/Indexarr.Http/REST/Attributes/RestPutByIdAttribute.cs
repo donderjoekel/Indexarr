@@ -7,7 +7,7 @@ namespace NzbDrone.Http.REST.Attributes
     public class RestPutByIdAttribute : HttpPutAttribute
     {
         public RestPutByIdAttribute()
-            : base("{id:int?}")
+            : base("{id:guid?}")
         {
         }
     }

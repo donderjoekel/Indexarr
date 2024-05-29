@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NzbDrone.Core.Tags;
@@ -8,10 +9,10 @@ namespace Prowlarr.Api.V1.Tags
     public class TagDetailsResource : RestResource
     {
         public string Label { get; set; }
-        public List<int> NotificationIds { get; set; }
-        public List<int> IndexerIds { get; set; }
-        public List<int> IndexerProxyIds { get; set; }
-        public List<int> ApplicationIds { get; set; }
+        public List<Guid> NotificationIds { get; set; }
+        public List<Guid> IndexerIds { get; set; }
+        public List<Guid> IndexerProxyIds { get; set; }
+        public List<Guid> ApplicationIds { get; set; }
     }
 
     public static class TagDetailsResourceMapper

@@ -142,7 +142,7 @@ namespace NzbDrone.Core.Applications
                 //Add mappings if not already in db, these were setup manually in the app or orphaned by a table wipe
                 foreach (var mapping in remoteMappings)
                 {
-                    if (!indexerMappings.Any(m => (m.RemoteIndexerId > 0 && m.RemoteIndexerId == mapping.RemoteIndexerId) || (m.RemoteIndexerName.IsNotNullOrWhiteSpace() && m.RemoteIndexerName == mapping.RemoteIndexerName)))
+                    if (!indexerMappings.Any(m => (m.RemoteIndexerId != Guid.Empty && m.RemoteIndexerId == mapping.RemoteIndexerId) || (m.RemoteIndexerName.IsNotNullOrWhiteSpace() && m.RemoteIndexerName == mapping.RemoteIndexerName)))
                     {
                         var addMapping = new AppIndexerMap
                         {

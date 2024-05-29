@@ -5,7 +5,7 @@ namespace NzbDrone.Core.ThingiProvider.Status
 {
     public abstract class ProviderStatusBase : ModelBase
     {
-        public int ProviderId { get; set; }
+        public Guid ProviderId { get; set; }
 
         public DateTime? InitialFailure { get; set; }
         public DateTime? MostRecentFailure { get; set; }

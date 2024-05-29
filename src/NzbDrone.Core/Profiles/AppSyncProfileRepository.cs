@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Messaging.Events;
@@ -6,7 +7,7 @@ namespace NzbDrone.Core.Profiles
 {
     public interface IAppProfileRepository : IBasicRepository<AppSyncProfile>
     {
-        bool Exists(int id);
+        bool Exists(Guid id);
     }
 
     public class AppSyncProfileRepository : BasicRepository<AppSyncProfile>, IAppProfileRepository
@@ -24,7 +25,7 @@ namespace NzbDrone.Core.Profiles
             return profiles;
         }
 
-        public bool Exists(int id)
+        public bool Exists(Guid id)
         {
             return Query(x => x.Id == id).Count == 1;
         }

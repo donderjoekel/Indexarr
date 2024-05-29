@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -38,9 +39,13 @@ namespace Prowlarr.Api.V1.Logs
                 var file = files[i];
                 var filename = Path.GetFileName(file);
 
+                var buffer = new byte[16];
+                var index = BitConverter.GetBytes(i + 1);
+                Array.Copy(index, buffer, index.Length);
+
                 result.Add(new LogFileResource
                 {
-                    Id = i + 1,
+                    Id = new Guid(buffer),
                     Filename = filename,
                     LastWriteTime = _diskProvider.FileGetLastWrite(file),
                     ContentsUrl = string.Format("{0}/api/v1/{1}/{2}", _configFileProvider.UrlBase, _resource, filename),

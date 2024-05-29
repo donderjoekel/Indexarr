@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -5,12 +6,12 @@ namespace NzbDrone.Core.IndexerVersions
 {
     public interface IIndexerDefinitionVersionService
     {
-        IndexerDefinitionVersion Get(int indexerVersionId);
+        IndexerDefinitionVersion Get(Guid indexerVersionId);
         IndexerDefinitionVersion GetByDefId(string defId);
         List<IndexerDefinitionVersion> All();
         IndexerDefinitionVersion Add(IndexerDefinitionVersion defVersion);
         IndexerDefinitionVersion Upsert(IndexerDefinitionVersion defVersion);
-        void Delete(int indexerVersionId);
+        void Delete(Guid indexerVersionId);
     }
 
     public class IndexerDefinitionVersionService : IIndexerDefinitionVersionService
@@ -22,7 +23,7 @@ namespace NzbDrone.Core.IndexerVersions
             _repo = repo;
         }
 
-        public IndexerDefinitionVersion Get(int indexerVersionId)
+        public IndexerDefinitionVersion Get(Guid indexerVersionId)
         {
             return _repo.Get(indexerVersionId);
         }
@@ -58,7 +59,7 @@ namespace NzbDrone.Core.IndexerVersions
             return defVersion;
         }
 
-        public void Delete(int indexerVersionId)
+        public void Delete(Guid indexerVersionId)
         {
             _repo.Delete(indexerVersionId);
         }

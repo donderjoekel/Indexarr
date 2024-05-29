@@ -21,7 +21,6 @@ namespace Prowlarr.Api.V1.Indexers
         public bool SupportsSearch { get; set; }
         public bool SupportsRedirect { get; set; }
         public bool SupportsPagination { get; set; }
-        public int AppProfileId { get; set; }
         public DownloadProtocol Protocol { get; set; }
         public IndexerPrivacy Privacy { get; set; }
         public IndexerCapabilityResource Capabilities { get; set; }
@@ -54,7 +53,6 @@ namespace Prowlarr.Api.V1.Indexers
             var infoLinkName = definition.ImplementationName;
 
             resource.InfoLink = $"https://wiki.servarr.com/prowlarr/supported-indexers#{infoLinkName.ToLower().Replace(' ', '-')}";
-            resource.AppProfileId = definition.AppProfileId;
             resource.IndexerUrls = definition.IndexerUrls;
             resource.LegacyUrls = definition.LegacyUrls;
             resource.Description = definition.Description;
@@ -85,7 +83,6 @@ namespace Prowlarr.Api.V1.Indexers
 
             var definition = base.ToModel(resource, existingDefinition);
 
-            definition.AppProfileId = resource.AppProfileId;
             definition.Enable = resource.Enable;
             definition.Redirect = resource.Redirect;
             definition.IndexerUrls = resource.IndexerUrls;

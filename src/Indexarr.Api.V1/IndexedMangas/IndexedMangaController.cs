@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
@@ -18,7 +19,7 @@ public class IndexedMangaController : RestController<IndexedMangaResource>
         _indexedMangaService = indexedMangaService;
     }
 
-    public override IndexedMangaResource GetResourceById(int id)
+    public override IndexedMangaResource GetResourceById(Guid id)
     {
         return _indexedMangaService.Find(id).ToResource();
     }

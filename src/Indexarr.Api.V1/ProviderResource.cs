@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using NzbDrone.Common.Reflection;
 using NzbDrone.Core.ThingiProvider;
@@ -15,7 +16,7 @@ namespace Prowlarr.Api.V1
         public string ConfigContract { get; set; }
         public string InfoLink { get; set; }
         public ProviderMessage Message { get; set; }
-        public HashSet<int> Tags { get; set; }
+        public HashSet<Guid> Tags { get; set; }
 
         public List<T> Presets { get; set; }
     }
@@ -61,7 +62,7 @@ namespace Prowlarr.Api.V1
                 Implementation = resource.Implementation,
                 ConfigContract = resource.ConfigContract,
                 Message = resource.Message,
-                Tags = resource.Tags ?? new HashSet<int>()
+                Tags = resource.Tags ?? new HashSet<Guid>()
             };
 
             var configContract = ReflectionExtensions.CoreAssembly.FindTypeByName(definition.ConfigContract);

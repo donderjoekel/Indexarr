@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +33,7 @@ namespace Prowlarr.Api.V1.System.Tasks
                                .ToList();
         }
 
-        public override TaskResource GetResourceById(int id)
+        public override TaskResource GetResourceById(Guid id)
         {
             var task = _taskManager.GetAll()
                                .SingleOrDefault(t => t.Id == id);

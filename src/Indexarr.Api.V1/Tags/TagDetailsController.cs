@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.Tags;
@@ -16,7 +17,7 @@ namespace Prowlarr.Api.V1.Tags
             _tagService = tagService;
         }
 
-        public override TagDetailsResource GetResourceById(int id)
+        public override TagDetailsResource GetResourceById(Guid id)
         {
             return _tagService.Details(id).ToResource();
         }

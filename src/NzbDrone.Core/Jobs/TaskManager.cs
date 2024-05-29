@@ -159,7 +159,7 @@ namespace NzbDrone.Core.Jobs
 
                 currentDefinition.Interval = defaultTask.Interval;
 
-                if (currentDefinition.Id == 0)
+                if (currentDefinition.Id == Guid.Empty)
                 {
                     currentDefinition.LastExecution = DateTime.UtcNow;
                 }

@@ -9,7 +9,7 @@ namespace NzbDrone.Core.Datastore.Migration
         protected override void MainDbUpgrade()
         {
             Create.TableForModel("NotificationStatus")
-                  .WithColumn("ProviderId").AsInt32().NotNullable().Unique()
+                  .WithColumn("ProviderId").AsGuid().NotNullable().Unique()
                   .WithColumn("InitialFailure").AsDateTimeOffset().Nullable()
                   .WithColumn("MostRecentFailure").AsDateTimeOffset().Nullable()
                   .WithColumn("EscalationLevel").AsInt32().NotNullable()

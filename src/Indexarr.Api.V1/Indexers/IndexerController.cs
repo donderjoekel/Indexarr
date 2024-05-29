@@ -13,9 +13,6 @@ namespace Prowlarr.Api.V1.Indexers
             AppProfileExistsValidator appProfileExistsValidator)
             : base(indexerFactory, "indexer", resourceMapper, bulkResourceMapper)
         {
-            Http.Validation.RuleBuilderExtensions.ValidId(SharedValidator.RuleFor(s => s.AppProfileId));
-
-            SharedValidator.RuleFor(c => c.AppProfileId).SetValidator(appProfileExistsValidator);
         }
     }
 }

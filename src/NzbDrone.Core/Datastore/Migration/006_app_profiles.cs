@@ -13,9 +13,6 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("EnableRss").AsBoolean().NotNullable()
                 .WithColumn("EnableInteractiveSearch").AsBoolean().NotNullable()
                 .WithColumn("EnableAutomaticSearch").AsBoolean().NotNullable();
-
-            Alter.Table("Indexers")
-                .AddColumn("AppProfileId").AsInt32().NotNullable().WithDefaultValue(1);
         }
     }
 }

@@ -17,17 +17,17 @@ namespace NzbDrone.Core.History
     public interface IHistoryService
     {
         PagingSpec<History> Paged(PagingSpec<History> pagingSpec);
-        History MostRecentForIndexer(int indexerId);
+        History MostRecentForIndexer(Guid indexerId);
         History MostRecentForDownloadId(string downloadId);
-        History Get(int historyId);
+        History Get(Guid historyId);
         List<History> Find(string downloadId, HistoryEventType eventType);
         List<History> FindByDownloadId(string downloadId);
-        List<History> GetByIndexerId(int indexerId, HistoryEventType? eventType);
+        List<History> GetByIndexerId(Guid indexerId, HistoryEventType? eventType);
         void UpdateMany(List<History> toUpdate);
         List<History> Between(DateTime start, DateTime end);
         List<History> Since(DateTime date, HistoryEventType? eventType);
-        int CountSince(int indexerId, DateTime date, List<HistoryEventType> eventTypes);
-        History FindFirstForIndexerSince(int indexerId, DateTime date, List<HistoryEventType> eventTypes, int limit);
+        int CountSince(Guid indexerId, DateTime date, List<HistoryEventType> eventTypes);
+        History FindFirstForIndexerSince(Guid indexerId, DateTime date, List<HistoryEventType> eventTypes, int limit);
     }
 
     public class HistoryService : IHistoryService,
@@ -54,7 +54,7 @@ namespace NzbDrone.Core.History
             return _historyRepository.GetPaged(pagingSpec);
         }
 
-        public History MostRecentForIndexer(int indexerId)
+        public History MostRecentForIndexer(Guid indexerId)
         {
             return _historyRepository.MostRecentForIndexer(indexerId);
         }
@@ -64,7 +64,7 @@ namespace NzbDrone.Core.History
             return _historyRepository.MostRecentForDownloadId(downloadId);
         }
 
-        public History Get(int historyId)
+        public History Get(Guid historyId)
         {
             return _historyRepository.Get(historyId);
         }
@@ -79,7 +79,7 @@ namespace NzbDrone.Core.History
             return _historyRepository.FindByDownloadId(downloadId);
         }
 
-        public List<History> GetByIndexerId(int indexerId, HistoryEventType? eventType)
+        public List<History> GetByIndexerId(Guid indexerId, HistoryEventType? eventType)
         {
             return _historyRepository.GetByIndexerId(indexerId, eventType);
         }
@@ -226,7 +226,7 @@ namespace NzbDrone.Core.History
 
         public void Handle(ProviderDeletedEvent<IIndexer> message)
         {
-            _historyRepository.DeleteForIndexers(new List<int> { message.ProviderId });
+            _historyRepository.DeleteForIndexers(new List<Guid> { message.ProviderId });
         }
 
         public void Execute(CleanUpHistoryCommand message)
@@ -239,12 +239,12 @@ namespace NzbDrone.Core.History
             _historyRepository.Purge(vacuum: true);
         }
 
-        public int CountSince(int indexerId, DateTime date, List<HistoryEventType> eventTypes)
+        public int CountSince(Guid indexerId, DateTime date, List<HistoryEventType> eventTypes)
         {
             return _historyRepository.CountSince(indexerId, date, eventTypes);
         }
 
-        public History FindFirstForIndexerSince(int indexerId, DateTime date, List<HistoryEventType> eventTypes, int limit)
+        public History FindFirstForIndexerSince(Guid indexerId, DateTime date, List<HistoryEventType> eventTypes, int limit)
         {
             return _historyRepository.FindFirstForIndexerSince(indexerId, date, eventTypes, limit);
         }

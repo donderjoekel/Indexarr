@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using NzbDrone.Core.Indexers;
 using NzbDrone.Core.ThingiProvider;
@@ -8,7 +9,7 @@ namespace NzbDrone.Core.Applications
     {
         void AddIndexer(IndexerDefinition indexer);
         void UpdateIndexer(IndexerDefinition indexer, bool forceSync = false);
-        void RemoveIndexer(int indexerId);
+        void RemoveIndexer(Guid indexerId);
         List<AppIndexerMap> GetIndexerMappings();
     }
 }

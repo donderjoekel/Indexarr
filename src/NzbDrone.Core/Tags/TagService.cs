@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NzbDrone.Core.Applications;
@@ -11,15 +12,15 @@ namespace NzbDrone.Core.Tags
 {
     public interface ITagService
     {
-        Tag GetTag(int tagId);
+        Tag GetTag(Guid tagId);
         Tag GetTag(string tag);
-        List<Tag> GetTags(IEnumerable<int> ids);
-        TagDetails Details(int tagId);
+        List<Tag> GetTags(IEnumerable<Guid> ids);
+        TagDetails Details(Guid tagId);
         List<TagDetails> Details();
         List<Tag> All();
         Tag Add(Tag tag);
         Tag Update(Tag tag);
-        void Delete(int tagId);
+        void Delete(Guid tagId);
     }
 
     public class TagService : ITagService
@@ -46,7 +47,7 @@ namespace NzbDrone.Core.Tags
             _applicationFactory = applicationFactory;
         }
 
-        public Tag GetTag(int tagId)
+        public Tag GetTag(Guid tagId)
         {
             return _repo.Get(tagId);
         }
@@ -55,7 +56,7 @@ namespace NzbDrone.Core.Tags
         {
             if (tag.All(char.IsDigit))
             {
-                return _repo.Get(int.Parse(tag));
+                return _repo.Get(Guid.Parse(tag));
             }
             else
             {
@@ -63,12 +64,12 @@ namespace NzbDrone.Core.Tags
             }
         }
 
-        public List<Tag> GetTags(IEnumerable<int> ids)
+        public List<Tag> GetTags(IEnumerable<Guid> ids)
         {
             return _repo.Get(ids).ToList();
         }
 
-        public TagDetails Details(int tagId)
+        public TagDetails Details(Guid tagId)
         {
             var tag = GetTag(tagId);
             var notifications = _notificationFactory.AllForTag(tagId);
@@ -145,7 +146,7 @@ namespace NzbDrone.Core.Tags
             return tag;
         }
 
-        public void Delete(int tagId)
+        public void Delete(Guid tagId)
         {
             var details = Details(tagId);
             if (details.InUse)

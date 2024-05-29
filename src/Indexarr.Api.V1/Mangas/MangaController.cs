@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
@@ -18,7 +19,7 @@ public class MangaController : RestController<MangaResource>
         _mangaService = mangaService;
     }
 
-    public override MangaResource GetResourceById(int id)
+    public override MangaResource GetResourceById(Guid id)
     {
         return _mangaService.Find(id).ToResource();
     }
