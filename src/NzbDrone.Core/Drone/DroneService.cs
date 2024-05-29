@@ -10,6 +10,7 @@ namespace NzbDrone.Core.Drone;
 
 public interface IDroneService
 {
+    bool IsMainDrone();
     int GetDroneCount();
     bool RequestPartialIndex(Guid indexerId);
     void RegisterDrone(string address);
@@ -28,6 +29,8 @@ public class DroneService : IDroneService,
     private readonly Logger _logger;
     private readonly IManageCommandQueue _commandQueue;
 
+    private readonly string _hostAddress;
+
     public DroneService(IDroneRepository droneRepository,
         IHttpClient httpClient,
         Logger logger,
@@ -37,6 +40,13 @@ public class DroneService : IDroneService,
         _httpClient = httpClient;
         _logger = logger;
         _commandQueue = commandQueue;
+
+        _hostAddress = Environment.GetEnvironmentVariable("HOST_ADDRESS");
+    }
+
+    public bool IsMainDrone()
+    {
+        return !string.IsNullOrWhiteSpace(_hostAddress);
     }
 
     public int GetDroneCount()
@@ -107,18 +117,21 @@ public class DroneService : IDroneService,
 
     public void Execute(RegisterDroneCommand message)
     {
-        var hostAddress = Environment.GetEnvironmentVariable("HOST_ADDRESS");
-
-        if (string.IsNullOrWhiteSpace(hostAddress))
+        if (IsMainDrone())
         {
             return;
         }
 
-        _httpClient.Get(new HttpRequest(hostAddress + "/api/v1/drone/register"));
+        _httpClient.Get(new HttpRequest(_hostAddress + "/api/v1/drone/register"));
     }
 
     public void Execute(RemoveUnresponsiveDronesCommand message)
     {
+        if (!IsMainDrone())
+        {
+            return;
+        }
+
         var now = DateTime.UtcNow;
         var unresponsiveDrones = _droneRepository.All()
             .Where(x => now - x.LastSeen > TimeSpan.FromSeconds(CleanInterval))
