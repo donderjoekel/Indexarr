@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +33,7 @@ namespace Prowlarr.Api.V1.Profiles.App
 
         [RestDeleteById]
         [Produces("application/json")]
-        public object DeleteProfile(int id)
+        public object DeleteProfile(Guid id)
         {
             _appProfileService.Delete(id);
             return new { };
@@ -54,7 +55,7 @@ namespace Prowlarr.Api.V1.Profiles.App
         [ProducesResponseType(typeof(AppProfileResource), 200)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 404)]
         [ProducesResponseType(500)]
-        public override AppProfileResource GetResourceById(int id)
+        public override AppProfileResource GetResourceById(Guid id)
         {
             return _appProfileService.Get(id).ToResource();
         }

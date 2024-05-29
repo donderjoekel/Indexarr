@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
@@ -11,10 +12,10 @@ namespace NzbDrone.Core.Profiles
     {
         AppSyncProfile Add(AppSyncProfile profile);
         void Update(AppSyncProfile profile);
-        void Delete(int id);
+        void Delete(Guid id);
         List<AppSyncProfile> All();
-        AppSyncProfile Get(int id);
-        bool Exists(int id);
+        AppSyncProfile Get(Guid id);
+        bool Exists(Guid id);
         AppSyncProfile GetDefaultProfile(string name);
     }
 
@@ -44,13 +45,8 @@ namespace NzbDrone.Core.Profiles
             _profileRepository.Update(profile);
         }
 
-        public void Delete(int id)
+        public void Delete(Guid id)
         {
-            if (_indexerFactory.All().Any(c => c.AppProfileId == id) || All().Count == 1)
-            {
-                throw new ProfileInUseException(id);
-            }
-
             _profileRepository.Delete(id);
         }
 
@@ -59,12 +55,12 @@ namespace NzbDrone.Core.Profiles
             return _profileRepository.All().ToList();
         }
 
-        public AppSyncProfile Get(int id)
+        public AppSyncProfile Get(Guid id)
         {
             return _profileRepository.Get(id);
         }
 
-        public bool Exists(int id)
+        public bool Exists(Guid id)
         {
             return _profileRepository.Exists(id);
         }

@@ -23,14 +23,14 @@ namespace NzbDrone.Core.Messaging.Commands
         CommandModel Push(string commandName, DateTime? lastExecutionTime, DateTime? lastStartTime, CommandPriority priority = CommandPriority.Normal, CommandTrigger trigger = CommandTrigger.Unspecified);
         IEnumerable<CommandModel> Queue(CancellationToken cancellationToken);
         List<CommandModel> All();
-        CommandModel Get(int id);
+        CommandModel Get(Guid id);
         List<CommandModel> GetStarted();
         void SetMessage(CommandModel command, string message);
         void Start(CommandModel command);
         void Complete(CommandModel command, string message);
         void Fail(CommandModel command, string message, Exception e);
         void Requeue();
-        void Cancel(int id);
+        void Cancel(Guid id);
         void CleanCommands();
     }
 
@@ -157,7 +157,7 @@ namespace NzbDrone.Core.Messaging.Commands
             return _commandQueue.All();
         }
 
-        public CommandModel Get(int id)
+        public CommandModel Get(Guid id)
         {
             var command = _commandQueue.Find(id);
 
@@ -211,7 +211,7 @@ namespace NzbDrone.Core.Messaging.Commands
             }
         }
 
-        public void Cancel(int id)
+        public void Cancel(Guid id)
         {
             if (!_commandQueue.RemoveIfQueued(id))
             {

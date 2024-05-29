@@ -55,7 +55,7 @@ namespace NzbDrone.Core.Applications
 
         public abstract void AddIndexer(IndexerDefinition indexer);
         public abstract void UpdateIndexer(IndexerDefinition indexer, bool forceSync = false);
-        public abstract void RemoveIndexer(int indexerId);
+        public abstract void RemoveIndexer(Guid indexerId);
         public abstract List<AppIndexerMap> GetIndexerMappings();
 
         public virtual object RequestAction(string action, IDictionary<string, string> query)

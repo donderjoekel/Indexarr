@@ -9,7 +9,7 @@ namespace NzbDrone.Core.Chapters;
 
 public interface IChapterService
 {
-    IEnumerable<Chapter> GetForIndexedManga(int indexedMangaId);
+    IEnumerable<Chapter> GetForIndexedManga(Guid indexedMangaId);
     bool Exists(IndexedManga indexedManga, ChapterInfo chapterInfo);
     Chapter Create(IndexedManga indexedManga, ChapterInfo chapterInfo);
     Chapter Update(IndexedManga indexedManga, ChapterInfo chapterInfo);
@@ -26,7 +26,7 @@ public class ChapterService : IChapterService
         _eventAggregator = eventAggregator;
     }
 
-    public IEnumerable<Chapter> GetForIndexedManga(int indexedMangaId)
+    public IEnumerable<Chapter> GetForIndexedManga(Guid indexedMangaId)
     {
         return _chapterRepository.GetForIndexedManga(indexedMangaId);
     }

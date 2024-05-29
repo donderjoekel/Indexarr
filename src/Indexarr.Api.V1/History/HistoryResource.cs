@@ -7,7 +7,7 @@ namespace Prowlarr.Api.V1.History
 {
     public class HistoryResource : RestResource
     {
-        public int IndexerId { get; set; }
+        public Guid IndexerId { get; set; }
         public DateTime Date { get; set; }
         public string DownloadId { get; set; }
         public bool Successful { get; set; }

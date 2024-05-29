@@ -9,7 +9,7 @@ namespace NzbDrone.Core.Download
 {
     public interface IDownloadService
     {
-        Task<byte[]> DownloadReport(string link, int indexerId, string source, string host, string title);
+        Task<byte[]> DownloadReport(string link, Guid indexerId, string source, string host, string title);
     }
 
     public class DownloadService : IDownloadService
@@ -33,7 +33,7 @@ namespace NzbDrone.Core.Download
             _logger = logger;
         }
 
-        public Task<byte[]> DownloadReport(string link, int indexerId, string source, string host, string title)
+        public Task<byte[]> DownloadReport(string link, Guid indexerId, string source, string host, string title)
         {
             throw new NotImplementedException();
         }

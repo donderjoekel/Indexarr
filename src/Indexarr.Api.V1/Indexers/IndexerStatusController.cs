@@ -24,7 +24,7 @@ namespace Prowlarr.Api.V1.Indexers
         }
 
         [NonAction]
-        public override IndexerStatusResource GetResourceById(int id)
+        public override IndexerStatusResource GetResourceById(Guid id)
         {
             throw new NotImplementedException();
         }

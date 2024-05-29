@@ -6,7 +6,6 @@ namespace Prowlarr.Api.V1.Indexers
     public class IndexerBulkResource : ProviderBulkResource<IndexerBulkResource>
     {
         public bool? Enable { get; set; }
-        public int? AppProfileId { get; set; }
         public int? Priority { get; set; }
         public int? MinimumSeeders { get; set; }
         public double? SeedRatio { get; set; }
@@ -26,7 +25,6 @@ namespace Prowlarr.Api.V1.Indexers
             existingDefinitions.ForEach(existing =>
             {
                 existing.Enable = resource.Enable ?? existing.Enable;
-                existing.AppProfileId = resource.AppProfileId ?? existing.AppProfileId;
                 existing.Priority = resource.Priority ?? existing.Priority;
 
                 if (existing.Protocol == DownloadProtocol.Torrent)

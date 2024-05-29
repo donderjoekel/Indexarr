@@ -57,7 +57,7 @@ namespace NzbDrone.Core.Messaging.Commands
             return rval;
         }
 
-        public CommandModel Find(int id)
+        public CommandModel Find(Guid id)
         {
             return All().FirstOrDefault(q => q.Id == id);
         }
@@ -75,7 +75,7 @@ namespace NzbDrone.Core.Messaging.Commands
             }
         }
 
-        public bool RemoveIfQueued(int id)
+        public bool RemoveIfQueued(Guid id)
         {
             var rval = false;
 

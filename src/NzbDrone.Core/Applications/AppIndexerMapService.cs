@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.ThingiProvider.Events;
@@ -6,11 +7,11 @@ namespace NzbDrone.Core.Applications
 {
     public interface IAppIndexerMapService
     {
-        List<AppIndexerMap> GetMappingsForApp(int appId);
+        List<AppIndexerMap> GetMappingsForApp(Guid appId);
         AppIndexerMap Insert(AppIndexerMap appIndexerMap);
         AppIndexerMap Update(AppIndexerMap appIndexerMap);
-        void Delete(int mappingId);
-        void DeleteAllForApp(int appId);
+        void Delete(Guid mappingId);
+        void DeleteAllForApp(Guid appId);
     }
 
     public class AppIndexerMapService : IAppIndexerMapService, IHandle<ProviderDeletedEvent<IApplication>>
@@ -22,17 +23,17 @@ namespace NzbDrone.Core.Applications
             _appIndexerMapRepository = appIndexerMapRepository;
         }
 
-        public void DeleteAllForApp(int appId)
+        public void DeleteAllForApp(Guid appId)
         {
             _appIndexerMapRepository.DeleteAllForApp(appId);
         }
 
-        public void Delete(int mappingId)
+        public void Delete(Guid mappingId)
         {
             _appIndexerMapRepository.Delete(mappingId);
         }
 
-        public List<AppIndexerMap> GetMappingsForApp(int appId)
+        public List<AppIndexerMap> GetMappingsForApp(Guid appId)
         {
             return _appIndexerMapRepository.GetMappingsForApp(appId);
         }

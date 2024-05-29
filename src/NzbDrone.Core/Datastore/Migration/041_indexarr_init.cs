@@ -15,12 +15,12 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("Titles").AsString().NotNullable();
 
             Create.TableForModel("IndexedManga")
-                .WithColumn("MangaId").AsInt32().NotNullable()
-                .WithColumn("IndexerId").AsInt32().NotNullable()
+                .WithColumn("MangaId").AsGuid().NotNullable()
+                .WithColumn("IndexerId").AsGuid().NotNullable()
                 .WithColumn("Url").AsString().NotNullable();
 
             Create.TableForModel("Chapter")
-                .WithColumn("IndexedMangaId").AsInt32().NotNullable()
+                .WithColumn("IndexedMangaId").AsGuid().NotNullable()
                 .WithColumn("Number").AsDecimal().NotNullable()
                 .WithColumn("Url").AsString().NotNullable()
                 .WithColumn("Date").AsDateTime().NotNullable();

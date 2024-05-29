@@ -1,3 +1,4 @@
+using System;
 using FluentMigrator;
 using NzbDrone.Core.Datastore.Migration.Framework;
 
@@ -8,7 +9,7 @@ namespace NzbDrone.Core.Datastore.Migration
     {
         protected override void MainDbUpgrade()
         {
-            Alter.Table("Indexers").AddColumn("DownloadClientId").AsInt32().WithDefaultValue(0);
+            Alter.Table("Indexers").AddColumn("DownloadClientId").AsGuid().WithDefaultValue(Guid.NewGuid());
         }
     }
 }

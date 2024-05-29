@@ -11,7 +11,7 @@ namespace NzbDrone.Core.Indexers
     public interface ISeedConfigProvider
     {
         TorrentSeedConfiguration GetSeedConfiguration(ReleaseInfo release);
-        TorrentSeedConfiguration GetSeedConfiguration(int indexerId);
+        TorrentSeedConfiguration GetSeedConfiguration(Guid indexerId);
     }
 
     public class SeedConfigProvider : ISeedConfigProvider, IHandle<ProviderUpdatedEvent<IIndexer>>
@@ -32,7 +32,7 @@ namespace NzbDrone.Core.Indexers
                 return null;
             }
 
-            if (release.IndexerId == 0)
+            if (release.IndexerId == Guid.Empty)
             {
                 return null;
             }
@@ -40,9 +40,9 @@ namespace NzbDrone.Core.Indexers
             return GetSeedConfiguration(release.IndexerId);
         }
 
-        public TorrentSeedConfiguration GetSeedConfiguration(int indexerId)
+        public TorrentSeedConfiguration GetSeedConfiguration(Guid indexerId)
         {
-            if (indexerId == 0)
+            if (indexerId == Guid.Empty)
             {
                 return null;
             }
@@ -68,7 +68,7 @@ namespace NzbDrone.Core.Indexers
             return seedConfig;
         }
 
-        private IndexerTorrentBaseSettings FetchSeedCriteria(int indexerId)
+        private IndexerTorrentBaseSettings FetchSeedCriteria(Guid indexerId)
         {
             try
             {

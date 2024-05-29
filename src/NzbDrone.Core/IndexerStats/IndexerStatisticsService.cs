@@ -8,7 +8,7 @@ namespace NzbDrone.Core.IndexerStats
 {
     public interface IIndexerStatisticsService
     {
-        CombinedStatistics IndexerStatistics(DateTime start, DateTime end, List<int> indexerIds);
+        CombinedStatistics IndexerStatistics(DateTime start, DateTime end, List<Guid> indexerIds);
     }
 
     public class IndexerStatisticsService : IIndexerStatisticsService
@@ -22,7 +22,7 @@ namespace NzbDrone.Core.IndexerStats
             _indexerFactory = indexerFactory;
         }
 
-        public CombinedStatistics IndexerStatistics(DateTime start, DateTime end, List<int> indexerIds)
+        public CombinedStatistics IndexerStatistics(DateTime start, DateTime end, List<Guid> indexerIds)
         {
             var history = _historyService.Between(start, end);
 

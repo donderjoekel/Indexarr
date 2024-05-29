@@ -176,7 +176,7 @@ namespace NzbDrone.Core.Datastore
             return this;
         }
 
-        public ColumnMapper<T> HasOne<TChild>(Expression<Func<T, LazyLoaded<TChild>>> portalExpression, Func<T, int> childIdSelector)
+        public ColumnMapper<T> HasOne<TChild>(Expression<Func<T, LazyLoaded<TChild>>> portalExpression, Func<T, Guid> childIdSelector)
             where TChild : ModelBase
         {
             return LazyLoad(portalExpression,
@@ -185,7 +185,7 @@ namespace NzbDrone.Core.Datastore
                                 var id = childIdSelector(parent);
                                 return db.Query<TChild>(new SqlBuilder(db.DatabaseType).Where<TChild>(x => x.Id == id)).SingleOrDefault();
                             },
-                            parent => childIdSelector(parent) > 0);
+                            parent => childIdSelector(parent) != Guid.Empty);
         }
     }
 }

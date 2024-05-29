@@ -17,7 +17,7 @@ namespace Prowlarr.Api.V1.Search
         public long Size { get; set; }
         public int? Files { get; set; }
         public int? Grabs { get; set; }
-        public int IndexerId { get; set; }
+        public Guid IndexerId { get; set; }
         public string Indexer { get; set; }
         public string SubGroup { get; set; }
         public string ReleaseHash { get; set; }

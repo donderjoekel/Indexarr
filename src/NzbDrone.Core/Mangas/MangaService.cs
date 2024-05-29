@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Mangas.Events;
 using NzbDrone.Core.Messaging.Events;
@@ -7,7 +8,7 @@ namespace NzbDrone.Core.Mangas;
 
 public interface IMangaService
 {
-    Manga Find(int id);
+    Manga Find(Guid id);
     IEnumerable<Manga> All();
 
     Manga GetByMangaUpdatesId(long mangaUpdatesId);
@@ -20,9 +21,9 @@ public interface IMangaService
     IEnumerable<Manga> GetMangasWithoutAniListTitles();
     IEnumerable<Manga> GetMangasWithoutMyAnimeListTitles();
 
-    void UpdateMangaUpdatesTitles(int id, IEnumerable<string> titles);
-    void UpdateAniListTitles(int id, IEnumerable<string> titles);
-    void UpdateMyAnimeListTitles(int id, IEnumerable<string> titles);
+    void UpdateMangaUpdatesTitles(Guid id, IEnumerable<string> titles);
+    void UpdateAniListTitles(Guid id, IEnumerable<string> titles);
+    void UpdateMyAnimeListTitles(Guid id, IEnumerable<string> titles);
 }
 
 public class MangaService : IMangaService
@@ -36,7 +37,7 @@ public class MangaService : IMangaService
         _eventAggregator = eventAggregator;
     }
 
-    public Manga Find(int id)
+    public Manga Find(Guid id)
     {
         return _mangaRepository.Find(id);
     }
@@ -90,7 +91,7 @@ public class MangaService : IMangaService
         return _mangaRepository.GetMangasWithoutMyAnimeListTitles();
     }
 
-    public void UpdateMangaUpdatesTitles(int id, IEnumerable<string> titles)
+    public void UpdateMangaUpdatesTitles(Guid id, IEnumerable<string> titles)
     {
         var manga = _mangaRepository.Get(id);
         var changed = false;
@@ -111,7 +112,7 @@ public class MangaService : IMangaService
         }
     }
 
-    public void UpdateAniListTitles(int id, IEnumerable<string> titles)
+    public void UpdateAniListTitles(Guid id, IEnumerable<string> titles)
     {
         var manga = _mangaRepository.Get(id);
         var changed = false;
@@ -132,7 +133,7 @@ public class MangaService : IMangaService
         }
     }
 
-    public void UpdateMyAnimeListTitles(int id, IEnumerable<string> titles)
+    public void UpdateMyAnimeListTitles(Guid id, IEnumerable<string> titles)
     {
         var manga = _mangaRepository.Get(id);
         var changed = false;

@@ -13,12 +13,17 @@ namespace NzbDrone.Core.Datastore.Converters
                 return Guid.Empty;
             }
 
+            if (value is Guid guid)
+            {
+                return guid;
+            }
+
             return new Guid((string)value);
         }
 
         public override void SetValue(IDbDataParameter parameter, Guid value)
         {
-            parameter.Value = value.ToString();
+            parameter.Value = value;
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.CustomFilters;
@@ -17,7 +18,7 @@ namespace Prowlarr.Api.V1.CustomFilters
             _customFilterService = customFilterService;
         }
 
-        public override CustomFilterResource GetResourceById(int id)
+        public override CustomFilterResource GetResourceById(Guid id)
         {
             return _customFilterService.Get(id).ToResource();
         }
@@ -49,7 +50,7 @@ namespace Prowlarr.Api.V1.CustomFilters
         }
 
         [RestDeleteById]
-        public object DeleteCustomResource(int id)
+        public object DeleteCustomResource(Guid id)
         {
             _customFilterService.Delete(id);
 

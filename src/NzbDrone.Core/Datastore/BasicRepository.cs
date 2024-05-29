@@ -16,20 +16,20 @@ namespace NzbDrone.Core.Datastore
     {
         IEnumerable<TModel> All();
         int Count();
-        TModel Find(int id);
-        TModel Get(int id);
+        TModel Find(Guid id);
+        TModel Get(Guid id);
         TModel Insert(TModel model);
         TModel Update(TModel model);
         TModel Upsert(TModel model);
         void SetFields(TModel model, params Expression<Func<TModel, object>>[] properties);
         void Delete(TModel model);
-        void Delete(int id);
-        IEnumerable<TModel> Get(IEnumerable<int> ids);
+        void Delete(Guid id);
+        IEnumerable<TModel> Get(IEnumerable<Guid> ids);
         void InsertMany(IList<TModel> model);
         void UpdateMany(IList<TModel> model);
         void SetFields(IList<TModel> models, params Expression<Func<TModel, object>>[] properties);
         void DeleteMany(List<TModel> model);
-        void DeleteMany(IEnumerable<int> ids);
+        void DeleteMany(IEnumerable<Guid> ids);
         void Purge(bool vacuum = false);
         bool HasItems();
         TModel Single();
@@ -88,14 +88,14 @@ namespace NzbDrone.Core.Datastore
             return Query(Builder());
         }
 
-        public TModel Find(int id)
+        public TModel Find(Guid id)
         {
             var model = Query(x => x.Id == id).FirstOrDefault();
 
             return model;
         }
 
-        public TModel Get(int id)
+        public TModel Get(Guid id)
         {
             var model = Find(id);
 
@@ -107,7 +107,7 @@ namespace NzbDrone.Core.Datastore
             return model;
         }
 
-        public IEnumerable<TModel> Get(IEnumerable<int> ids)
+        public IEnumerable<TModel> Get(IEnumerable<Guid> ids)
         {
             if (!ids.Any())
             {
@@ -136,7 +136,7 @@ namespace NzbDrone.Core.Datastore
 
         public TModel Insert(TModel model)
         {
-            if (model.Id != 0)
+            if (model.Id != Guid.Empty)
             {
                 throw new InvalidOperationException("Can't insert model with existing ID " + model.Id);
             }
@@ -188,7 +188,7 @@ namespace NzbDrone.Core.Datastore
             SqlBuilderExtensions.LogQuery(_insertSql, model);
             var multi = connection.QueryMultiple(_insertSql, model, transaction);
             var multiRead = multi.Read();
-            var id = (int)(multiRead.First().id ?? multiRead.First().Id);
+            var id = (Guid)(multiRead.First().id ?? multiRead.First().Id);
             _keyProperty.SetValue(model, id);
 
             _database.ApplyLazyLoad(model);
@@ -197,9 +197,9 @@ namespace NzbDrone.Core.Datastore
 
         public void InsertMany(IList<TModel> models)
         {
-            if (models.Any(x => x.Id != 0))
+            if (models.Any(x => x.Id != Guid.Empty))
             {
-                throw new InvalidOperationException("Can't insert model with existing ID != 0");
+                throw new InvalidOperationException("Can't insert model with existing ID != empty");
             }
 
             using (var conn = _database.OpenConnection())
@@ -218,9 +218,9 @@ namespace NzbDrone.Core.Datastore
 
         public TModel Update(TModel model)
         {
-            if (model.Id == 0)
+            if (model.Id == Guid.Empty)
             {
-                throw new InvalidOperationException("Can't update model with ID 0");
+                throw new InvalidOperationException("Can't update model with ID empty");
             }
 
             using (var conn = _database.OpenConnection())
@@ -236,9 +236,9 @@ namespace NzbDrone.Core.Datastore
 
         public void UpdateMany(IList<TModel> models)
         {
-            if (models.Any(x => x.Id == 0))
+            if (models.Any(x => x.Id == Guid.Empty))
             {
-                throw new InvalidOperationException("Can't update model with ID 0");
+                throw new InvalidOperationException("Can't update model with ID empty");
             }
 
             using (var conn = _database.OpenConnection())
@@ -267,12 +267,12 @@ namespace NzbDrone.Core.Datastore
             Delete(model.Id);
         }
 
-        public void Delete(int id)
+        public void Delete(Guid id)
         {
             Delete(x => x.Id == id);
         }
 
-        public void DeleteMany(IEnumerable<int> ids)
+        public void DeleteMany(IEnumerable<Guid> ids)
         {
             if (ids.Any())
             {
@@ -287,7 +287,7 @@ namespace NzbDrone.Core.Datastore
 
         public TModel Upsert(TModel model)
         {
-            if (model.Id == 0)
+            if (model.Id == Guid.Empty)
             {
                 Insert(model);
                 return model;
@@ -322,7 +322,7 @@ namespace NzbDrone.Core.Datastore
 
         public void SetFields(TModel model, params Expression<Func<TModel, object>>[] properties)
         {
-            if (model.Id == 0)
+            if (model.Id == Guid.Empty)
             {
                 throw new InvalidOperationException("Attempted to update model without ID");
             }
@@ -339,7 +339,7 @@ namespace NzbDrone.Core.Datastore
 
         public void SetFields(IList<TModel> models, params Expression<Func<TModel, object>>[] properties)
         {
-            if (models.Any(x => x.Id == 0))
+            if (models.Any(x => x.Id == Guid.Empty))
             {
                 throw new InvalidOperationException("Attempted to update model without ID");
             }

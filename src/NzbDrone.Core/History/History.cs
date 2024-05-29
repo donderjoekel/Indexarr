@@ -11,7 +11,7 @@ namespace NzbDrone.Core.History
             Data = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         }
 
-        public int IndexerId { get; set; }
+        public Guid IndexerId { get; set; }
         public DateTime Date { get; set; }
         public bool Successful { get; set; }
         public HistoryEventType EventType { get; set; }

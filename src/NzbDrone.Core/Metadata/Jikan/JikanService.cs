@@ -52,7 +52,8 @@ public class JikanService : MetadataSource, IJikanService
     public IEnumerable<string> GetTitles(int myAnimeListId)
     {
         var manga = GetManga(myAnimeListId);
-        if (manga == null)
+
+        if (manga?.Data == null)
         {
             yield break;
         }

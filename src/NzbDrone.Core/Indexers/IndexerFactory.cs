@@ -11,6 +11,7 @@ namespace NzbDrone.Core.Indexers
 {
     public interface IIndexerFactory : IProviderFactory<IIndexer, IndexerDefinition>
     {
+        IIndexer GetByGuid(Guid guid);
         List<IIndexer> Enabled(bool filterBlockedIndexers = true);
         List<IIndexer> AllProviders(bool filterBlockedIndexers = true);
     }
@@ -48,7 +49,7 @@ namespace NzbDrone.Core.Indexers
             return filteredDefinitions;
         }
 
-        public override IndexerDefinition Get(int id)
+        public override IndexerDefinition Get(Guid id)
         {
             var definition = base.Get(id);
 
@@ -105,6 +106,11 @@ namespace NzbDrone.Core.Indexers
             definition.Capabilities ??= provider.Capabilities;
         }
 
+        public IIndexer GetByGuid(Guid guid)
+        {
+            return AllProviders().FirstOrDefault(x => x.Definition.Id == guid);
+        }
+
         public List<IIndexer> Enabled(bool filterBlockedIndexers = true)
         {
             var enabledIndexers = GetAvailableProviders().Where(n => ((IndexerDefinition)n.Definition).Enable);
@@ -149,7 +155,7 @@ namespace NzbDrone.Core.Indexers
         {
             var result = base.Test(definition);
 
-            if (definition.Id == 0)
+            if (definition.Id == Guid.Empty)
             {
                 return result;
             }

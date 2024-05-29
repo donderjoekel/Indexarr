@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Common.Crypto;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Extensions;
@@ -51,7 +53,7 @@ namespace Prowlarr.Api.V1.System.Backup
         }
 
         [RestDeleteById]
-        public void DeleteBackup(int id)
+        public void DeleteBackup(Guid id)
         {
             var backup = GetBackup(id);
 
@@ -70,8 +72,8 @@ namespace Prowlarr.Api.V1.System.Backup
             _diskProvider.DeleteFile(path);
         }
 
-        [HttpPost("restore/{id:int}")]
-        public object Restore(int id)
+        [HttpPost("restore/{id:guid}")]
+        public object Restore(Guid id)
         {
             var backup = GetBackup(id);
 
@@ -127,12 +129,13 @@ namespace Prowlarr.Api.V1.System.Backup
             return Path.Combine(_backupService.GetBackupFolder(backup.Type), backup.Name);
         }
 
-        private int GetBackupId(NzbDrone.Core.Backup.Backup backup)
+        private Guid GetBackupId(NzbDrone.Core.Backup.Backup backup)
         {
-            return HashConverter.GetHashInt31($"backup-{backup.Type}-{backup.Name}");
+            var hash = MD5.HashData(Encoding.UTF8.GetBytes($"backup-{backup.Type}-{backup.Name}"));
+            return new Guid(hash);
         }
 
-        private NzbDrone.Core.Backup.Backup GetBackup(int id)
+        private NzbDrone.Core.Backup.Backup GetBackup(Guid id)
         {
             return _backupService.GetBackups().SingleOrDefault(b => GetBackupId(b) == id);
         }

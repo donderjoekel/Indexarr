@@ -8,14 +8,14 @@ namespace NzbDrone.Core.IndexedMangas;
 
 public interface IIndexedMangaService
 {
-    IndexedManga Find(int id);
+    IndexedManga Find(Guid id);
     IEnumerable<IndexedManga> All();
-    IEnumerable<IndexedManga> GetByMangaId(int mangaId);
+    IEnumerable<IndexedManga> GetByMangaId(Guid mangaId);
     bool Exists(MangaInfo mangaInfo);
     IndexedManga Create(MangaInfo mangaInfo);
     IndexedManga Update(MangaInfo mangaInfo);
     IEnumerable<IndexedManga> GetWithoutLinkedManga();
-    void LinkToManga(int indexedMangaId, int mangaId);
+    void LinkToManga(Guid indexedMangaId, Guid mangaId);
 }
 
 public class IndexedMangaService : IIndexedMangaService
@@ -29,7 +29,7 @@ public class IndexedMangaService : IIndexedMangaService
         _eventAggregator = eventAggregator;
     }
 
-    public IndexedManga Find(int id)
+    public IndexedManga Find(Guid id)
     {
         return _indexedMangaRepository.Get(id);
     }
@@ -39,7 +39,7 @@ public class IndexedMangaService : IIndexedMangaService
         return _indexedMangaRepository.All();
     }
 
-    public IEnumerable<IndexedManga> GetByMangaId(int mangaId)
+    public IEnumerable<IndexedManga> GetByMangaId(Guid mangaId)
     {
         return _indexedMangaRepository.GetByMangaId(mangaId);
     }
@@ -90,7 +90,7 @@ public class IndexedMangaService : IIndexedMangaService
         return _indexedMangaRepository.GetWithoutLinkedManga();
     }
 
-    public void LinkToManga(int indexedMangaId, int mangaId)
+    public void LinkToManga(Guid indexedMangaId, Guid mangaId)
     {
         var indexedManga = _indexedMangaRepository.Get(indexedMangaId);
         indexedManga.MangaId = mangaId;

@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -101,7 +102,7 @@ namespace Prowlarr.Api.V1.Config
             return false;
         }
 
-        public override HostConfigResource GetResourceById(int id)
+        public override HostConfigResource GetResourceById(Guid id)
         {
             return GetHostConfig();
         }
@@ -111,7 +112,7 @@ namespace Prowlarr.Api.V1.Config
         public HostConfigResource GetHostConfig()
         {
             var resource = HostConfigResourceMapper.ToResource(_configFileProvider, _configService);
-            resource.Id = 1;
+            resource.Id = Guid.NewGuid();
 
             var user = _userService.FindUser();
 

@@ -23,7 +23,7 @@ namespace Prowlarr.Api.V1.Health
         }
 
         [NonAction]
-        public override HealthResource GetResourceById(int id)
+        public override HealthResource GetResourceById(Guid id)
         {
             throw new NotImplementedException();
         }

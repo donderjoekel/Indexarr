@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.Datastore;
@@ -45,7 +46,7 @@ namespace Prowlarr.Http.REST
             BroadcastResourceChange(message.Action, message.Model.Id);
         }
 
-        protected void BroadcastResourceChange(ModelAction action, int id)
+        protected void BroadcastResourceChange(ModelAction action, Guid id)
         {
             if (!_signalRBroadcaster.IsConnected)
             {

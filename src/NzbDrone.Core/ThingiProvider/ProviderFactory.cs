@@ -91,22 +91,22 @@ namespace NzbDrone.Core.ThingiProvider
             return Active().Select(GetInstance).ToList();
         }
 
-        public bool Exists(int id)
+        public bool Exists(Guid id)
         {
             return _providerRepository.Find(id) != null;
         }
 
-        public virtual TProviderDefinition Get(int id)
+        public virtual TProviderDefinition Get(Guid id)
         {
             return _providerRepository.Get(id);
         }
 
-        public IEnumerable<TProviderDefinition> Get(IEnumerable<int> ids)
+        public IEnumerable<TProviderDefinition> Get(IEnumerable<Guid> ids)
         {
             return _providerRepository.Get(ids);
         }
 
-        public TProviderDefinition Find(int id)
+        public TProviderDefinition Find(Guid id)
         {
             return _providerRepository.Find(id);
         }
@@ -133,13 +133,13 @@ namespace NzbDrone.Core.ThingiProvider
             return definitions;
         }
 
-        public void Delete(int id)
+        public void Delete(Guid id)
         {
             _providerRepository.Delete(id);
             _eventAggregator.PublishEvent(new ProviderDeletedEvent<TProvider>(id));
         }
 
-        public void Delete(IEnumerable<int> ids)
+        public void Delete(IEnumerable<Guid> ids)
         {
             _providerRepository.DeleteMany(ids);
 
@@ -200,7 +200,7 @@ namespace NzbDrone.Core.ThingiProvider
             }
         }
 
-        public List<TProviderDefinition> AllForTag(int tagId)
+        public List<TProviderDefinition> AllForTag(Guid tagId)
         {
             return All().Where(p => p.Tags.Contains(tagId))
                         .ToList();

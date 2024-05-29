@@ -13,7 +13,7 @@ namespace NzbDrone.Core.Datastore.Migration
                   .WithColumn("Value").AsString();
 
             Create.TableForModel("History")
-                .WithColumn("IndexerId").AsInt32()
+                .WithColumn("IndexerId").AsGuid()
                 .WithColumn("Date").AsDateTime()
                 .WithColumn("Data").AsString()
                 .WithColumn("EventType").AsInt32().Nullable()
@@ -46,9 +46,9 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("Added").AsDateTime();
 
             Create.TableForModel("ApplicationIndexerMapping")
-                .WithColumn("IndexerId").AsInt32()
-                .WithColumn("AppId").AsInt32()
-                .WithColumn("RemoteIndexerId").AsInt32();
+                .WithColumn("IndexerId").AsGuid()
+                .WithColumn("AppId").AsGuid()
+                .WithColumn("RemoteIndexerId").AsGuid();
 
             Create.TableForModel("Applications")
                 .WithColumn("Name").AsString().Unique()
@@ -79,7 +79,7 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("Trigger").AsInt32().NotNullable();
 
             Create.TableForModel("IndexerStatus")
-                .WithColumn("ProviderId").AsInt32().NotNullable().Unique()
+                .WithColumn("ProviderId").AsGuid().NotNullable().Unique()
                 .WithColumn("InitialFailure").AsDateTime().Nullable()
                 .WithColumn("MostRecentFailure").AsDateTime().Nullable()
                 .WithColumn("EscalationLevel").AsInt32().NotNullable()

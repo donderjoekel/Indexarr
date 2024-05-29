@@ -22,7 +22,7 @@ namespace NzbDrone.Core.Parser.Model
         public string DownloadUrl { get; set; }
         public string InfoUrl { get; set; }
         public string CommentUrl { get; set; }
-        public int IndexerId { get; set; }
+        public Guid IndexerId { get; set; }
         public string Indexer { get; set; }
         public int IndexerPriority { get; set; }
         public IndexerPrivacy IndexerPrivacy { get; set; }

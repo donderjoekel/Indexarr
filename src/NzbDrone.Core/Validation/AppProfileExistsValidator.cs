@@ -1,4 +1,5 @@
-﻿using FluentValidation.Validators;
+﻿using System;
+using FluentValidation.Validators;
 using NzbDrone.Core.Profiles;
 
 namespace NzbDrone.Core.Validation
@@ -16,7 +17,7 @@ namespace NzbDrone.Core.Validation
 
         protected override bool IsValid(PropertyValidatorContext context)
         {
-            return context?.PropertyValue == null || _appProfileService.Exists((int)context.PropertyValue);
+            return context?.PropertyValue == null || _appProfileService.Exists((Guid)context.PropertyValue);
         }
     }
 }

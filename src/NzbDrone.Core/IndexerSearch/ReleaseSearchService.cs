@@ -9,7 +9,7 @@ namespace NzbDrone.Core.IndexerSearch
 {
     public interface IReleaseSearchService
     {
-        Task<NewznabResults> Search(NewznabRequest request, List<int> indexerIds, bool interactiveSearch);
+        Task<NewznabResults> Search(NewznabRequest request, List<Guid> indexerIds, bool interactiveSearch);
     }
 
     public class ReleaseSearchService : IReleaseSearchService
@@ -30,7 +30,7 @@ namespace NzbDrone.Core.IndexerSearch
             _logger = logger;
         }
 
-        public Task<NewznabResults> Search(NewznabRequest request, List<int> indexerIds, bool interactiveSearch)
+        public Task<NewznabResults> Search(NewznabRequest request, List<Guid> indexerIds, bool interactiveSearch)
         {
             throw new NotImplementedException();
         }

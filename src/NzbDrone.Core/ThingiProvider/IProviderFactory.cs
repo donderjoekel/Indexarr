@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FluentValidation.Results;
 
@@ -9,15 +10,15 @@ namespace NzbDrone.Core.ThingiProvider
     {
         List<TProviderDefinition> All();
         List<TProvider> GetAvailableProviders();
-        bool Exists(int id);
-        TProviderDefinition Find(int id);
-        TProviderDefinition Get(int id);
-        IEnumerable<TProviderDefinition> Get(IEnumerable<int> ids);
+        bool Exists(Guid id);
+        TProviderDefinition Find(Guid id);
+        TProviderDefinition Get(Guid id);
+        IEnumerable<TProviderDefinition> Get(IEnumerable<Guid> ids);
         TProviderDefinition Create(TProviderDefinition definition);
         void Update(TProviderDefinition definition);
         IEnumerable<TProviderDefinition> Update(IEnumerable<TProviderDefinition> definitions);
-        void Delete(int id);
-        void Delete(IEnumerable<int> ids);
+        void Delete(Guid id);
+        void Delete(IEnumerable<Guid> ids);
         IEnumerable<TProviderDefinition> GetDefaultDefinitions();
         IEnumerable<TProviderDefinition> GetPresetDefinitions(TProviderDefinition providerDefinition);
         void SetProviderCharacteristics(TProviderDefinition definition);
@@ -25,6 +26,6 @@ namespace NzbDrone.Core.ThingiProvider
         TProvider GetInstance(TProviderDefinition definition);
         ValidationResult Test(TProviderDefinition definition);
         object RequestAction(TProviderDefinition definition, string action, IDictionary<string, string> query);
-        List<TProviderDefinition> AllForTag(int tagId);
+        List<TProviderDefinition> AllForTag(Guid tagId);
     }
 }

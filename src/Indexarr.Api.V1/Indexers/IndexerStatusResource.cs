@@ -8,7 +8,7 @@ namespace Prowlarr.Api.V1.Indexers
 {
     public class IndexerStatusResource : RestResource
     {
-        public int IndexerId { get; set; }
+        public Guid IndexerId { get; set; }
         public DateTime? DisabledTill { get; set; }
         public DateTime? MostRecentFailure { get; set; }
         public DateTime? InitialFailure { get; set; }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
@@ -38,7 +39,7 @@ namespace Prowlarr.Api.V1
             PostValidator.RuleFor(c => c.Fields).NotNull();
         }
 
-        public override TProviderResource GetResourceById(int id)
+        public override TProviderResource GetResourceById(Guid id)
         {
             var definition = _providerFactory.Get(id);
             _providerFactory.SetProviderCharacteristics(definition);
@@ -129,7 +130,7 @@ namespace Prowlarr.Api.V1
                             newTags.ForEach(t => definition.Tags.Remove(t));
                             break;
                         case ApplyTags.Replace:
-                            definition.Tags = new HashSet<int>(newTags);
+                            definition.Tags = new HashSet<Guid>(newTags);
                             break;
                     }
                 }
@@ -142,7 +143,7 @@ namespace Prowlarr.Api.V1
 
         private TProviderDefinition GetDefinition(TProviderResource providerResource, bool validate, bool includeWarnings, bool forceValidate)
         {
-            var existingDefinition = providerResource.Id > 0 ? _providerFactory.Find(providerResource.Id) : null;
+            var existingDefinition = providerResource.Id != Guid.Empty ? _providerFactory.Find(providerResource.Id) : null;
             var definition = _resourceMapper.ToModel(providerResource, existingDefinition);
 
             if (validate && (definition.Enable || forceValidate))
@@ -154,7 +155,7 @@ namespace Prowlarr.Api.V1
         }
 
         [RestDeleteById]
-        public object DeleteProvider(int id)
+        public object DeleteProvider(Guid id)
         {
             _providerFactory.Delete(id);
 

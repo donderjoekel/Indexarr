@@ -22,7 +22,7 @@ namespace Prowlarr.Api.V1.History
 
         [HttpGet]
         [Produces("application/json")]
-        public PagingResource<HistoryResource> GetHistory([FromQuery] PagingRequestResource paging, [FromQuery(Name = "eventType")] int[] eventTypes, bool? successful, string downloadId, [FromQuery] int[] indexerIds = null)
+        public PagingResource<HistoryResource> GetHistory([FromQuery] PagingRequestResource paging, [FromQuery(Name = "eventType")] int[] eventTypes, bool? successful, string downloadId, [FromQuery] Guid[] indexerIds = null)
         {
             var pagingResource = new PagingResource<HistoryResource>(paging);
             var pagingSpec = pagingResource.MapToPagingSpec<HistoryResource, NzbDrone.Core.History.History>("date", SortDirection.Descending);
@@ -60,7 +60,7 @@ namespace Prowlarr.Api.V1.History
 
         [HttpGet("indexer")]
         [Produces("application/json")]
-        public List<HistoryResource> GetIndexerHistory(int indexerId, HistoryEventType? eventType = null, int? limit = null)
+        public List<HistoryResource> GetIndexerHistory(Guid indexerId, HistoryEventType? eventType = null, int? limit = null)
         {
             if (limit.HasValue)
             {

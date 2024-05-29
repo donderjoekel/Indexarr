@@ -13,7 +13,7 @@ namespace NzbDrone.Core.Datastore.Migration.Framework
     {
         public static ICreateTableColumnOptionOrWithColumnSyntax TableForModel(this ICreateExpressionRoot expressionRoot, string name)
         {
-            return expressionRoot.Table(name).WithColumn("Id").AsInt32().PrimaryKey().Identity();
+            return expressionRoot.Table(name).WithColumn("Id").AsGuid().PrimaryKey().WithDefault(SystemMethods.NewGuid);
         }
 
         public static void AddParameter(this System.Data.IDbCommand command, object value)

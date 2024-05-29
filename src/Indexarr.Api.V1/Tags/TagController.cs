@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.Datastore.Events;
@@ -22,7 +23,7 @@ namespace Prowlarr.Api.V1.Tags
             _tagService = tagService;
         }
 
-        public override TagResource GetResourceById(int id)
+        public override TagResource GetResourceById(Guid id)
         {
             return _tagService.GetTag(id).ToResource();
         }
@@ -52,7 +53,7 @@ namespace Prowlarr.Api.V1.Tags
         }
 
         [RestDeleteById]
-        public void DeleteTag(int id)
+        public void DeleteTag(Guid id)
         {
             _tagService.Delete(id);
         }

@@ -1,12 +1,13 @@
-﻿using NzbDrone.Core.IndexedMangas;
+﻿using System;
+using NzbDrone.Core.IndexedMangas;
 using Prowlarr.Http.REST;
 
 namespace Prowlarr.Api.V1.IndexedMangas;
 
 public class IndexedMangaResource : RestResource
 {
-    public int? MangaId { get; set; }
-    public int IndexerId { get; set; }
+    public Guid? MangaId { get; set; }
+    public Guid IndexerId { get; set; }
     public string Title { get; set; }
     public string Url { get; set; }
 }

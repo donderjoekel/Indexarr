@@ -12,9 +12,9 @@ namespace NzbDrone.Core.ThingiProvider.Status
         where TModel : ProviderStatusBase, new()
     {
         List<TModel> GetBlockedProviders();
-        void RecordSuccess(int providerId);
-        void RecordFailure(int providerId, TimeSpan minimumBackOff = default(TimeSpan));
-        void RecordConnectionFailure(int providerId);
+        void RecordSuccess(Guid providerId);
+        void RecordFailure(Guid providerId, TimeSpan minimumBackOff = default(TimeSpan));
+        void RecordConnectionFailure(Guid providerId);
     }
 
     public abstract class ProviderStatusServiceBase<TProvider, TModel> : IProviderStatusServiceBase<TModel>, IHandleAsync<ProviderDeletedEvent<TProvider>>
@@ -45,7 +45,7 @@ namespace NzbDrone.Core.ThingiProvider.Status
             return _providerStatusRepository.All().Where(v => v.IsDisabled()).ToList();
         }
 
-        protected virtual TModel GetProviderStatus(int providerId)
+        protected virtual TModel GetProviderStatus(Guid providerId)
         {
             return _providerStatusRepository.FindByProviderId(providerId) ?? new TModel { ProviderId = providerId };
         }
@@ -57,9 +57,9 @@ namespace NzbDrone.Core.ThingiProvider.Status
             return TimeSpan.FromSeconds(EscalationBackOff.Periods[level]);
         }
 
-        public virtual void RecordSuccess(int providerId)
+        public virtual void RecordSuccess(Guid providerId)
         {
-            if (providerId <= 0)
+            if (providerId == Guid.Empty)
             {
                 return;
             }
@@ -82,9 +82,9 @@ namespace NzbDrone.Core.ThingiProvider.Status
             }
         }
 
-        protected virtual void RecordFailure(int providerId, TimeSpan minimumBackOff, bool escalate)
+        protected virtual void RecordFailure(Guid providerId, TimeSpan minimumBackOff, bool escalate)
         {
-            if (providerId <= 0)
+            if (providerId == Guid.Empty)
             {
                 return;
             }
@@ -139,12 +139,12 @@ namespace NzbDrone.Core.ThingiProvider.Status
             }
         }
 
-        public virtual void RecordFailure(int providerId, TimeSpan minimumBackOff = default(TimeSpan))
+        public virtual void RecordFailure(Guid providerId, TimeSpan minimumBackOff = default(TimeSpan))
         {
             RecordFailure(providerId, minimumBackOff, true);
         }
 
-        public virtual void RecordConnectionFailure(int providerId)
+        public virtual void RecordConnectionFailure(Guid providerId)
         {
             RecordFailure(providerId, default(TimeSpan), false);
         }

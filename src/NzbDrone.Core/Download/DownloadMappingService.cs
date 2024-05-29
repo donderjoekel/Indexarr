@@ -10,7 +10,7 @@ namespace NzbDrone.Core.Download
 {
     public interface IDownloadMappingService
     {
-        Uri ConvertToProxyLink(Uri link, string serverUrl, int indexerId, string file = "t");
+        Uri ConvertToProxyLink(Uri link, string serverUrl, Guid indexerId, string file = "t");
         string ConvertToNormalLink(string link);
     }
 
@@ -25,7 +25,7 @@ namespace NzbDrone.Core.Download
             _configFileProvider = configFileProvider;
         }
 
-        public Uri ConvertToProxyLink(Uri link, string serverUrl, int indexerId, string file = "t")
+        public Uri ConvertToProxyLink(Uri link, string serverUrl, Guid indexerId, string file = "t")
         {
             var urlBase = _configFileProvider.UrlBase;
 

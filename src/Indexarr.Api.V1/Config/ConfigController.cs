@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ namespace Prowlarr.Api.V1.Config
             _configService = configService;
         }
 
-        public override TResource GetResourceById(int id)
+        public override TResource GetResourceById(Guid id)
         {
             return GetConfig();
         }
@@ -27,7 +28,7 @@ namespace Prowlarr.Api.V1.Config
         public TResource GetConfig()
         {
             var resource = ToResource(_configService);
-            resource.Id = 1;
+            resource.Id = Guid.NewGuid();
 
             return resource;
         }
