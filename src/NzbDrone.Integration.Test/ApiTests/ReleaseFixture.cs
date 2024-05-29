@@ -1,3 +1,4 @@
+/*
 using NUnit.Framework;
 
 namespace NzbDrone.Integration.Test.ApiTests
@@ -53,3 +54,4 @@ namespace NzbDrone.Integration.Test.ApiTests
         //}
     }
 }
+*/

@@ -28,7 +28,7 @@ namespace NzbDrone.Core.Test.Datastore
             _basicList = Builder<ScheduledTask>
                 .CreateListOfSize(5)
                 .All()
-                .With(x => x.Id = 0)
+                .With(x => x.Id = Guid.Empty)
                 .BuildList();
         }
 
@@ -49,7 +49,7 @@ namespace NzbDrone.Core.Test.Datastore
         [Test]
         public void insert_many_should_throw_if_id_not_zero()
         {
-            _basicList[1].Id = 999;
+            _basicList[1].Id = Guid.NewGuid();
             Assert.Throws<InvalidOperationException>(() => Subject.InsertMany(_basicList));
         }
 
@@ -122,7 +122,7 @@ namespace NzbDrone.Core.Test.Datastore
         public void set_fields_should_throw_if_id_zero()
         {
             Subject.InsertMany(_basicList);
-            _basicList[1].Id = 0;
+            _basicList[1].Id = Guid.Empty;
             _basicList[1].LastExecution = DateTime.UtcNow;
 
             Assert.Throws<InvalidOperationException>(() => Subject.SetFields(_basicList[1], x => x.Interval));
@@ -151,14 +151,14 @@ namespace NzbDrone.Core.Test.Datastore
         [Test]
         public void get_many_should_return_empty_list_if_no_ids()
         {
-            Subject.Get(new List<int>()).Should().BeEquivalentTo(new List<ScheduledTask>());
+            Subject.Get(new List<Guid>()).Should().BeEquivalentTo(new List<ScheduledTask>());
         }
 
         [Test]
         public void get_many_should_throw_if_not_all_found()
         {
             Subject.InsertMany(_basicList);
-            Assert.Throws<ApplicationException>(() => Subject.Get(new[] { 999 }));
+            Assert.Throws<ApplicationException>(() => Subject.Get(new[] { Guid.NewGuid() }));
         }
 
         [Test]
@@ -183,7 +183,7 @@ namespace NzbDrone.Core.Test.Datastore
         public void update_many_should_throw_if_id_zero()
         {
             Subject.InsertMany(_basicList);
-            _basicList[1].Id = 0;
+            _basicList[1].Id = Guid.Empty;
             Assert.Throws<InvalidOperationException>(() => Subject.UpdateMany(_basicList));
         }
 
@@ -211,7 +211,7 @@ namespace NzbDrone.Core.Test.Datastore
         {
             Subject.InsertMany(_basicList);
             _basicList.ForEach(x => x.Interval = 999);
-            _basicList[1].Id = 0;
+            _basicList[1].Id = Guid.Empty;
 
             Assert.Throws<InvalidOperationException>(() => Subject.SetFields(_basicList, x => x.Interval));
         }
@@ -283,7 +283,7 @@ namespace NzbDrone.Core.Test.Datastore
         [Test]
         public void getting_model_with_invalid_id_should_throw()
         {
-            Assert.Throws<ModelNotFoundException>(() => Subject.Get(12));
+            Assert.Throws<ModelNotFoundException>(() => Subject.Get(Guid.NewGuid()));
         }
 
         [Test]

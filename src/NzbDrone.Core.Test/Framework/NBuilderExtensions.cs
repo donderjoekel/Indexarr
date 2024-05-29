@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FizzWare.NBuilder;
@@ -10,7 +11,7 @@ namespace NzbDrone.Core.Test.Framework
         public static T BuildNew<T>(this ISingleObjectBuilder<T> builder)
             where T : ModelBase, new()
         {
-            return builder.With(c => c.Id = 0).Build();
+            return builder.With(c => c.Id = Guid.Empty).Build();
         }
 
         public static List<T> BuildList<T>(this IListBuilder<T> builder)
@@ -22,7 +23,7 @@ namespace NzbDrone.Core.Test.Framework
         public static List<T> BuildListOfNew<T>(this IListBuilder<T> builder)
             where T : ModelBase, new()
         {
-            return BuildList<T>(builder.All().With(c => c.Id = 0));
+            return BuildList<T>(builder.All().With(c => c.Id = Guid.Empty));
         }
     }
 }

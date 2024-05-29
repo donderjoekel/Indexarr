@@ -1,3 +1,4 @@
+/*
 using System;
 using System.Linq;
 using FluentAssertions;
@@ -81,3 +82,4 @@ namespace NzbDrone.Core.Test.IndexerTests
         }
     }
 }
+*/

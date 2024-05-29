@@ -20,7 +20,7 @@ namespace NzbDrone.Core.Test.Datastore
         {
             _sampleType = Builder<ScheduledTask>
                     .CreateNew()
-                    .With(s => s.Id = 0)
+                    .With(s => s.Id = Guid.Empty)
                     .Build();
         }
 
@@ -41,7 +41,7 @@ namespace NzbDrone.Core.Test.Datastore
         [Test]
         public void update_item_with_root_index_0_should_faile()
         {
-            _sampleType.Id = 0;
+            _sampleType.Id = Guid.Empty;
             Assert.Throws<InvalidOperationException>(() => Subject.Update(_sampleType));
         }
 
@@ -56,19 +56,19 @@ namespace NzbDrone.Core.Test.Datastore
         [Test]
         public void new_objects_should_get_id()
         {
-            _sampleType.Id = 0;
+            _sampleType.Id = Guid.Empty;
             Subject.Insert(_sampleType);
-            _sampleType.Id.Should().NotBe(0);
+            _sampleType.Id.Should().NotBe(Guid.Empty);
         }
 
         [Test]
         public void new_object_should_get_new_id()
         {
-            _sampleType.Id = 0;
+            _sampleType.Id = Guid.Empty;
             Subject.Insert(_sampleType);
 
             Db.All<ScheduledTask>().Should().HaveCount(1);
-            _sampleType.Id.Should().Be(1);
+            _sampleType.Id.Should().NotBe(Guid.Empty);
         }
 
         [Test]
@@ -100,13 +100,12 @@ namespace NzbDrone.Core.Test.Datastore
         [Test]
         public void should_have_id_when_returned_from_database()
         {
-            _sampleType.Id = 0;
+            _sampleType.Id = Guid.Empty;
             Subject.Insert(_sampleType);
             var item = Db.All<ScheduledTask>();
 
             item.Should().HaveCount(1);
-            item.First().Id.Should().NotBe(0);
-            item.First().Id.Should().BeLessThan(100);
+            item.First().Id.Should().NotBe(Guid.Empty);
             item.First().Id.Should().Be(_sampleType.Id);
         }
 
@@ -116,7 +115,7 @@ namespace NzbDrone.Core.Test.Datastore
             Subject.Insert(_sampleType);
             var item = Db.All<ScheduledTask>().Single(c => c.Id == _sampleType.Id);
 
-            item.Id.Should().NotBe(0);
+            item.Id.Should().NotBe(Guid.Empty);
             item.Id.Should().Be(_sampleType.Id);
         }
 

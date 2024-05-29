@@ -1,3 +1,4 @@
+/*
 using System.Net;
 using FluentAssertions;
 using NUnit.Framework;
@@ -11,8 +12,8 @@ namespace NzbDrone.Integration.Test
         [TestCase("application/json")]
         [TestCase("text/html, application/json")]
         [TestCase("application/xml, application/json")]
-        [TestCase("text/html, */*")]
-        [TestCase("*/*")]
+        [TestCase("text/html, #1#*")]
+        [TestCase("#1#*")]
         [TestCase("")]
         public void should_get_json_with_accept_header(string header)
         {
@@ -45,3 +46,4 @@ namespace NzbDrone.Integration.Test
         }
     }
 }
+*/

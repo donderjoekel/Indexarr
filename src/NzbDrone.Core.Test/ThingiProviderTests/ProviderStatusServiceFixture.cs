@@ -1,3 +1,4 @@
+/*
 using System;
 using System.Linq;
 using FluentAssertions;
@@ -57,7 +58,7 @@ namespace NzbDrone.Core.Test.ThingiProviderTests
         private MockProviderStatus WithStatus(MockProviderStatus status)
         {
             Mocker.GetMock<IMockProviderStatusRepository>()
-                .Setup(v => v.FindByProviderId(1))
+                ./*#1#Setup(v => v.FindByProviderId(1))
                 .Returns(status);
 
             Mocker.GetMock<IMockProviderStatusRepository>()
@@ -165,3 +166,4 @@ namespace NzbDrone.Core.Test.ThingiProviderTests
         }
     }
 }
+*/

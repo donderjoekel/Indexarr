@@ -46,7 +46,7 @@ namespace NzbDrone.Integration.Test.Client
             var request = BuildRequest();
             request.AddJsonBody(command);
             var result = Post<SimpleCommandResource>(request);
-            result.Id.Should().NotBe(0);
+            result.Id.Should().NotBe(Guid.Empty);
 
             for (var i = 0; i < 50; i++)
             {
