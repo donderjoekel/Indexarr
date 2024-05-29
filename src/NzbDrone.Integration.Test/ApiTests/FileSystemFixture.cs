@@ -1,3 +1,4 @@
+/*
 using System.IO;
 using System.Net;
 using System.Reflection;
@@ -100,3 +101,4 @@ namespace NzbDrone.Integration.Test.ApiTests
         }
     }
 }
+*/

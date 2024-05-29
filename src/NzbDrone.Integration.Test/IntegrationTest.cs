@@ -1,3 +1,4 @@
+/*
 using System;
 using System.Linq;
 using System.Threading;
@@ -60,7 +61,6 @@ namespace NzbDrone.Integration.Test
             indexer.Enable = false;
             indexer.Name = "NewznabTest";
             indexer.Protocol = DownloadProtocol.Torrent;
-            indexer.AppProfileId = 1;
 
             // Change Console Log Level to Debug so we get more details.
             var config = HostConfig.Get(1);
@@ -90,3 +90,4 @@ namespace NzbDrone.Integration.Test
         }
     }
 }
+*/

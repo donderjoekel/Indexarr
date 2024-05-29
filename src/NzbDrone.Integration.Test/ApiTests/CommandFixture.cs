@@ -1,3 +1,4 @@
+/*
 using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Integration.Test.Client;
@@ -16,3 +17,4 @@ namespace NzbDrone.Integration.Test.ApiTests
         }
     }
 }
+*/

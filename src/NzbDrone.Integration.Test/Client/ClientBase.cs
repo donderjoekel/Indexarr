@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -123,7 +124,7 @@ namespace NzbDrone.Integration.Test.Client
             return Put<TResource>(request, statusCode);
         }
 
-        public TResource Get(int id, HttpStatusCode statusCode = HttpStatusCode.OK)
+        public TResource Get(Guid id, HttpStatusCode statusCode = HttpStatusCode.OK)
         {
             var request = BuildRequest(id.ToString());
             return Get<TResource>(request, statusCode);
@@ -135,7 +136,7 @@ namespace NzbDrone.Integration.Test.Client
             return Get<TResource>(request, statusCode);
         }
 
-        public void Delete(int id)
+        public void Delete(Guid id)
         {
             var request = BuildRequest(id.ToString());
             Delete(request);
