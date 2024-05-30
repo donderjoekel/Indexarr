@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Drones;
 using Prowlarr.Http;
-using Prowlarr.Http.Extensions;
 using Prowlarr.Http.REST;
 
 namespace Prowlarr.Api.V1.Drone;
@@ -26,15 +26,13 @@ public class DroneController : RestController<DroneResource>
         throw new NotImplementedException();
     }
 
-    [HttpGet("register")]
+    [HttpGet("register/{address}")]
     [AllowAnonymous]
-    public IActionResult RegisterDrone()
+    public IActionResult RegisterDrone(string address)
     {
-        _logger.Info(
-            "Drone registration incoming from {0}:{1}",
-            HttpContext.GetRemoteIP(),
-            HttpContext.Connection.RemotePort);
-        _droneService.RegisterDrone(HttpContext.GetRemoteIP(), HttpContext.Connection.RemotePort);
+        var actualAddress = address.FromBase64();
+        _logger.Info("Drone registration incoming from {0}", actualAddress);
+        _droneService.RegisterDrone(actualAddress);
         return Ok();
     }
 

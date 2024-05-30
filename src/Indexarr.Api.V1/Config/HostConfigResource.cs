@@ -13,6 +13,7 @@ namespace Prowlarr.Api.V1.Config
         public int Port { get; set; }
         public bool IsDirector { get; set; }
         public string DirectorAddress { get; set; }
+        public string DroneAddress { get; set; }
         public int SslPort { get; set; }
         public bool EnableSsl { get; set; }
         public bool LaunchBrowser { get; set; }
@@ -60,6 +61,7 @@ namespace Prowlarr.Api.V1.Config
                 Port = model.Port,
                 IsDirector = model.IsDirector,
                 DirectorAddress = model.DirectorAddress,
+                DroneAddress = model.DroneAddress,
                 SslPort = model.SslPort,
                 EnableSsl = model.EnableSsl,
                 LaunchBrowser = model.LaunchBrowser,
