@@ -1,6 +1,6 @@
 ﻿using NzbDrone.Common.Messaging;
 
-namespace NzbDrone.Core.Drone.Events;
+namespace NzbDrone.Core.Drones.Events;
 
 public class PartialIndexFinishedEvent : IEvent
 {

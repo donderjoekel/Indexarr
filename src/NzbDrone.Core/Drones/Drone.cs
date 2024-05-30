@@ -1,7 +1,7 @@
 ﻿using System;
 using NzbDrone.Core.Datastore;
 
-namespace NzbDrone.Core.Drone;
+namespace NzbDrone.Core.Drones;
 
 public class Drone : ModelBase
 {

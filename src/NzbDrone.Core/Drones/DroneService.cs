@@ -3,13 +3,13 @@ using System.Linq;
 using NLog;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Configuration;
-using NzbDrone.Core.Drone.Commands;
-using NzbDrone.Core.Drone.Events;
+using NzbDrone.Core.Drones.Commands;
+using NzbDrone.Core.Drones.Events;
 using NzbDrone.Core.Indexing.Commands;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Messaging.Events;
 
-namespace NzbDrone.Core.Drone;
+namespace NzbDrone.Core.Drones;
 
 public interface IDroneService
 {
