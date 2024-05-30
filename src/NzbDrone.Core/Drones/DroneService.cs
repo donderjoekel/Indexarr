@@ -185,6 +185,10 @@ public class DroneService : IDroneService,
             .ToList();
 
         _logger.Info("Removing {0} unresponsive drones", unresponsiveDrones.Count);
-        _droneRepository.DeleteMany(unresponsiveDrones);
+
+        foreach (var unresponsiveDrone in unresponsiveDrones)
+        {
+            _droneRepository.Delete(unresponsiveDrone);
+        }
     }
 }
