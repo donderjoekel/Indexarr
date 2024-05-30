@@ -1,4 +1,4 @@
-﻿using NzbDrone.Common.Http;
+using NzbDrone.Common.Http;
 using NzbDrone.Core.Configuration;
 
 namespace NzbDrone.Core.Drones;
