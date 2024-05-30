@@ -16,7 +16,7 @@ public interface IDroneService
 {
     bool IsDirector();
     int GetDroneCount();
-    void RegisterDrone(string address);
+    void RegisterDrone(string address, int port);
     bool DispatchPartialIndex(Guid indexerId);
     void DispatchPartialIndexFinished(Guid indexerId);
     void StartPartialIndex(string indexerId);
@@ -108,7 +108,7 @@ public class DroneService : IDroneService,
         }
     }
 
-    public void RegisterDrone(string address)
+    public void RegisterDrone(string address, int port)
     {
         if (string.IsNullOrWhiteSpace(address))
         {
@@ -116,14 +116,16 @@ public class DroneService : IDroneService,
             return;
         }
 
+        var fullAddress = address + ":" + port;
+
         _logger.Info("Registering drone");
-        var drone = _droneRepository.GetByAddress(address);
+        var drone = _droneRepository.GetByAddress(fullAddress);
         if (drone == null)
         {
             _droneRepository.Insert(
                 new Drone
                 {
-                    Address = address,
+                    Address = fullAddress,
                     LastSeen = DateTime.UtcNow
                 });
         }
