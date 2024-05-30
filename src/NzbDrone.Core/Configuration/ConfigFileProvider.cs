@@ -29,6 +29,8 @@ namespace NzbDrone.Core.Configuration
 
         string BindAddress { get; }
         int Port { get; }
+        bool IsDirector { get; }
+        string DirectorAddress { get; }
         int SslPort { get; }
         bool EnableSsl { get; }
         bool LaunchBrowser { get; }
@@ -155,6 +157,10 @@ namespace NzbDrone.Core.Configuration
         }
 
         public int Port => GetValueInt("Port", DEFAULT_PORT);
+
+        public bool IsDirector => GetValueBoolean("IsDirector", false);
+
+        public string DirectorAddress => GetValue("DirectorAddress", "http://indexarr-director:9696");
 
         public int SslPort => GetValueInt("SslPort", DEFAULT_SSL_PORT);
 

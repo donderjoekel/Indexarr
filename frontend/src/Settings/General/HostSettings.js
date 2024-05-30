@@ -19,6 +19,8 @@ function HostSettings(props) {
   const {
     bindAddress,
     port,
+    isDirector,
+    directorAddress,
     urlBase,
     instanceName,
     applicationUrl,
@@ -71,6 +73,30 @@ function HostSettings(props) {
           helpTextWarning={translate('RestartRequiredHelpTextWarning')}
           onChange={onInputChange}
           {...urlBase}
+        />
+      </FormGroup>
+
+      <FormGroup>
+        <FormLabel>{translate('IsDirector')}</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.CHECK}
+          name="isDirector"
+          helpText={translate('IsDirectorHelpText')}
+          onChange={onInputChange}
+          {...isDirector}
+        />
+      </FormGroup>
+
+      <FormGroup>
+        <FormLabel>{translate('DirectorAddress')}</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.TEXT}
+          name="directorAddress"
+          helpText={translate('DirectorAddressHelpText')}
+          onChange={onInputChange}
+          {...directorAddress}
         />
       </FormGroup>
 

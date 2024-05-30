@@ -56,7 +56,7 @@ public class IndexingService : IIndexingService,
 
     public void Execute(FullIndexCommand message)
     {
-        if (!_droneService.IsMainDrone())
+        if (!_droneService.IsDirector())
         {
             return;
         }
