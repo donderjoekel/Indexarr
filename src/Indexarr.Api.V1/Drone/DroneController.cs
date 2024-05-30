@@ -30,8 +30,11 @@ public class DroneController : RestController<DroneResource>
     [AllowAnonymous]
     public IActionResult RegisterDrone()
     {
-        _logger.Info("Drone registration incoming from {0}", HttpContext.GetRemoteIP());
-        _droneService.RegisterDrone(HttpContext.GetRemoteIP());
+        _logger.Info(
+            "Drone registration incoming from {0}:{1}",
+            HttpContext.GetRemoteIP(),
+            HttpContext.Connection.RemotePort);
+        _droneService.RegisterDrone(HttpContext.GetRemoteIP(), HttpContext.Connection.RemotePort);
         return Ok();
     }
 
