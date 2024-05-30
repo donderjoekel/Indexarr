@@ -9,6 +9,7 @@ using NzbDrone.Core.Chapters;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.CustomFilters;
 using NzbDrone.Core.Datastore.Converters;
+using NzbDrone.Core.Drones;
 using NzbDrone.Core.IndexedMangas;
 using NzbDrone.Core.IndexerProxies;
 using NzbDrone.Core.Indexers;
@@ -101,6 +102,8 @@ namespace NzbDrone.Core.Datastore
                 .HasOne(x => x.Indexer, x => x.IndexerId);
             Mapper.Entity<Chapter>("Chapters").RegisterModel()
                 .HasOne(x => x.IndexedManga, x => x.IndexedMangaId);
+
+            Mapper.Entity<Drone>("Drones").RegisterModel();
         }
 
         private static void RegisterMappers()
