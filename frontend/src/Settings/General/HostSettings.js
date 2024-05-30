@@ -21,6 +21,7 @@ function HostSettings(props) {
     port,
     isDirector,
     directorAddress,
+    droneAddress,
     urlBase,
     instanceName,
     applicationUrl,
@@ -97,6 +98,18 @@ function HostSettings(props) {
           helpText={translate('DirectorAddressHelpText')}
           onChange={onInputChange}
           {...directorAddress}
+        />
+      </FormGroup>
+
+      <FormGroup>
+        <FormLabel>{translate('DroneAddress')}</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.TEXT}
+          name="droneAddress"
+          helpText={translate('DroneAddressHelpText')}
+          onChange={onInputChange}
+          {...droneAddress}
         />
       </FormGroup>
 
