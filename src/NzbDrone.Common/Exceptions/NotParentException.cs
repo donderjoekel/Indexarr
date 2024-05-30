@@ -1,4 +1,4 @@
-﻿namespace NzbDrone.Common.Exceptions
+namespace NzbDrone.Common.Exceptions
 {
     public class NotParentException : NzbDroneException
     {

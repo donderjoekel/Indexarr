@@ -1,4 +1,4 @@
-﻿using Indexarr.Core.Metadata.Jikan.Resource;
+using Indexarr.Core.Metadata.Jikan.Resource;
 
 namespace NzbDrone.Core.Metadata.Jikan.Result;
 

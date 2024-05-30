@@ -1,4 +1,4 @@
-﻿using NLog;
+using NLog;
 using NzbDrone.Core.Mangas;
 using NzbDrone.Core.Matching.Events;
 using NzbDrone.Core.Messaging.Commands;

@@ -1,4 +1,4 @@
-﻿namespace NzbDrone.Core.MetadataSource.MangaUpdates.Resource.SeriesGet;
+namespace NzbDrone.Core.MetadataSource.MangaUpdates.Resource.SeriesGet;
 
 public class RecommendationResource
 {

@@ -60,48 +60,48 @@ namespace NzbDrone.Host
                 switch (appMode)
                 {
                     case ApplicationModes.Service:
-                    {
-                        Logger.Debug("Service selected");
-
-                        CreateConsoleHostBuilder(args, startupContext).UseWindowsService().Build().Run();
-                        break;
-                    }
-
-                    case ApplicationModes.Interactive:
-                    {
-                        Logger.Debug(trayCallback != null ? "Tray selected" : "Console selected");
-                        var builder = CreateConsoleHostBuilder(args, startupContext);
-
-                        if (trayCallback != null)
                         {
-                            trayCallback(builder);
+                            Logger.Debug("Service selected");
+
+                            CreateConsoleHostBuilder(args, startupContext).UseWindowsService().Build().Run();
+                            break;
                         }
 
-                        builder.Build().Run();
-                        break;
-                    }
+                    case ApplicationModes.Interactive:
+                        {
+                            Logger.Debug(trayCallback != null ? "Tray selected" : "Console selected");
+                            var builder = CreateConsoleHostBuilder(args, startupContext);
+
+                            if (trayCallback != null)
+                            {
+                                trayCallback(builder);
+                            }
+
+                            builder.Build().Run();
+                            break;
+                        }
 
                     // Utility mode
                     default:
-                    {
-                        new HostBuilder()
-                            .UseServiceProviderFactory(new DryIocServiceProviderFactory(new Container(rules => rules.WithNzbDroneRules())))
-                            .ConfigureContainer<IContainer>(c =>
-                            {
-                                c.AutoAddServices(Bootstrap.ASSEMBLIES)
-                                    .AddNzbDroneLogger()
-                                    .AddDatabase()
-                                    .AddStartupContext(startupContext)
-                                    .Resolve<UtilityModeRouter>()
-                                    .Route(appMode);
-                            })
-                            .ConfigureServices(services =>
-                            {
-                                services.Configure<PostgresOptions>(config.GetSection("Indexarr:Postgres"));
-                            }).Build();
+                        {
+                            new HostBuilder()
+                                .UseServiceProviderFactory(new DryIocServiceProviderFactory(new Container(rules => rules.WithNzbDroneRules())))
+                                .ConfigureContainer<IContainer>(c =>
+                                {
+                                    c.AutoAddServices(Bootstrap.ASSEMBLIES)
+                                        .AddNzbDroneLogger()
+                                        .AddDatabase()
+                                        .AddStartupContext(startupContext)
+                                        .Resolve<UtilityModeRouter>()
+                                        .Route(appMode);
+                                })
+                                .ConfigureServices(services =>
+                                {
+                                    services.Configure<PostgresOptions>(config.GetSection("Indexarr:Postgres"));
+                                }).Build();
 
-                        break;
-                    }
+                            break;
+                        }
                 }
             }
             catch (InvalidConfigFileException ex)

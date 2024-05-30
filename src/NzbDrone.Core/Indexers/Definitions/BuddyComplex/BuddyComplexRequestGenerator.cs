@@ -1,4 +1,4 @@
-﻿using NzbDrone.Common.Http;
+using NzbDrone.Common.Http;
 using NzbDrone.Core.Indexers.Definitions.Indexarr;
 using NzbDrone.Core.Indexers.Settings;
 

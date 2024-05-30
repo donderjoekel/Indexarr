@@ -10,7 +10,7 @@ using Prowlarr.Http.Frontend.Mappers;
 
 namespace Prowlarr.Http.Frontend
 {
-    [Authorize(Policy="UI")]
+    [Authorize(Policy = "UI")]
     [ApiController]
     public class StaticResourceController : Controller
     {

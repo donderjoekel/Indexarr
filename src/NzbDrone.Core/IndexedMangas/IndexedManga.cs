@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Indexers;
 using NzbDrone.Core.Mangas;

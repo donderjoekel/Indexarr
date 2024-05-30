@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Prowlarr.Api.V1.Notifications;
 using RestSharp;
 

@@ -1,4 +1,4 @@
-﻿namespace NzbDrone.Core.MetadataSource.MangaUpdates.Resource;
+namespace NzbDrone.Core.MetadataSource.MangaUpdates.Resource;
 
 public class ListsResource
 {

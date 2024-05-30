@@ -1,4 +1,4 @@
-﻿namespace NzbDrone.Core.MetadataSource.MangaUpdates.Resource.ReleaseSearch;
+namespace NzbDrone.Core.MetadataSource.MangaUpdates.Resource.ReleaseSearch;
 
 public class ReleaseSearchResultResource
 {

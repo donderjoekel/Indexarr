@@ -1,4 +1,4 @@
-﻿namespace Prowlarr.Http.Extensions
+namespace Prowlarr.Http.Extensions
 {
     public static class AccessControlHeaders
     {

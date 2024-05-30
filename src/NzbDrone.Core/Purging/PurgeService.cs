@@ -1,4 +1,4 @@
-﻿using Indexarr.Core.Purging.Commands;
+using Indexarr.Core.Purging.Commands;
 using NzbDrone.Core.Chapters;
 using NzbDrone.Core.IndexedMangas;
 using NzbDrone.Core.Mangas;

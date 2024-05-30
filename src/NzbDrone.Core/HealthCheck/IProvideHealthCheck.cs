@@ -1,4 +1,4 @@
-﻿namespace NzbDrone.Core.HealthCheck
+namespace NzbDrone.Core.HealthCheck
 {
     public interface IProvideHealthCheck
     {

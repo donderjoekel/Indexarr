@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using NzbDrone.Core.Messaging.Commands;
 
 namespace NzbDrone.Core.Indexing.Commands;

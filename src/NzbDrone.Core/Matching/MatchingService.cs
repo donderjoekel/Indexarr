@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using NLog;
 using NzbDrone.Core.IndexedMangas;

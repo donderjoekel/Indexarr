@@ -33,11 +33,11 @@ namespace NzbDrone.Core.Messaging.Commands
         {
             var sql = @"UPDATE ""Commands"" SET ""Status"" = @Orphaned, ""EndedAt"" = @Ended WHERE ""Status"" = @Started";
             var args = new
-                {
-                    Orphaned = (int)CommandStatus.Orphaned,
-                    Started = (int)CommandStatus.Started,
-                    Ended = DateTime.UtcNow
-                };
+            {
+                Orphaned = (int)CommandStatus.Orphaned,
+                Started = (int)CommandStatus.Started,
+                Ended = DateTime.UtcNow
+            };
 
             using (var conn = _database.OpenConnection())
             {
