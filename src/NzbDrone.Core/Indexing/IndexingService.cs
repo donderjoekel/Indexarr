@@ -92,7 +92,7 @@ public class IndexingService : IIndexingService,
         var indexer = _indexerFactory.GetByGuid(message.IndexerId);
         _logger.Info("Starting full index for {Indexer}", indexer.Name);
         var result = indexer.FullIndex().GetAwaiter().GetResult();
-        ConcurrentWork.CreateAndRun(5, result.Mangas, info => () => ProcessManga(info));
+        ConcurrentWork.CreateAndRun(1, result.Mangas, info => () => ProcessManga(info));
         _logger.Info("Finished full index for {Indexer}", indexer.Name);
         _droneService.DispatchPartialIndexFinished(message.IndexerId);
     }
