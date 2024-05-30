@@ -36,13 +36,17 @@ public class DroneService : IDroneService,
     private readonly IManageCommandQueue _commandQueue;
     private readonly IEventAggregator _eventAggregator;
     private readonly IConfigFileProvider _configFile;
+    private readonly IDirectorRequestBuilder _directorRequestBuilder;
+    private readonly IDroneRequestBuilder _droneRequestBuilder;
 
     public DroneService(IDroneRepository droneRepository,
         IHttpClient httpClient,
         Logger logger,
         IManageCommandQueue commandQueue,
         IEventAggregator eventAggregator,
-        IConfigFileProvider configFile)
+        IConfigFileProvider configFile,
+        IDirectorRequestBuilder directorRequestBuilder,
+        IDroneRequestBuilder droneRequestBuilder)
     {
         _droneRepository = droneRepository;
         _httpClient = httpClient;
@@ -50,6 +54,8 @@ public class DroneService : IDroneService,
         _commandQueue = commandQueue;
         _eventAggregator = eventAggregator;
         _configFile = configFile;
+        _directorRequestBuilder = directorRequestBuilder;
+        _droneRequestBuilder = droneRequestBuilder;
     }
 
     public bool IsDirector()
@@ -74,7 +80,13 @@ public class DroneService : IDroneService,
         try
         {
             _logger.Info("Requesting index on drone {0}", drone.Address);
-            var response = _httpClient.Get(new HttpRequest(drone.Address + "/api/v1/drone/index/" + indexerId));
+
+            var request = _droneRequestBuilder.Create(drone)
+                .Resource("index/{indexer}")
+                .SetSegment("indexer", indexerId.ToString())
+                .Build();
+
+            var response = _httpClient.Get(request);
             if (response.HasHttpError)
             {
                 _logger.Error("Failed to dispatch partial index to drone {0}", drone.Address);
@@ -96,9 +108,13 @@ public class DroneService : IDroneService,
 
     public void DispatchPartialIndexFinished(Guid indexerId)
     {
-        var response = _httpClient.Get(
-            new HttpRequest(
-                _configFile.DirectorAddress + "/api/v1/drone/finish/" + _configFile.DroneAddress.ToBase64() + "/" + indexerId));
+        var request = _directorRequestBuilder.Builder
+            .Resource("finish/{address}/{indexer}")
+            .SetSegment("address", _configFile.DroneAddress.ToBase64())
+            .SetSegment("indexer", indexerId.ToString())
+            .Build();
+
+        var response = _httpClient.Get(request);
         if (response.HasHttpError)
         {
             _logger.Error("Failed to notify director of partial index completion");
@@ -162,9 +178,13 @@ public class DroneService : IDroneService,
         }
 
         _logger.Info("Registering self with director");
-        var response = _httpClient.Get(
-            new HttpRequest(
-                _configFile.DirectorAddress + "/api/v1/drone/register/" + _configFile.DroneAddress.ToBase64()));
+
+        var request = _directorRequestBuilder.Builder
+            .Resource("register/{address}")
+            .SetSegment("address", _configFile.DroneAddress.ToBase64())
+            .Build();
+
+        var response = _httpClient.Get(request);
         if (response.HasHttpError)
         {
             _logger.Error("Failed to register with director");
