@@ -23,7 +23,6 @@ public class DirectorRequestBuilder : IDirectorRequestBuilder,
         UpdateFactory();
     }
 
-
     public HttpRequestBuilder Builder => _factory.Create();
 
     public void Handle(ConfigFileSavedEvent message)

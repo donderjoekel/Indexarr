@@ -175,7 +175,12 @@ namespace NzbDrone.Core.Configuration
         {
             get
             {
-                var apiKey = GetValue("ApiKey", GenerateApiKey());
+                var apiKey = Environment.GetEnvironmentVariable("Indexarr:ApiKey");
+
+                if (string.IsNullOrWhiteSpace(apiKey))
+                {
+                    apiKey = GetValue("ApiKey", GenerateApiKey());
+                }
 
                 if (apiKey.IsNullOrWhiteSpace())
                 {
