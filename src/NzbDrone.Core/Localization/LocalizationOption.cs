@@ -1,4 +1,4 @@
-﻿namespace NzbDrone.Core.Localization
+namespace NzbDrone.Core.Localization
 {
     public class LocalizationOption
     {

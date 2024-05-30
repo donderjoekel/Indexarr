@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using NzbDrone.Common.Messaging;
 using NzbDrone.Core.Datastore;
 

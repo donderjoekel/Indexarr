@@ -1,4 +1,4 @@
-﻿using FluentValidation.Validators;
+using FluentValidation.Validators;
 
 namespace Prowlarr.Http.Validation
 {

@@ -1,4 +1,4 @@
-﻿using NzbDrone.Core.MetadataSource.MangaUpdates.Resource;
+using NzbDrone.Core.MetadataSource.MangaUpdates.Resource;
 using NzbDrone.Core.MetadataSource.MangaUpdates.Resource.SeriesGet;
 
 namespace NzbDrone.Core.MetadataSource.MangaUpdates.Result;

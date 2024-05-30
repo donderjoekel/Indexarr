@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using NzbDrone.Core.MetadataSource.MangaUpdates.Resource.ReleaseSearch;
 
 namespace NzbDrone.Core.MetadataSource.MangaUpdates.Result;

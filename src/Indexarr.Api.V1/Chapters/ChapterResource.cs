@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using NzbDrone.Core.Chapters;
 using Prowlarr.Http.REST;
 

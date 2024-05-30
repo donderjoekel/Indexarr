@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Prowlarr.Http.REST;
 
 namespace Prowlarr.Api.V1.Logs

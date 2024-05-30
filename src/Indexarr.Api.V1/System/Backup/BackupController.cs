@@ -40,14 +40,14 @@ namespace Prowlarr.Api.V1.System.Backup
             var backups = _backupService.GetBackups();
 
             return backups.Select(b => new BackupResource
-                {
-                    Id = GetBackupId(b),
-                    Name = b.Name,
-                    Path = $"/backup/{b.Type.ToString().ToLower()}/{b.Name}",
-                    Type = b.Type,
-                    Size = b.Size,
-                    Time = b.Time
-                })
+            {
+                Id = GetBackupId(b),
+                Name = b.Name,
+                Path = $"/backup/{b.Type.ToString().ToLower()}/{b.Name}",
+                Type = b.Type,
+                Size = b.Size,
+                Time = b.Time
+            })
                 .OrderByDescending(b => b.Time)
                 .ToList();
         }

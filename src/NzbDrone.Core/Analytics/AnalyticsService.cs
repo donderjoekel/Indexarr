@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Core.Configuration;

@@ -1,4 +1,4 @@
-﻿using NzbDrone.Core.Indexers.Settings;
+using NzbDrone.Core.Indexers.Settings;
 
 namespace NzbDrone.Core.Indexers.Definitions.Indexarr;
 

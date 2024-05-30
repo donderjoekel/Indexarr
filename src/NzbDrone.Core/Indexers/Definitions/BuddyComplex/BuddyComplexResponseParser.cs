@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Indexers.Definitions.Indexarr;

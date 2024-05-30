@@ -1,4 +1,4 @@
-﻿namespace Indexarr.Core.Metadata.Jikan.Resource;
+namespace Indexarr.Core.Metadata.Jikan.Resource;
 
 public class TitleResource
 {

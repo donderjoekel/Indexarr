@@ -22,18 +22,18 @@ namespace NzbDrone.Core.Notifications.Discord
         public override void OnGrab(GrabMessage message)
         {
             var embed = new Embed
-                        {
-                            Author = new DiscordAuthor
-                            {
-                                Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
-                                IconUrl = "https://raw.githubusercontent.com/Indexarr/Indexarr/develop/Logo/256.png"
-                            },
-                            Title = RELEASE_GRABBED_TITLE,
-                            Description = message.Message,
-                            Timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                            Color = message.Successful ? (int)DiscordColors.Success : (int)DiscordColors.Danger,
-                            Fields = new List<DiscordField>()
-                        };
+            {
+                Author = new DiscordAuthor
+                {
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    IconUrl = "https://raw.githubusercontent.com/Indexarr/Indexarr/develop/Logo/256.png"
+                },
+                Title = RELEASE_GRABBED_TITLE,
+                Description = message.Message,
+                Timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                Color = message.Successful ? (int)DiscordColors.Success : (int)DiscordColors.Danger,
+                Fields = new List<DiscordField>()
+            };
 
             foreach (var field in Settings.GrabFields)
             {
