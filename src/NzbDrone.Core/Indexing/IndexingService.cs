@@ -84,6 +84,11 @@ public class IndexingService : IIndexingService,
             }
         }
 
+        while (_indexInProgress.Any())
+        {
+            Thread.Sleep(1000);
+        }
+
         _eventAggregator.PublishEvent(new IndexCompletedEvent());
     }
 
