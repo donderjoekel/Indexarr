@@ -21,7 +21,7 @@ public interface IDroneService
     bool DispatchPartialIndex(Guid indexerId);
     void DispatchPartialIndexFinished(Guid indexerId);
     void StartPartialIndex(string indexerId);
-    void FinishPartialIndex(string indexerId);
+    void FinishPartialIndex(string address, string indexerId);
 }
 
 public class DroneService : IDroneService,
@@ -97,7 +97,9 @@ public class DroneService : IDroneService,
 
     public void DispatchPartialIndexFinished(Guid indexerId)
     {
-        var response = _httpClient.Get(new HttpRequest(_configFile.DirectorAddress + "/api/v1/drone/finish/" + indexerId));
+        var response = _httpClient.Get(
+            new HttpRequest(
+                _configFile.DirectorAddress + "/api/v1/drone/finish/" + _configFile.DroneAddress + "/" + indexerId));
         if (response.HasHttpError)
         {
             _logger.Error("Failed to notify director of partial index completion");
@@ -140,8 +142,12 @@ public class DroneService : IDroneService,
         _commandQueue.Push(command);
     }
 
-    public void FinishPartialIndex(string indexerId)
+    public void FinishPartialIndex(string address, string indexerId)
     {
+        var drone = _droneRepository.GetByAddress(address);
+        drone.IsBusy = false;
+        _droneRepository.Update(drone);
+
         _eventAggregator.PublishEvent(
             new PartialIndexFinishedEvent()
             {

@@ -45,12 +45,12 @@ public class DroneController : RestController<DroneResource>
         return Ok();
     }
 
-    [HttpGet("finish/{indexerId}")]
+    [HttpGet("finish/{address}/{indexerId}")]
     [AllowAnonymous]
-    public IActionResult FinishIndex(string indexerId)
+    public IActionResult FinishIndex(string address, string indexerId)
     {
         _logger.Info("Index request for {0} finished", indexerId);
-        _droneService.FinishPartialIndex(indexerId);
+        _droneService.FinishPartialIndex(address, indexerId);
         return Ok();
     }
 }
