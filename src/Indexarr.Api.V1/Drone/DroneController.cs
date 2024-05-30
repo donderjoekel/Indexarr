@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NLog;
 using NzbDrone.Core.Drone;
 using Prowlarr.Http;
 using Prowlarr.Http.Extensions;
@@ -12,10 +13,12 @@ namespace Prowlarr.Api.V1.Drone;
 public class DroneController : RestController<DroneResource>
 {
     private readonly IDroneService _droneService;
+    private readonly Logger _logger;
 
-    public DroneController(IDroneService droneService)
+    public DroneController(IDroneService droneService, Logger logger)
     {
         _droneService = droneService;
+        _logger = logger;
     }
 
     public override DroneResource GetResourceById(Guid id)
@@ -27,6 +30,7 @@ public class DroneController : RestController<DroneResource>
     [AllowAnonymous]
     public IActionResult RegisterDrone()
     {
+        _logger.Info("Drone registration incoming from {0}", HttpContext.GetRemoteIP());
         _droneService.RegisterDrone(HttpContext.GetRemoteIP());
         return Ok();
     }
@@ -35,6 +39,7 @@ public class DroneController : RestController<DroneResource>
     [AllowAnonymous]
     public IActionResult StartIndex(string indexerId)
     {
+        _logger.Info("Index request for {0} received", indexerId);
         _droneService.StartPartialIndex(indexerId);
         return Ok();
     }
@@ -43,6 +48,7 @@ public class DroneController : RestController<DroneResource>
     [AllowAnonymous]
     public IActionResult FinishIndex(string indexerId)
     {
+        _logger.Info("Index request for {0} finished", indexerId);
         _droneService.FinishPartialIndex(indexerId);
         return Ok();
     }

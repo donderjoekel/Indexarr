@@ -70,18 +70,23 @@ public class DroneService : IDroneService,
             throw new Exception("No drone available");
         }
 
-        drone.IsBusy = true;
-        _droneRepository.Update(drone);
-
         try
         {
             var response = _httpClient.Get(new HttpRequest(drone.Address + "/api/v1/drone/index/" + indexerId));
+            if (response.HasHttpError)
+            {
+                _logger.Error("Failed to dispatch partial index to drone {0}", drone.Address);
+            }
+            else
+            {
+                drone.IsBusy = true;
+                _droneRepository.Update(drone);
+            }
+
             return !response.HasHttpError;
         }
         catch (Exception e)
         {
-            drone.IsBusy = false;
-            _droneRepository.Update(drone);
             _logger.Error(e);
             return false;
         }
@@ -89,7 +94,11 @@ public class DroneService : IDroneService,
 
     public void DispatchPartialIndexFinished(Guid indexerId)
     {
-        _httpClient.Get(new HttpRequest(_configFile.DirectorAddress + "/api/v1/drone/finish/" + indexerId));
+        var response = _httpClient.Get(new HttpRequest(_configFile.DirectorAddress + "/api/v1/drone/finish/" + indexerId));
+        if (response.HasHttpError)
+        {
+            _logger.Error("Failed to notify director of partial index completion");
+        }
     }
 
     public void RegisterDrone(string address)
@@ -100,6 +109,7 @@ public class DroneService : IDroneService,
             return;
         }
 
+        _logger.Info("Registering drone");
         var drone = _droneRepository.GetByAddress(address);
         if (drone == null)
         {
@@ -143,7 +153,12 @@ public class DroneService : IDroneService,
             return;
         }
 
-        _httpClient.Get(new HttpRequest(_configFile.DirectorAddress + "/api/v1/drone/register"));
+        _logger.Info("Registering self with director");
+        var response = _httpClient.Get(new HttpRequest(_configFile.DirectorAddress + "/api/v1/drone/register"));
+        if (response.HasHttpError)
+        {
+            _logger.Error("Failed to register with director");
+        }
     }
 
     public void Execute(RemoveUnresponsiveDronesCommand message)
@@ -153,11 +168,13 @@ public class DroneService : IDroneService,
             return;
         }
 
+        _logger.Info("Checking for unresponsive drones");
         var now = DateTime.UtcNow;
         var unresponsiveDrones = _droneRepository.All()
             .Where(x => now - x.LastSeen > TimeSpan.FromMinutes(CleanInterval))
             .ToList();
 
+        _logger.Info("Removing {0} unresponsive drones", unresponsiveDrones.Count);
         _droneRepository.DeleteMany(unresponsiveDrones);
     }
 }
