@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using NLog;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Drones.Commands;
@@ -16,7 +17,7 @@ public interface IDroneService
 {
     bool IsDirector();
     int GetDroneCount();
-    void RegisterDrone(string address, int port);
+    void RegisterDrone(string address);
     bool DispatchPartialIndex(Guid indexerId);
     void DispatchPartialIndexFinished(Guid indexerId);
     void StartPartialIndex(string indexerId);
@@ -108,7 +109,7 @@ public class DroneService : IDroneService,
         }
     }
 
-    public void RegisterDrone(string address, int port)
+    public void RegisterDrone(string address)
     {
         if (string.IsNullOrWhiteSpace(address))
         {
@@ -116,16 +117,14 @@ public class DroneService : IDroneService,
             return;
         }
 
-        var fullAddress = address + ":" + port;
-
         _logger.Info("Registering drone");
-        var drone = _droneRepository.GetByAddress(fullAddress);
+        var drone = _droneRepository.GetByAddress(address);
         if (drone == null)
         {
             _droneRepository.Insert(
                 new Drone
                 {
-                    Address = fullAddress,
+                    Address = address,
                     LastSeen = DateTime.UtcNow
                 });
         }
@@ -163,7 +162,9 @@ public class DroneService : IDroneService,
         }
 
         _logger.Info("Registering self with director");
-        var response = _httpClient.Get(new HttpRequest(_configFile.DirectorAddress + "/api/v1/drone/register"));
+        var response = _httpClient.Get(
+            new HttpRequest(
+                _configFile.DirectorAddress + "/api/v1/drone/register/" + _configFile.DroneAddress.ToBase64()));
         if (response.HasHttpError)
         {
             _logger.Error("Failed to register with director");

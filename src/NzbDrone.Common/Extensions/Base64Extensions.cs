@@ -10,12 +10,17 @@ namespace NzbDrone.Common.Extensions
             return Convert.ToBase64String(bytes);
         }
 
+        public static string ToBase64(this string input)
+        {
+            return Encoding.UTF8.GetBytes(input).ToBase64();
+        }
+
         public static string ToBase64(this long input)
         {
             return BitConverter.GetBytes(input).ToBase64();
         }
 
-        public static string FromBase64(string str) =>
+        public static string FromBase64(this string str) =>
             Encoding.UTF8.GetString(Convert.FromBase64String(str));
     }
 }
