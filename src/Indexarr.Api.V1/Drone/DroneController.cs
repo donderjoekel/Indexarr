@@ -50,7 +50,7 @@ public class DroneController : RestController<DroneResource>
     public IActionResult FinishIndex(string address, string indexerId)
     {
         _logger.Info("Index request for {0} finished", indexerId);
-        _droneService.FinishPartialIndex(address, indexerId);
+        _droneService.FinishPartialIndex(address.FromBase64(), indexerId);
         return Ok();
     }
 }

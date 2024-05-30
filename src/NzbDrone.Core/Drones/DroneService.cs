@@ -98,7 +98,7 @@ public class DroneService : IDroneService,
     {
         var response = _httpClient.Get(
             new HttpRequest(
-                _configFile.DirectorAddress + "/api/v1/drone/finish/" + _configFile.DroneAddress + "/" + indexerId));
+                _configFile.DirectorAddress + "/api/v1/drone/finish/" + _configFile.DroneAddress.ToBase64() + "/" + indexerId));
         if (response.HasHttpError)
         {
             _logger.Error("Failed to notify director of partial index completion");
