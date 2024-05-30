@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using NLog;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Configuration;
@@ -15,7 +16,7 @@ public interface IDroneService
 {
     bool IsDirector();
     int GetDroneCount();
-    void RegisterDrone(string address);
+    void RegisterDrone(string address, int port);
     bool DispatchPartialIndex(Guid indexerId);
     void DispatchPartialIndexFinished(Guid indexerId);
     void StartPartialIndex(string indexerId);
@@ -72,6 +73,12 @@ public class DroneService : IDroneService,
 
         try
         {
+            var droneAddress = drone.Address;
+            if (IPAddress.TryParse(droneAddress, out _))
+            {
+                droneAddress = "http://" + droneAddress;
+            }
+
             var response = _httpClient.Get(new HttpRequest(drone.Address + "/api/v1/drone/index/" + indexerId));
             if (response.HasHttpError)
             {
@@ -101,7 +108,7 @@ public class DroneService : IDroneService,
         }
     }
 
-    public void RegisterDrone(string address)
+    public void RegisterDrone(string address, int port)
     {
         if (string.IsNullOrWhiteSpace(address))
         {
@@ -109,14 +116,16 @@ public class DroneService : IDroneService,
             return;
         }
 
+        var fullAddress = address + ":" + port;
+
         _logger.Info("Registering drone");
-        var drone = _droneRepository.GetByAddress(address);
+        var drone = _droneRepository.GetByAddress(fullAddress);
         if (drone == null)
         {
             _droneRepository.Insert(
                 new Drone
                 {
-                    Address = address,
+                    Address = fullAddress,
                     LastSeen = DateTime.UtcNow
                 });
         }

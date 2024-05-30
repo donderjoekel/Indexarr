@@ -61,6 +61,12 @@ public class IndexingService : IIndexingService,
             return;
         }
 
+        if (_droneService.GetDroneCount() == 0)
+        {
+            _logger.Warn("No drones available to start index");
+            return;
+        }
+
         _semaphore = new SemaphoreSlim(_droneService.GetDroneCount());
 
         var indexers = _indexerFactory.Enabled();
