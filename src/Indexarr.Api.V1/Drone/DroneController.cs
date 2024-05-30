@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
-using NzbDrone.Core.Drone;
+using NzbDrone.Core.Drones;
 using Prowlarr.Http;
 using Prowlarr.Http.Extensions;
 using Prowlarr.Http.REST;

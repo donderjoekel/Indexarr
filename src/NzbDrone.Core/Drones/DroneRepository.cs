@@ -2,7 +2,7 @@
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Messaging.Events;
 
-namespace NzbDrone.Core.Drone;
+namespace NzbDrone.Core.Drones;
 
 public interface IDroneRepository : IBasicRepository<Drone>
 {
