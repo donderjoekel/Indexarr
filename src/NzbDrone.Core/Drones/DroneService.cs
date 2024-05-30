@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using NLog;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Configuration;
@@ -72,6 +73,12 @@ public class DroneService : IDroneService,
 
         try
         {
+            var droneAddress = drone.Address;
+            if (IPAddress.TryParse(droneAddress, out _))
+            {
+                droneAddress = "http://" + droneAddress;
+            }
+
             var response = _httpClient.Get(new HttpRequest(drone.Address + "/api/v1/drone/index/" + indexerId));
             if (response.HasHttpError)
             {
