@@ -22,8 +22,10 @@ jobs:
       - name: Add .NET tools to PATH
         run: echo "${HOME}/.dotnet/tools" >> $GITHUB_PATH
 
-      - name: Run dotnet format
-        run: dotnet format --verify-no-changes
+      - name: Change directory to src and run dotnet format
+        run: |
+          cd src
+          dotnet format -v d
 
       - name: Commit changes
         run: |
