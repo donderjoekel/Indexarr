@@ -53,11 +53,11 @@ public class ChapterService : IChapterService
         CreateNewChapters(indexedManga.Id, newChapters);
         UpdateExistingChapters(chapters, existingChapters);
 
-        if (newChapters.Count + existingChapters.Count != chapters.Count)
+        if (newChapters.Count + existingChapters.Count != mangaInfo.Chapters.Count)
         {
             _logger.Warn("Expected {0} chapters, but found {1} ({2} new, {3} existing)",
                 mangaInfo.Chapters.Count,
-                chapters.Count,
+                newChapters.Count + existingChapters.Count,
                 newChapters.Count,
                 existingChapters.Count);
         }
