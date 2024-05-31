@@ -1,5 +1,4 @@
 using System;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 using NzbDrone.Common.Extensions;
@@ -27,7 +26,6 @@ public class DroneController : RestController<DroneResource>
     }
 
     [HttpGet("register/{address}")]
-    [AllowAnonymous]
     public IActionResult RegisterDrone(string address)
     {
         var actualAddress = address.FromBase64();
@@ -37,7 +35,6 @@ public class DroneController : RestController<DroneResource>
     }
 
     [HttpGet("index/{indexerId}")]
-    [AllowAnonymous]
     public IActionResult StartIndex(string indexerId)
     {
         _logger.Info("Index request for {0} received", indexerId);
@@ -46,7 +43,6 @@ public class DroneController : RestController<DroneResource>
     }
 
     [HttpGet("finish/{address}/{indexerId}")]
-    [AllowAnonymous]
     public IActionResult FinishIndex(string address, string indexerId)
     {
         _logger.Info("Index request for {0} finished", indexerId);
