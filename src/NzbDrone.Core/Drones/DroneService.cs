@@ -4,6 +4,7 @@ using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Configuration;
+using NzbDrone.Core.Drones.Builders;
 using NzbDrone.Core.Drones.Commands;
 using NzbDrone.Core.Drones.Events;
 using NzbDrone.Core.Indexing.Commands;

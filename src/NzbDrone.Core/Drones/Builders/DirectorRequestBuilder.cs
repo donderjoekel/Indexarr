@@ -3,7 +3,7 @@ using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Configuration.Events;
 using NzbDrone.Core.Messaging.Events;
 
-namespace NzbDrone.Core.Drones;
+namespace NzbDrone.Core.Drones.Builders;
 
 public interface IDirectorRequestBuilder
 {
@@ -32,12 +32,9 @@ public class DirectorRequestBuilder : IDirectorRequestBuilder,
 
     private void UpdateFactory()
     {
-        if (_configFile.IsDirector)
-        {
-            _factory = new HttpRequestBuilder(_configFile.DirectorAddress)
-                .Resource("/api/v1/drone")
-                .SetHeader("X-Api-Key", _configFile.ApiKey)
-                .CreateFactory();
-        }
+        _factory = new HttpRequestBuilder(_configFile.DirectorAddress)
+            .Resource("/api/v1/drone")
+            .SetHeader("X-Api-Key", _configFile.ApiKey)
+            .CreateFactory();
     }
 }
