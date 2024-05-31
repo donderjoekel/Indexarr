@@ -39,13 +39,16 @@ public class ChapterService : IChapterService
         var newChapters = mangaInfo.Chapters
             .Where(x => !chapters.Any(y => y.Volume == x.Volume && y.Number == x.Number))
             .ToList();
-
-        _logger.Info("Creating {0} new chapters", newChapters.Count);
         CreateNewChapters(indexedManga.Id, newChapters);
 
         var existingChapters = mangaInfo.Chapters.Except(newChapters).ToList();
-        _logger.Info("Updating {0} existing chapters", existingChapters.Count);
         UpdateExistingChapters(chapters, existingChapters);
+
+        _logger.Info(
+            "Processed {0}; Created {1}; Updated {2}",
+            mangaInfo.Chapters.Count,
+            newChapters.Count,
+            existingChapters.Count);
     }
 
     private void CreateNewChapters(Guid indexedMangaId, IEnumerable<ChapterInfo> chapterInfos)

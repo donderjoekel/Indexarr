@@ -50,17 +50,15 @@ public class MetadataService : IMetadataService,
         var mangas = _mangaService.GetMangasWithoutMangaUpdatesTitles();
         foreach (var manga in mangas)
         {
-            _logger.Info("Refreshing MangaUpdates titles for {Manga}", manga.Id);
-            _mangaService.UpdateMangaUpdatesTitles(manga.Id,
-                _mangaUpdatesService.GetTitles(manga.MangaUpdatesId!.Value));
+            _logger.Info("Refreshing MangaUpdates titles for {Manga}", manga.MangaUpdatesId);
+            _mangaService.UpdateMangaUpdatesTitles(manga.Id, _mangaUpdatesService.GetTitles(manga.MangaUpdatesId!.Value));
         }
 
         mangas = _mangaService.GetMangasWithoutMyAnimeListTitles();
         foreach (var manga in mangas)
         {
-            _logger.Info("Refreshing MyAnimeList titles for {Manga}", manga.Id);
-            _mangaService.UpdateMyAnimeListTitles(manga.Id,
-                _jikanService.GetTitles(manga.MyAnimeListId!.Value));
+            _logger.Info("Refreshing MyAnimeList titles for {Manga}", manga.MyAnimeListId);
+            _mangaService.UpdateMyAnimeListTitles(manga.Id, _jikanService.GetTitles(manga.MyAnimeListId!.Value));
         }
 
         // TODO: Implement when AniList is implemented
