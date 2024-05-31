@@ -1,0 +1,39 @@
+name: Run dotnet format and commit changes
+
+on:
+  workflow_dispatch:
+
+jobs:
+  dotnet-format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.x'  # Specify the .NET version you are using
+
+      - name: Install dotnet-format tool
+        run: dotnet tool install -g dotnet-format
+
+      - name: Add .NET tools to PATH
+        run: echo "${HOME}/.dotnet/tools" >> $GITHUB_PATH
+
+      - name: Run dotnet format
+        run: dotnet format --verify-no-changes
+
+      - name: Commit changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          git diff-index --quiet HEAD || git commit -m "Apply dotnet format changes"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
