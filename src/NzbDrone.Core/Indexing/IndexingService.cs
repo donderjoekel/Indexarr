@@ -127,9 +127,8 @@ public class IndexingService : IIndexingService,
         }
 
         LogDuplicateChapters(manga);
-        ConcurrentWork.CreateAndRun(5,
-            manga.Chapters.DistinctBy(x => $"{x.Volume}-{x.Number}"),
-            x => () => ProcessChapter(indexedManga, manga, x));
+        manga.Chapters = manga.Chapters.DistinctBy(x => $"{x.Volume}-{x.Number}").ToList();
+        _chapterService.CreateOrUpdateChapters(indexedManga, manga);
     }
 
     private void LogDuplicateChapters(MangaInfo manga)
@@ -152,27 +151,6 @@ public class IndexingService : IIndexingService,
             }
 
             _logger.Warn(sb.ToString);
-        }
-    }
-
-    private void ProcessChapter(IndexedManga indexedManga, MangaInfo manga, ChapterInfo chapter)
-    {
-        try
-        {
-            if (_chapterService.Exists(indexedManga, chapter))
-            {
-                _logger.Debug("Updating {Title} - {Chapter}", manga.Title, chapter.Number);
-                _chapterService.Update(indexedManga, chapter);
-            }
-            else
-            {
-                _logger.Debug("Creating {Title} - {Chapter}", manga.Title, chapter.Number);
-                _chapterService.Create(indexedManga, chapter);
-            }
-        }
-        catch (Exception e)
-        {
-            _logger.Error(e, "Error processing chapter {Title} - {Chapter}", manga.Title, chapter.Number);
         }
     }
 
