@@ -1,7 +1,7 @@
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Configuration;
 
-namespace NzbDrone.Core.Drones;
+namespace NzbDrone.Core.Drones.Builders;
 
 public interface IDroneRequestBuilder
 {
