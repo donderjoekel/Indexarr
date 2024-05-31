@@ -40,7 +40,7 @@ public class ChapterService : IChapterService
 
         foreach (var chapter in mangaInfo.Chapters)
         {
-            if (chapters.Any(x=>x.Volume == chapter.Volume && x.Number == chapter.Number))
+            if (chapters.Any(x => x.Volume == chapter.Volume && x.Number == chapter.Number))
             {
                 existingChapters.Add(chapter);
             }
