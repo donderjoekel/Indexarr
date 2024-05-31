@@ -35,20 +35,40 @@ public class ChapterService : IChapterService
         _ = mangaInfo ?? throw new ArgumentNullException(nameof(mangaInfo));
 
         var chapters = GetForIndexedManga(indexedManga.Id).ToList();
+        var newChapters = new List<ChapterInfo>();
+        var existingChapters = new List<ChapterInfo>();
 
-        var newChapters = mangaInfo.Chapters
-            .Where(x => !chapters.Any(y => y.Volume == x.Volume && y.Number == x.Number))
-            .ToList();
+        foreach (var chapter in mangaInfo.Chapters)
+        {
+            if (chapters.Any(x=>x.Volume == chapter.Volume && x.Number == chapter.Number))
+            {
+                existingChapters.Add(chapter);
+            }
+            else
+            {
+                newChapters.Add(chapter);
+            }
+        }
+
         CreateNewChapters(indexedManga.Id, newChapters);
-
-        var existingChapters = mangaInfo.Chapters.Except(newChapters).ToList();
         UpdateExistingChapters(chapters, existingChapters);
 
-        _logger.Info(
-            "Processed {0}; Created {1}; Updated {2}",
-            mangaInfo.Chapters.Count,
-            newChapters.Count,
-            existingChapters.Count);
+        if (newChapters.Count + existingChapters.Count != chapters.Count)
+        {
+            _logger.Warn("Expected {0} chapters, but found {1} ({2} new, {3} existing)",
+                mangaInfo.Chapters.Count,
+                chapters.Count,
+                newChapters.Count,
+                existingChapters.Count);
+        }
+        else
+        {
+            _logger.Info(
+                "Processed {0}; Created {1}; Updated {2}",
+                mangaInfo.Chapters.Count,
+                newChapters.Count,
+                existingChapters.Count);
+        }
     }
 
     private void CreateNewChapters(Guid indexedMangaId, IEnumerable<ChapterInfo> chapterInfos)
