@@ -24,6 +24,7 @@ public interface IMangaService
     void UpdateMangaUpdatesTitles(Guid id, IEnumerable<string> titles);
     void UpdateAniListTitles(Guid id, IEnumerable<string> titles);
     void UpdateMyAnimeListTitles(Guid id, IEnumerable<string> titles);
+    bool TryFindByIds(long? mangaUpdatesId, int? myAnimeListId, out Manga manga);
 }
 
 public class MangaService : IMangaService
@@ -152,5 +153,22 @@ public class MangaService : IMangaService
             _mangaRepository.Update(manga);
             _eventAggregator.PublishEvent(new MangaTitlesUpdatedEvent(manga));
         }
+    }
+
+    public bool TryFindByIds(long? mangaUpdatesId, int? myAnimeListId, out Manga manga)
+    {
+        manga = null;
+
+        if (mangaUpdatesId != null)
+        {
+            manga = _mangaRepository.GetByMangaUpdatesId(mangaUpdatesId.Value);
+        }
+
+        if (manga == null && myAnimeListId != null)
+        {
+            manga = _mangaRepository.GetByMyAnimeListId(myAnimeListId.Value);
+        }
+
+        return manga != null;
     }
 }

@@ -45,15 +45,15 @@ public class MatchingService : IMatchingService,
 
     public void Execute(MatchMangasCommand message)
     {
-        MatchMangas(true);
+        MatchMangas();
     }
 
     public void Handle(IndexCompletedEvent message)
     {
-        MatchMangas(false);
+        MatchMangas();
     }
 
-    private void MatchMangas(bool full)
+    private void MatchMangas()
     {
         _logger.Info("Starting match process");
         var indexMangas = _indexedMangaService.GetWithoutLinkedManga().ToList();
@@ -64,15 +64,7 @@ public class MatchingService : IMatchingService,
             try
             {
                 _logger.Info("Attempting to match {Title}", indexedManga.Title);
-
-                if (full)
-                {
-                    TryLinkIndexedManga(indexedManga);
-                }
-                else
-                {
-                    TryMatch(indexedManga);
-                }
+                TryLinkIndexedManga(indexedManga);
             }
             catch (Exception e)
             {
@@ -126,7 +118,11 @@ public class MatchingService : IMatchingService,
             mangaUpdatesId,
             myAnimeListId);
 
-        var manga = _mangaService.CreateWithIds(mangaUpdatesId, myAnimeListId);
+        if (!_mangaService.TryFindByIds(mangaUpdatesId, myAnimeListId, out var manga))
+        {
+            manga = _mangaService.CreateWithIds(mangaUpdatesId, myAnimeListId);
+        }
+
         _indexedMangaService.LinkToManga(indexedManga.Id, manga.Id);
     }
 }
