@@ -128,7 +128,15 @@ public class IndexingService : IIndexingService,
 
         LogDuplicateChapters(manga);
         manga.Chapters = manga.Chapters.DistinctBy(x => $"{x.Volume}-{x.Number}").ToList();
-        _chapterService.CreateOrUpdateChapters(indexedManga, manga);
+
+        try
+        {
+            _chapterService.CreateOrUpdateChapters(indexedManga, manga);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Error processing chapters for {Title}", manga.Title);
+        }
     }
 
     private void LogDuplicateChapters(MangaInfo manga)
