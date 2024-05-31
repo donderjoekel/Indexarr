@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using NzbDrone.Core.Chapters.Events;
+using System.Linq;
+using NLog;
 using NzbDrone.Core.IndexedMangas;
-using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Parser.Model;
 
 namespace NzbDrone.Core.Chapters;
@@ -10,20 +10,18 @@ namespace NzbDrone.Core.Chapters;
 public interface IChapterService
 {
     IEnumerable<Chapter> GetForIndexedManga(Guid indexedMangaId);
-    bool Exists(IndexedManga indexedManga, ChapterInfo chapterInfo);
-    Chapter Create(IndexedManga indexedManga, ChapterInfo chapterInfo);
-    Chapter Update(IndexedManga indexedManga, ChapterInfo chapterInfo);
+    void CreateOrUpdateChapters(IndexedManga indexedManga, MangaInfo mangaInfo);
 }
 
 public class ChapterService : IChapterService
 {
     private readonly IChapterRepository _chapterRepository;
-    private readonly IEventAggregator _eventAggregator;
+    private readonly Logger _logger;
 
-    public ChapterService(IChapterRepository chapterRepository, IEventAggregator eventAggregator)
+    public ChapterService(IChapterRepository chapterRepository, Logger logger)
     {
         _chapterRepository = chapterRepository;
-        _eventAggregator = eventAggregator;
+        _logger = logger;
     }
 
     public IEnumerable<Chapter> GetForIndexedManga(Guid indexedMangaId)
@@ -31,57 +29,81 @@ public class ChapterService : IChapterService
         return _chapterRepository.GetForIndexedManga(indexedMangaId);
     }
 
-    public bool Exists(IndexedManga indexedManga, ChapterInfo chapterInfo)
+    public void CreateOrUpdateChapters(IndexedManga indexedManga, MangaInfo mangaInfo)
     {
         _ = indexedManga ?? throw new ArgumentNullException(nameof(indexedManga));
-        _ = chapterInfo ?? throw new ArgumentNullException(nameof(chapterInfo));
+        _ = mangaInfo ?? throw new ArgumentNullException(nameof(mangaInfo));
 
-        return _chapterRepository.GetForIndexedManga(indexedManga.Id, chapterInfo.Volume, chapterInfo.Number) != null;
+        var chapters = GetForIndexedManga(indexedManga.Id).ToList();
+
+        var newChapters = mangaInfo.Chapters
+            .Where(x => !chapters.Any(y => y.Volume == x.Volume && y.Number == x.Number))
+            .ToList();
+
+        _logger.Info("Creating {0} new chapters", newChapters.Count);
+        CreateNewChapters(indexedManga.Id, newChapters);
+
+        var existingChapters = mangaInfo.Chapters.Except(newChapters).ToList();
+        _logger.Info("Updating {0} existing chapters", existingChapters.Count);
+        UpdateExistingChapters(chapters, existingChapters);
     }
 
-    public Chapter Create(IndexedManga indexedManga, ChapterInfo chapterInfo)
+    private void CreateNewChapters(Guid indexedMangaId, IEnumerable<ChapterInfo> chapterInfos)
     {
-        _ = indexedManga ?? throw new ArgumentNullException(nameof(indexedManga));
-        _ = chapterInfo ?? throw new ArgumentNullException(nameof(chapterInfo));
-
-        var chapter = _chapterRepository.Insert(new Chapter()
+        var chapters = new List<Chapter>();
+        foreach (var chapterInfo in chapterInfos)
         {
-            IndexedMangaId = indexedManga.Id,
-            Volume = chapterInfo.Volume,
-            Number = chapterInfo.Number,
-            Url = chapterInfo.Url,
-            Date = chapterInfo.Date
-        });
+            chapters.Add(new Chapter()
+            {
+                IndexedMangaId = indexedMangaId,
+                Volume = chapterInfo.Volume,
+                Number = chapterInfo.Number,
+                Url = chapterInfo.Url,
+                Date = chapterInfo.Date
+            });
+        }
 
-        _eventAggregator.PublishEvent(new ChapterCreatedEvent(chapter));
-        return chapter;
+        _chapterRepository.InsertMany(chapters);
     }
 
-    public Chapter Update(IndexedManga indexedManga, ChapterInfo chapterInfo)
+    private void UpdateExistingChapters(List<Chapter> chapters, List<ChapterInfo> existingChapters)
     {
-        _ = indexedManga ?? throw new ArgumentNullException(nameof(indexedManga));
-        _ = chapterInfo ?? throw new ArgumentNullException(nameof(chapterInfo));
+        var chaptersToUpdate = new List<Chapter>();
 
-        var chapter = _chapterRepository.GetForIndexedManga(indexedManga.Id, chapterInfo.Volume, chapterInfo.Number);
-        var changed = false;
-        if (chapter.Url != chapterInfo.Url)
+        foreach (var existingChapter in existingChapters)
         {
-            chapter.Url = chapterInfo.Url;
-            changed = true;
+            var chapter = chapters.FirstOrDefault(
+                x => x.Volume == existingChapter.Volume && x.Number == existingChapter.Number);
+
+            if (chapter == null)
+            {
+                _logger.Error(
+                    "Chapter {0}-{1} should exist but doesn't ({2})",
+                    existingChapter.Volume,
+                    existingChapter.Number,
+                    existingChapter.Url);
+                continue;
+            }
+
+            var hasChanged = false;
+            if (chapter.Url != existingChapter.Url)
+            {
+                chapter.Url = existingChapter.Url;
+                hasChanged = true;
+            }
+
+            if (chapter.Date != existingChapter.Date)
+            {
+                chapter.Date = existingChapter.Date;
+                hasChanged = true;
+            }
+
+            if (hasChanged)
+            {
+                chaptersToUpdate.Add(chapter);
+            }
         }
 
-        if (chapter.Date != chapterInfo.Date)
-        {
-            chapter.Date = chapterInfo.Date;
-            changed = true;
-        }
-
-        if (changed)
-        {
-            chapter = _chapterRepository.Update(chapter);
-            _eventAggregator.PublishEvent(new ChapterUpdatedEvent(chapter));
-        }
-
-        return chapter;
+        _chapterRepository.UpdateMany(chaptersToUpdate);
     }
 }
