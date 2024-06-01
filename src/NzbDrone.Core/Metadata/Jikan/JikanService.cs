@@ -38,7 +38,7 @@ public class JikanService : MetadataSource, IJikanService
 
         var response = ExecuteRequest(request);
         var data = Json.Deserialize<SearchMangaResult>(response.Content);
-        var resource = data.Data.FirstOrDefault(x => IsMatch(x, title));
+        var resource = data?.Data.FirstOrDefault(x => IsMatch(x, title));
         if (resource == null)
         {
             myAnimeListId = null;
