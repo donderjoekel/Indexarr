@@ -22,31 +22,49 @@ public interface IJikanService
 public class JikanService : MetadataSource, IJikanService
 {
     private readonly IHttpRequestBuilderFactory _requestBuilder;
+    private readonly Logger _logger;
 
     public JikanService(IHttpClient httpClient, Logger logger, IJikanCloudRequestBuilder requestBuilder)
     : base(httpClient, logger)
     {
+        _logger = logger;
         _requestBuilder = requestBuilder.Services;
     }
 
     public bool TryMatchTitle(string title, out int? myAnimeListId)
     {
-        var request = _requestBuilder.Create()
-            .Resource("manga")
-            .AddQueryParam("q", title)
-            .Build();
-
-        var response = ExecuteRequest(request);
-        var data = Json.Deserialize<SearchMangaResult>(response.Content);
-        var resource = data?.Data.FirstOrDefault(x => IsMatch(x, title));
-        if (resource == null)
+        try
         {
+            var request = _requestBuilder.Create()
+                .Resource("manga")
+                .AddQueryParam("q", title)
+                .Build();
+
+            var response = ExecuteRequest(request);
+            if (response.HttpResponse.HasHttpError)
+            {
+                _logger.Error("Request failed with status code {StatusCode}", response.HttpResponse.StatusCode);
+                myAnimeListId = null;
+                return false;
+            }
+
+            var data = Json.Deserialize<SearchMangaResult>(response.Content);
+            var resource = data?.Data.FirstOrDefault(x => IsMatch(x, title));
+            if (resource == null)
+            {
+                myAnimeListId = null;
+                return false;
+            }
+
+            myAnimeListId = resource.MalId;
+            return true;
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Failed to match title {Title}", title);
             myAnimeListId = null;
             return false;
         }
-
-        myAnimeListId = resource.MalId;
-        return true;
     }
 
     public IEnumerable<string> GetTitles(int myAnimeListId)
