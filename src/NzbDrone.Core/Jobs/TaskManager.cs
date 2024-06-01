@@ -119,7 +119,7 @@ namespace NzbDrone.Core.Jobs
 
                     new ScheduledTask
                     {
-                        Interval = 12 * 60,
+                        Interval = 24 * 7 * 60,
                         TypeName = typeof(FullIndexCommand).FullName
                     },
 
