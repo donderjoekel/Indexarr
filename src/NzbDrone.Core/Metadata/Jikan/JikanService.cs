@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
+using FuzzySharp;
 using Indexarr.Core.Metadata.Jikan.Resource;
 using NLog;
 using NzbDrone.Common.Cloud;
@@ -84,20 +85,46 @@ public class JikanService : MetadataSource, IJikanService
 
     private bool IsMatch(DataResource resource, string title)
     {
-        return IsMatch(resource, title, x => x.HtmlDecode().ReplaceQuotations()) ||
-               IsMatch(resource, title, x => x.HtmlDecode().ReplaceQuotations().StripNonAlphaNumeric());
-    }
-
-    private bool IsMatch(DataResource resource, string title, Func<string, string> titleTransform)
-    {
-        var replacedTitle = titleTransform(title);
-
         foreach (var resourceTitle in resource.Titles)
         {
-            if (replacedTitle.EqualsIgnoreCase(titleTransform(resourceTitle.Title)))
+            if (CompareTitles(title, resourceTitle.Title))
             {
                 return true;
             }
+        }
+
+        return false;
+    }
+
+    private bool CompareTitles(string left, string right)
+    {
+        if (left == right)
+        {
+            return true;
+        }
+
+        if (left.EqualsIgnoreCase(right))
+        {
+            return true;
+        }
+
+        var leftAlphaNumeric = new string(left.ToLower().Where(char.IsLetterOrDigit).ToArray());
+        var rightAlphaNumeric = new string(right.ToLower().Where(char.IsLetterOrDigit).ToArray());
+        if (leftAlphaNumeric.EqualsIgnoreCase(rightAlphaNumeric))
+        {
+            return true;
+        }
+
+        var ratio = Fuzz.Ratio(leftAlphaNumeric, rightAlphaNumeric);
+
+        if (ratio >= 99)
+        {
+            return true;
+        }
+
+        if (ratio >= 95)
+        {
+            _logger.Info("Not quite a match but close with a ratio of {0} for {1} and {2}", ratio, left, right);
         }
 
         return false;
