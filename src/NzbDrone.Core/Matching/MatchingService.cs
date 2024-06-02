@@ -56,14 +56,23 @@ public class MatchingService : IMatchingService,
     private void MatchMangas()
     {
         _logger.Info("Starting match process");
-        var indexMangas = _indexedMangaService.GetWithoutLinkedManga().ToList();
+        var indexMangas = _indexedMangaService.GetWithoutLinkedManga()
+            .OrderBy(x => x.Title)
+            .ToList();
+
         _logger.Info("Attempting to link {Count} mangas", indexMangas.Count);
 
-        foreach (var indexedManga in indexMangas)
+        for (var i = 0; i < indexMangas.Count; i++)
         {
+            var indexedManga = indexMangas[i];
             try
             {
-                _logger.Info("Attempting to match {Title}", indexedManga.Title);
+                _logger.Info(
+                    "Attempting to match {Title} ({Index}/{Total})",
+                    indexedManga.Title,
+                    i + 1,
+                    indexMangas.Count);
+
                 TryLinkIndexedManga(indexedManga);
             }
             catch (Exception e)

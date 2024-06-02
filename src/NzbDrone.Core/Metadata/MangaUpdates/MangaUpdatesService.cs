@@ -36,27 +36,42 @@ public class MangaUpdatesService : MetadataSource, IMangaUpdatesService
 
     public bool TryMatchTitle(string title, out long? mangaUpdatesId)
     {
-        var httpRequest = _requestBuilder.Create()
-            .WithRateLimit(1)
-            .Resource("series/search")
-            .AddBodyProperty("search", title)
-            .AddBodyProperty("page", 1)
-            .AddBodyProperty("perpage", 5)
-            .Post()
-            .Build();
-
-        var response = ExecuteRequestAsync(httpRequest).GetAwaiter().GetResult();
-        var data = Json.Deserialize<SeriesSearchResult>(response.Content);
-        /*var httpResponse = _httpClient.Post<SeriesSearchResult>(httpRequest);*/
-        var resource = data.Results.Where(Filter).FirstOrDefault(x => IsMatch(x, title));
-        if (resource == null)
+        try
         {
+            var httpRequest = _requestBuilder.Create()
+                .WithRateLimit(1)
+                .Resource("series/search")
+                .AddBodyProperty("search", title)
+                .AddBodyProperty("page", 1)
+                .AddBodyProperty("perpage", 5)
+                .Post()
+                .Build();
+
+            var response = ExecuteRequest(httpRequest);
+            if (response.HttpResponse.HasHttpError)
+            {
+                _logger.Error("Request failed with status code {StatusCode}", response.HttpResponse.StatusCode);
+                mangaUpdatesId = null;
+                return false;
+            }
+
+            var data = Json.Deserialize<SeriesSearchResult>(response.Content);
+            var resource = data?.Results.Where(Filter).FirstOrDefault(x => IsMatch(x, title));
+            if (resource == null)
+            {
+                mangaUpdatesId = null;
+                return false;
+            }
+
+            mangaUpdatesId = resource.Record.SeriesId;
+            return true;
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Failed to match title {Title}", title);
             mangaUpdatesId = null;
             return false;
         }
-
-        mangaUpdatesId = resource.Record.SeriesId;
-        return true;
     }
 
     public IEnumerable<string> GetTitles(long mangaUpdatesId)
