@@ -113,18 +113,21 @@ public class MetadataSource
 
     protected bool CompareTitles(string left, string right)
     {
-        if (left == right)
+        var l = left.HtmlDecode().ReplaceQuotations();
+        var r = right.HtmlDecode().ReplaceQuotations();
+
+        if (l == r)
         {
             return true;
         }
 
-        if (left.EqualsIgnoreCase(right))
+        if (l.EqualsIgnoreCase(r))
         {
             return true;
         }
 
-        var leftAlphaNumeric = new string(left.ToLower().Where(char.IsLetterOrDigit).ToArray());
-        var rightAlphaNumeric = new string(right.ToLower().Where(char.IsLetterOrDigit).ToArray());
+        var leftAlphaNumeric = new string(l.ToLower().Where(char.IsLetterOrDigit).ToArray());
+        var rightAlphaNumeric = new string(r.ToLower().Where(char.IsLetterOrDigit).ToArray());
         if (leftAlphaNumeric.EqualsIgnoreCase(rightAlphaNumeric))
         {
             return true;
@@ -139,7 +142,7 @@ public class MetadataSource
 
         if (ratio >= 95)
         {
-            _logger.Info("Not quite a match but close with a ratio of {0} for {1} and {2}", ratio, left, right);
+            _logger.Info("Not quite a match but close with a ratio of {0} for '{1}' and '{2}'", ratio, l, r);
         }
 
         return false;
