@@ -100,7 +100,18 @@ public class MatchingService : IMatchingService,
         }
         else
         {
-            TryMatch(indexedManga);
+            var linkedIndexedManga = _indexedMangaService.FindByTitle(indexedManga.Title)
+                .FirstOrDefault(x => x.MangaId != null);
+
+            if (linkedIndexedManga != null)
+            {
+                _logger.Info("Found existing linked manga for '{Title}'", indexedManga.Title);
+                _indexedMangaService.LinkToManga(indexedManga.Id, linkedIndexedManga.MangaId!.Value);
+            }
+            else
+            {
+                TryMatch(indexedManga);
+            }
         }
     }
 
