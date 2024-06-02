@@ -2,7 +2,9 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using FuzzySharp;
 using NLog;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Http.CloudFlare;
 using NzbDrone.Core.Indexers;
@@ -107,5 +109,41 @@ public class MetadataSource
         }
 
         return new Response(request, response);
+    }
+
+
+
+    protected bool CompareTitles(string left, string right)
+    {
+        if (left == right)
+        {
+            return true;
+        }
+
+        if (left.EqualsIgnoreCase(right))
+        {
+            return true;
+        }
+
+        var leftAlphaNumeric = new string(left.ToLower().Where(char.IsLetterOrDigit).ToArray());
+        var rightAlphaNumeric = new string(right.ToLower().Where(char.IsLetterOrDigit).ToArray());
+        if (leftAlphaNumeric.EqualsIgnoreCase(rightAlphaNumeric))
+        {
+            return true;
+        }
+
+        var ratio = Fuzz.Ratio(leftAlphaNumeric, rightAlphaNumeric);
+
+        if (ratio >= 99)
+        {
+            return true;
+        }
+
+        if (ratio >= 95)
+        {
+            _logger.Info("Not quite a match but close with a ratio of {0} for {1} and {2}", ratio, left, right);
+        }
+
+        return false;
     }
 }

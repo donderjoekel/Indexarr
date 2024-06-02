@@ -6,7 +6,6 @@ using System.Net;
 using Indexarr.Core.Metadata.Jikan.Resource;
 using NLog;
 using NzbDrone.Common.Cloud;
-using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Common.Serializer;
 using NzbDrone.Core.Metadata.Jikan.Result;
@@ -84,17 +83,9 @@ public class JikanService : MetadataSource, IJikanService
 
     private bool IsMatch(DataResource resource, string title)
     {
-        return IsMatch(resource, title, x => x.HtmlDecode().ReplaceQuotations()) ||
-               IsMatch(resource, title, x => x.HtmlDecode().ReplaceQuotations().StripNonAlphaNumeric());
-    }
-
-    private bool IsMatch(DataResource resource, string title, Func<string, string> titleTransform)
-    {
-        var replacedTitle = titleTransform(title);
-
         foreach (var resourceTitle in resource.Titles)
         {
-            if (replacedTitle.EqualsIgnoreCase(titleTransform(resourceTitle.Title)))
+            if (CompareTitles(title, resourceTitle.Title))
             {
                 return true;
             }

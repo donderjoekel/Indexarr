@@ -91,20 +91,12 @@ public class MangaUpdatesService : MetadataSource, IMangaUpdatesService
 
     private bool IsMatch(SeriesSearchResultResource resource, string title)
     {
-        return IsMatch(resource, title, x => x.HtmlDecode().ReplaceQuotations()) ||
-               IsMatch(resource, title, x => x.HtmlDecode().ReplaceQuotations().StripNonAlphaNumeric());
-    }
-
-    private bool IsMatch(SeriesSearchResultResource resource, string title, Func<string, string> titleTransform)
-    {
-        var replacedTitle = titleTransform(title);
-
-        if (replacedTitle.EqualsIgnoreCase(titleTransform(resource.HitTitle)))
+        if (CompareTitles(title, resource.HitTitle))
         {
             return true;
         }
 
-        if (replacedTitle.EqualsIgnoreCase(titleTransform(resource.Record.Title)))
+        if (CompareTitles(title, resource.Record.Title))
         {
             return true;
         }
@@ -127,7 +119,7 @@ public class MangaUpdatesService : MetadataSource, IMangaUpdatesService
 
         foreach (var associated in series.Associated)
         {
-            if (replacedTitle.EqualsIgnoreCase(titleTransform(associated.Title)))
+            if (CompareTitles(title, associated.Title))
             {
                 return true;
             }
@@ -169,14 +161,6 @@ public class MangaUpdatesService : MetadataSource, IMangaUpdatesService
         if (resource.Record.Type.EqualsIgnoreCase("novel"))
         {
             return false;
-        }
-
-        foreach (var genreResource in resource.Record.Genres)
-        {
-            if (genreResource.Genre.EqualsIgnoreCase("adult"))
-            {
-                return false;
-            }
         }
 
         return true;
