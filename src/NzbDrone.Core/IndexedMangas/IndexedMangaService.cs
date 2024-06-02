@@ -9,6 +9,7 @@ namespace NzbDrone.Core.IndexedMangas;
 public interface IIndexedMangaService
 {
     IndexedManga Find(Guid id);
+    IEnumerable<IndexedManga> FindByTitle(string title);
     IEnumerable<IndexedManga> All();
     IEnumerable<IndexedManga> GetByMangaId(Guid mangaId);
     bool Exists(MangaInfo mangaInfo);
@@ -32,6 +33,11 @@ public class IndexedMangaService : IIndexedMangaService
     public IndexedManga Find(Guid id)
     {
         return _indexedMangaRepository.Get(id);
+    }
+
+    public IEnumerable<IndexedManga> FindByTitle(string title)
+    {
+        return _indexedMangaRepository.GetWithTitle(title);
     }
 
     public IEnumerable<IndexedManga> All()
