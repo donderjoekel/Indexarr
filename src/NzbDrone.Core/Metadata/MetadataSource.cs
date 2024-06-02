@@ -111,8 +111,6 @@ public class MetadataSource
         return new Response(request, response);
     }
 
-
-
     protected bool CompareTitles(string left, string right)
     {
         if (left == right)
