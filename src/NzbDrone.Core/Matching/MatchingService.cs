@@ -56,28 +56,39 @@ public class MatchingService : IMatchingService,
     private void MatchMangas()
     {
         _logger.Info("Starting match process");
-        var indexMangas = _indexedMangaService.GetWithoutLinkedManga()
+        var groups = _indexedMangaService.GetWithoutLinkedManga()
             .OrderBy(x => x.Title)
+            .GroupBy(x => x.Title)
             .ToList();
 
-        _logger.Info("Attempting to link {Count} mangas", indexMangas.Count);
+        _logger.Info("Attempting to link {Count} mangas", groups.Count);
 
-        for (var i = 0; i < indexMangas.Count; i++)
+        for (var i = 0; i < groups.Count; i++)
         {
-            var indexedManga = indexMangas[i];
+            var group = groups[i];
             try
             {
+                var first = group.First();
+
                 _logger.Info(
                     "Attempting to match {Title} ({Index}/{Total})",
-                    indexedManga.Title,
+                    first.Title,
                     i + 1,
-                    indexMangas.Count);
+                    groups.Count);
 
-                TryLinkIndexedManga(indexedManga);
+                if (!TryLinkIndexedManga(first))
+                {
+                    continue;
+                }
+
+                foreach (var indexedManga in group.Skip(1))
+                {
+                    TryLinkIndexedManga(indexedManga);
+                }
             }
             catch (Exception e)
             {
-                _logger.Error(e, "An error occurred while trying to link {Title}", indexedManga.Title);
+                _logger.Error(e, "An error occurred while trying to link manga");
                 _logger.Info("Ending early due to error");
                 return;
             }
@@ -87,35 +98,33 @@ public class MatchingService : IMatchingService,
         _eventAggregator.PublishEvent(new MatchingCompletedEvent());
     }
 
-    private void TryLinkIndexedManga(IndexedManga indexedManga)
+    private bool TryLinkIndexedManga(IndexedManga indexedManga)
     {
         if (_mangaService.TryFindByTitle(indexedManga.Title, out var manga))
         {
             if (indexedManga.MangaId == manga.Id)
             {
-                return;
+                return true;
             }
 
             _indexedMangaService.LinkToManga(indexedManga.Id, manga.Id);
+            return true;
         }
-        else
-        {
-            var linkedIndexedManga = _indexedMangaService.FindByTitle(indexedManga.Title)
-                .FirstOrDefault(x => x.MangaId != null);
 
-            if (linkedIndexedManga != null)
-            {
-                _logger.Info("Found existing linked manga for '{Title}'", indexedManga.Title);
-                _indexedMangaService.LinkToManga(indexedManga.Id, linkedIndexedManga.MangaId!.Value);
-            }
-            else
-            {
-                TryMatch(indexedManga);
-            }
+        var linkedIndexedManga = _indexedMangaService.FindByTitle(indexedManga.Title)
+            .FirstOrDefault(x => x.MangaId != null);
+
+        if (linkedIndexedManga != null)
+        {
+            _logger.Info("Found existing linked manga for '{Title}'", indexedManga.Title);
+            _indexedMangaService.LinkToManga(indexedManga.Id, linkedIndexedManga.MangaId!.Value);
+            return true;
         }
+
+        return TryMatch(indexedManga);
     }
 
-    private void TryMatch(IndexedManga indexedManga)
+    private bool TryMatch(IndexedManga indexedManga)
     {
         if (!_mangaUpdatesService.TryMatchTitle(indexedManga.Title, out var mangaUpdatesId))
         {
@@ -130,7 +139,7 @@ public class MatchingService : IMatchingService,
         if (mangaUpdatesId == null && myAnimeListId == null)
         {
             _logger.Info("No match found for '{Title}'", indexedManga.Title);
-            return;
+            return false;
         }
 
         _logger.Info("Found a match for '{Title}': {MangaUpdatesId}|{myAnimeListId}",
@@ -144,5 +153,6 @@ public class MatchingService : IMatchingService,
         }
 
         _indexedMangaService.LinkToManga(indexedManga.Id, manga.Id);
+        return true;
     }
 }
