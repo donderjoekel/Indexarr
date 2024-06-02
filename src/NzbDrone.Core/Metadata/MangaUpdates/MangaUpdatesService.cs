@@ -171,14 +171,6 @@ public class MangaUpdatesService : MetadataSource, IMangaUpdatesService
             return false;
         }
 
-        foreach (var genreResource in resource.Record.Genres)
-        {
-            if (genreResource.Genre.EqualsIgnoreCase("adult"))
-            {
-                return false;
-            }
-        }
-
         return true;
     }
 }
