@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using NLog;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Core.IndexedMangas;
 using NzbDrone.Core.Indexing.Events;
 using NzbDrone.Core.Mangas;
@@ -57,8 +58,8 @@ public class MatchingService : IMatchingService,
     {
         _logger.Info("Starting match process");
         var groups = _indexedMangaService.GetWithoutLinkedManga()
-            .OrderBy(x => x.Title)
-            .GroupBy(x => x.Title)
+            .GroupBy(x => x.Title.ToLower().StripNonAlphaNumeric())
+            .OrderBy(x => x.Key)
             .ToList();
 
         _logger.Info("Attempting to link {Count} mangas", groups.Count);
