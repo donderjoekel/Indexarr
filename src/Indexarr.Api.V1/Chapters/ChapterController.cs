@@ -12,6 +12,7 @@ using Prowlarr.Http.REST;
 namespace Prowlarr.Api.V1.Chapters;
 
 [V1ApiController]
+[AllowAnonymous]
 public class ChapterController : RestController<ChapterResource>
 {
     private readonly IChapterService _chapterService;
@@ -32,7 +33,7 @@ public class ChapterController : RestController<ChapterResource>
         throw new NotImplementedException();
     }
 
-    [HttpGet("mangaupdates/{mangaUpdatesId:long}")]
+    [HttpGet("mu/{mangaUpdatesId:long}")]
     [AllowAnonymous]
     [Produces("application/json")]
     public List<ChapterResource> GetByMangaUpdatesId(long mangaUpdatesId)
@@ -52,14 +53,19 @@ public class ChapterController : RestController<ChapterResource>
             resources.AddRange(chapters.Select(c => c.ToResource()));
         }
 
-        return resources.OrderBy(x => x.Volume).ThenBy(x => x.Number).Select((value, i) =>
-        {
-            value.AbsoluteNumber = i + 1;
-            return value;
-        }).ToList();
+        return resources.DistinctBy(x => $"{x.Volume}-{x.Number}")
+            .OrderBy(x => x.Volume)
+            .ThenBy(x => x.Number)
+            .Select(
+                (value, i) =>
+                {
+                    value.AbsoluteNumber = i + 1;
+                    return value;
+                })
+            .ToList();
     }
 
-    [HttpGet("anilist/{aniListId:int}")]
+    [HttpGet("al/{aniListId:int}")]
     [AllowAnonymous]
     [Produces("application/json")]
     public List<ChapterResource> GetByAniListId(int aniListId)
